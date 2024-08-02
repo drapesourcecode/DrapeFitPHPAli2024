@@ -21,9 +21,7 @@ jobs:
         php-version: '7.4'  # Adjust the PHP version as needed
 
     - name: Validate composer.json and composer.lock
-      run: composer validate --strict
-      env:
-        COMPOSER_ALLOW_SUPERUSER: 1
+      run: composer validate
 
     - name: Cache Composer packages
       id: composer-cache
