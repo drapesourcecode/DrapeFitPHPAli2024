@@ -13,28 +13,26 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Backup existing vendor directories
-      run: |
-        for dir in merchandise/vendor supplier/vendor inventory/vendor; do
-          if [ -d "$dir" ]; then
-            mv "$dir" "${dir}_backup"
-          fi
-        done
-
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: '7.4'  # Adjust the PHP version as needed
 
-    - name: Restore vendor directories
+    - name: Copy and unzip vendor directories
       run: |
-        for dir in merchandise/vendor supplier/vendor inventory/vendor; do
-          if [ -d "${dir}_backup" ]; then
-            mv "${dir}_backup" "$dir"
-          fi
-        done
+        # Define the project root directory
+        PROJECT_ROOT="/home/drapefit/actions-runner/_work/DrapeFitPHPAli2024/DrapeFitPHPAli2024"
+        
+        # Move the zip files to the project root directory
+        cp /home/drapefit/root_vendor.zip $PROJECT_ROOT/
+        cp /home/drapefit/merchandise_vendor.zip $PROJECT_ROOT/merchandise/
+        cp /home/drapefit/supplier_vendor.zip $PROJECT_ROOT/supplier/
+        cp /home/drapefit/inventory_vendor.zip $PROJECT_ROOT/inventory/
 
-    # Add your build and test steps here
-    - name: Run build
-      run: |
-        # Your build commands
+        # Unzip the files in their respective directories
+        unzip -o $PROJECT_ROOT/root_vendor.zip -d $PROJECT_ROOT/
+        unzip -o $PROJECT_ROOT/merchandise/merchandise_vendor.zip -d $PROJECT_ROOT/merchandise/
+        unzip -o $PROJECT_ROOT/supplier/supplier_vendor.zip -d $PROJECT_ROOT/supplier/
+        unzip -o $PROJECT_ROOT/inventory/inventory_vendor.zip -d $PROJECT_ROOT/inventory/
+ 
+ 
