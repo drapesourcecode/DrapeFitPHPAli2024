@@ -137,7 +137,7 @@ $errorHandler = new AppError();
    */
   $domain = $_SERVER['HTTP_HOST'];
  
-  $siteName = 'https://104.131.0.179/';
+  $siteName = 'http://64.225.16.163/';
    define('WS_URL', 'wss://drapefit.com/wss2/');
   // define('WS_URL', 'ws://localhost.com:8081');
 
