@@ -1,5 +1,3 @@
-name: PHP Composer
-
 on:
   push:
     branches: [ "master" ]
@@ -15,11 +13,28 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Backup existing vendor directories
+      run: |
+        for dir in merchandise/vendor supplier/vendor inventory/vendor; do
+          if [ -d "$dir" ]; then
+            mv "$dir" "${dir}_backup"
+          fi
+        done
+
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: '7.4'  # Adjust the PHP version as needed
 
+    - name: Restore vendor directories
+      run: |
+        for dir in merchandise/vendor supplier/vendor inventory/vendor; do
+          if [ -d "${dir}_backup" ]; then
+            mv "${dir}_backup" "$dir"
+          fi
+        done
 
-
-
+    # Add your build and test steps here
+    - name: Run build
+      run: |
+        # Your build commands
