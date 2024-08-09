@@ -248,8 +248,8 @@
        'mailjet'=> [
                     'host' => 'ssl://smtp.gmail.com',
                     'port' =>465, 
-                    'username' =>'support@drapefit.com', // id
-                    'password' =>'ftwu upnp leky cirb',//'hsde gmcc miso aitu',//app password added 12-08-2023//'encqsnxyqufqnbca',//'Kolkata@8906', // password
+                    'username' =>'support@drapefittest.com', // id
+                    'password' =>'Kolkata@5',//'hsde gmcc miso aitu',//app password added 12-08-2023//'encqsnxyqufqnbca',//'Kolkata@8906', // password
                     'timeout' => 3000,
                     'secure' =>'ssl',
                     'tls' =>false,
