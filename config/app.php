@@ -248,8 +248,8 @@
        'mailjet'=> [
                     'host' => 'ssl://smtp.gmail.com',
                     'port' =>465, 
-                    'username' =>'support@drapefit.com', // id
-                    'password' =>'ftwu upnp leky cirb',//'hsde gmcc miso aitu',//app password added 12-08-2023//'encqsnxyqufqnbca',//'Kolkata@8906', // password
+                    'username' =>'support@drapefittest.com', // id
+                    'password' =>'Kolkata@5',//'hsde gmcc miso aitu',//app password added 12-08-2023//'encqsnxyqufqnbca',//'Kolkata@8906', // password
                     'timeout' => 3000,
                     'secure' =>'ssl',
                     'tls' =>false,
@@ -303,7 +303,7 @@
            'className' => 'Cake\Database\Connection',
            'driver' => 'Cake\Database\Driver\Mysql',
            'persistent' => false,
-            'host' => '64.225.16.163',
+            'host' => 'localhost',
            /**
             * CakePHP will use the default DB port based on the driver selected
             * MySQL on MAMP uses port 8889, MAMP users will want to uncomment
