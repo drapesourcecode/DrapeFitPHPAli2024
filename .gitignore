@@ -1,0 +1,36 @@
+# Ignore .htaccess files
+merchandise/.htaccess
+merchandise/webroot/.htaccess
+
+supplier/webroot/.htaccess
+supplier/.htaccess
+
+inventory/webroot/.htaccess
+inventory/.htaccess
+
+# Ignore everything within vendor directories
+./vendor
+vendor
+/vendor/*
+/vendor
+vendor.zip
+inventory/vendor/
+supplier/vendor/
+merchandise/vendor/
+inventory/vendor.zip
+supplier/vendor.zip
+merchandise/vendor.zip
+
+# Ignore logs and tmp directories
+logs/
+tmp/
+merchandise/logs/
+merchandise/tmp/
+supplier/logs/
+supplier/tmp/
+inventory/logs/
+inventory/tmp/
+
+# Ignore htaccess files (if any)
+.htaccess
+webroot/.htaccess

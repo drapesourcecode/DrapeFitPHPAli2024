@@ -1,0 +1,1077 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="keywords" content="HTML,CSS,XML,JavaScript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <section class="header-top">
+      <div class="container"> 
+        <div class="row">
+          <div class="col-md-4">
+            <div class="logo">
+              <a href="#"> 
+                <img src="./images/mian-logo.png" alt="">
+              </a>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <div class="menu-bar menu-list">
+              <label for="menu-toggle"><p><img src="images/menu-toggle.png" alt=""></p></label>
+              <input type="checkbox" id="menu-toggle"/>
+              <ul id="menu">
+                <li>
+                  <a href="#">
+                    <i class="fas fa-question"></i>
+                    <span>FAQ</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" onclick="myFunction()">
+                    <i class="far fa-user-circle"></i>
+                    <span>My Account</span>
+                  </a>
+                  <div class="submenu" id="submenu-box">
+                  	<ul>
+                  		<li><a href="#"><i class="far fa-user-circle"></i> Soumya</a></li>
+                  		<li><a href="#"><i class="far fa-user-circle"></i> Soumya1</a></li>
+                  		<li><a href="#"><i class="far fa-user-circle"></i> Soumya2</a></li>
+                  		<li><a href="#"><i class="far fa-user-circle"></i> Soumya3</a></li>
+								      <li class="setting"><a href="#"><i class="fas fa-cog" aria-hidden="true"></i> Setting</a></li>
+                  		<li><a href="#"><i class="fas fa-sign-out-alt"></i> Sign Out</a></li>
+                  	</ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script type="text/javascript" >
+    	function myFunction() 
+        {
+      		var account= document.getElementById('submenu-box');
+      		account.classList.toggle("submenu-box2")
+      	}
+    </script>
+    <div id="id01" class="modal">
+        <form class="modal-content">  
+          <span onclick="document.getElementById('id01').style.display='none'" class="close" id="close1" title="Close Modal">&times;</span>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="sign-up-page">
+                  <h1>Welcome Back</h1>                 
+                </div>
+                <p class="last-para">Already have an Account ? <a href="#" onclick="document.getElementById('id02').style.display='block'">Sign Up </a> here.</p>
+                  <div class="sign-up-form">
+                    <input type="text" placeholder="Enter Email" name="email" required>
+                    <div class="show-password">
+                      <input type="password" placeholder="Enter Password" name="psw" required id="password">
+                      <span onclick="psw()">show</span>
+                    </div>
+                    <a href="#">Forgot Password ?</a>              
+                  </div>
+                  <script type="text/javascript">
+                    function psw()
+                    {
+                    var x=document.getElementById("password");
+                      if (x.type === "password") 
+                        {
+                          x.type="text";
+                        }
+                      else
+                        {
+                          x.type="password";
+                        }
+                    }
+                  </script>
+                  <div class="clearfix"><button type="submit" class="signupbtn">Sign In</button></div>
+                  <div class="sign-up-page">
+                    <a class="facebook" href="#">Log in with Facebook</a>
+                    <a class="google" href="#">Log in with Google</a>                  
+                  </div>
+                </div>
+              </div>
+            </div>
+        </form>
+      </div>
+      <script>
+        var modal = document.getElementById('id01');
+        window.onclick = function(event) 
+          {
+            if (event.target == modal) 
+              {
+                modal.style.display = "none";
+              }
+          }
+      </script>
+      <div id="id02" class="modal">
+        <form class="modal-content">
+          <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="sign-up-page">
+                  <h1>New to Drape Fit</h1>                  
+                  <p class="last-para">Already have an Account ? <a href="#" onclick="document.getElementById('id01').style.display='block'"> Sign In </a> here.</p>
+                </div>
+                  <div class="sign-up-form">
+                    <input type="text" placeholder="First Name" name="name" required>
+                    <input type="text" placeholder="Last Name" name="name" required>
+                    <input type="text" placeholder="Enter Email" name="email" required>
+                    <div class="show-password">
+                      <input type="password" placeholder="Enter Password" name="psw" required id="password">
+                      <span onclick="psw()">show</span>
+                    </div>
+                    <p>I need FIT for 
+                      <input type="radio" name="men"> men
+                      <input type="radio" name="men"> women
+                      <input type="radio" name="men"> Kids
+                    </p>
+                    <p>
+                      <input type="checkbox" name="">  
+                      There are many variations of passages of Lorem Ipsum available, but the majority have suffered.
+                    </p>
+                  </div>
+                  <script type="text/javascript">
+                    function psw()
+                    {
+                    var x=document.getElementById("password");
+                      if (x.type === "password") 
+                        {
+                          x.type="text";
+                        }
+                      else
+                        {
+                          x.type="password";
+                        }
+                    }
+                  </script>
+                  <div class="clearfix"><button type="submit" class="signupbtn">Sign Up</button></div>
+                   <div class="sign-up-page">
+                    <a class="facebook" href="#">Log in with Facebook</a>
+                    <a class="google" href="#">Log in with Google</a>                  
+                  </div>
+                </div>
+              </div>
+            </div>       
+        </form>
+      </div>
+      <script>
+        var modal = document.getElementById('id02');
+        window.onclick = function(event) 
+          {
+            if (event.target == modal) 
+              {
+                modal.style.display = "none";
+              }
+          }
+      </script>
+      <script>
+         $("#last-para2").bind("click", (function () 
+          {
+            alert("Button 2 is clicked!");
+            $("#button1").trigger("click");             
+          });       
+      </script>
+      <section class="customer-details">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <ul>
+                <li>
+                  <span>s</span>
+                  <a href="#">Sukendu</a>
+                </li>
+                <li><a href="#">FIT PROFILE </a></li>
+                <li><a href="#">ORDERS </a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+
+
+
+
+
+
+      <section class="setting-box">
+      	<div class="container">
+      		<div class="row">
+      			<div class="col-sm-12 col-lg-12 col-md-12 settings-profile">
+              <ul class="nav nav-tabs faq-cat-tabs">
+                <li class="active"><a href="#Sukhendu" data-toggle="tab">Sukhendu</a></li>
+                <li><a href="#Soumya1" data-toggle="tab">Soumya1</a></li>
+                <li><a href="#Soumya2" data-toggle="tab">Soumya2</a></li>
+                <li><a href="#Soumya3" data-toggle="tab">Soumya3</a></li>
+              </ul>
+              <h1>Sukhendu's Setting</h1>
+      			</div>
+      		</div>
+
+      		<div class="row">
+            <div class="tab-content faq-cat-content">
+              <div class="tab-pane active in fade" id="faq-cat-1">
+                <div class="panel-group" id="accordion-cat-1">
+                  <div class="panel panel-default panel-faq">
+                    <div class="panel-heading">
+
+
+                      <div class="col-sm-3 col-lg-3 col-md-3">
+      				          <div class="setting-left">      				   
+                          <ul class="nav nav-tabs nav-stacked text-center" role="tablist">
+                            <li role="presentation"><a class="cli" href="#one" aria-controls="home" role="tab" data-toggle="tab">Login details »</a></li>
+                            <li role="presentation"><a class="cli" href="#two" aria-controls="profile" role="tab" data-toggle="tab">Your Address »</a></li>
+                            <li role="presentation"><a class="cli" href="#three" aria-controls="messages" role="tab" data-toggle="tab">Payment details »</a></li>
+                            <li role="presentation"><a class="cli" href="#four" aria-controls="home" role="tab" data-toggle="tab">Manage FIT settings»</a></li>
+                            <li role="presentation"><a class="cli" href="#five" aria-controls="profile" role="tab" data-toggle="tab">Account Credit »</a></li>
+                            <li role="presentation"><a class="cli" href="#six" aria-controls="messages" role="tab" data-toggle="tab">Email preferences »</a></li>
+                            <li role="presentation"><a class="cli" href="#seven" aria-controls="messages" role="tab" data-toggle="tab">Manage Facebook Settings »</a></li>
+                            <li role="presentation">
+                              <a class="cli" href="#eight" aria-controls="messages" role="tab" data-toggle="tab">Manage Contact Settings »</a>
+                            </li>
+                          </ul>
+      				          </div>
+      			          </div>
+					            <div class="col-sm-9 col-lg-9 col-md-9">
+                        <div class="tab-content">
+                				  <ul id="customers">
+                            <li>
+                              <strong>LOGIN DETAILS</strong>
+                              <span>»</span>
+                              <span>dfgdfg@gmail.com</span>
+                            </li>
+                            <li>
+                              <strong>YOUR ADDRESS</strong>
+                              <span>»</span>
+                              <span>******</span>
+                            </li>
+                            <li>
+                              <strong>PAYMENT DETAILS</strong>
+                              <span>»</span>
+                              <span>Manage your address book settings.</span>
+                            </li>
+                            <li>
+                              <strong>MANAGE FIT DETAILS</strong>
+                              <span>»</span>
+                              <span>Sign into Stitch Fix with Facebook—no password required.</span>
+                            </li>
+                            <li>
+                              <strong>ACCOUNT CREDIT</strong>
+                              <span>»</span>
+                              <span>$0.00</span>
+                            </li>
+                            <li>
+                              <strong>EMAIL PREFERENCE</strong>
+                              <span>»</span>
+                              <span>You are currently receiving Fixes on demand.</span>
+                            </li>
+                            <li>
+                              <strong>MANAGE FACEBOOK SETTING</strong>
+                              <span>»</span>
+                              <span>Currently receiving exclusive offers, news, styling tips and more.</span>
+                            </li>
+                            <li>
+                              <strong>MANAGE CONTACT SETTING</strong>
+                              <span>»</span>
+                              <span>
+                                <b></b>
+                                <br>
+                                <b></b>
+                              </span>
+                            </li>
+                          </ul>
+                          <div role="tabpanel" class="tab-pane fade" id="one">
+                						<h5>Login details</h5>
+                						<ul>
+                							<li>
+                								<label>Name</label>
+                								<input type="text" disabled="disable" placeholder="Shukendu Mukharjee" />
+                							</li>
+                							<li>
+                								<label>Email</label>
+                								<input type="email" disabled="disable" placeholder="shukendu@gmail.com" />
+                							</li>
+                							<li>
+                								<label>Password</label>
+                								<input type="password" disabled="disable" placeholder="********" />
+                							</li>
+                						</ul>
+                						<div class="tab-button">
+                							<button class="btn-boxes" type="button" onClick="location.href=location.href">Cancel</button>
+                							<button class="btn-boxes" type="button">Edit</button>
+                							<button class="btn-boxes" type="button">Save</button>
+                						</div>
+                          </div>
+
+
+                  <div role="tabpanel" class="tab-pane fade" id="two">
+                    <h5>Your Address</h5>
+                    <div class="Address-details1" data-toggle="collapse" href="#add-address">
+                      <i class="fas fa-plus"></i>
+                      <p>Add Address</p>
+                    </div>
+                    <div class="Address-details1">
+                      <form>
+                        <ul>
+                          <li><strong>Debasish Das</strong></li>
+                          <li>At/Po-Barbatia Bazar ,Dist-Balasore,Odisha, India</li>
+                          <li>BHUBANESWAR, ODISHA 751010</li>
+                          <li>India</li>
+                          <li>Phone: 9776380822</li>
+                        </ul>
+                        <a href="#">Delete</a>
+                        <a href="#">Edit</a>
+                      </form>
+                    </div>  
+                    <div class="Address-details1">
+                      <form>
+                        <ul>
+                          <li><strong>Debasish Das</strong></li>
+                          <li>At/po-Barbatia Bazar ,Dist-Balasore,Odisha, India</li>
+                          <li>BHUBANESWAR, ODISHA 751010</li>
+                          <li>India</li>
+                          <li>Phone: 9776380822</li>
+                        </ul>
+                        <a href="#">Delete</a>
+                        <a href="#">Edit</a>
+                      </form>
+                    </div>  
+                    <div class="collapse setting-add-new-address" id="add-address">
+                      <form class="check-out-address-form">
+                            <h3>Add a new address</h3>
+                            <ul>
+                              <li>
+                                <label>Full name : </label>
+                                <input type="text" name="">
+                              </li>
+                              <li>
+                                <label>Address line 1 : </label>
+                                <input type="text" name="">
+                              </li>
+                              <li>
+                                <label>Address line 2 : </label>
+                                <input type="text" name="">
+                              </li>
+                              <li>
+                                <label>City : </label>
+                                <input type="text" name="">
+                              </li>
+                              <li>
+                                <label>State/Province/Region : </label>
+                                <input type="text" name="">
+                              </li>
+                              <li>
+                                <label>ZIP : </label>
+                                <input type="text" name="">
+                              </li>
+                              <li>
+                                <label>Country/Region : </label>
+                                <select>
+                                  <option></option>
+                                </select>
+                              </li>
+                              <li>
+                                <label>Phone number:</label>
+                                <input type="text" name="">
+                              </li>
+                            </ul>
+                            <button type="button" class="btn deliver-address">Save Address</button>
+                          </form>
+                    </div>
+                    <div class="tab-button">
+                      <button class="btn-boxes" type="button" onClick="location.href=location.href">Cancel</button>
+                      <!--<button class="btn-boxes" type="button">Edit</button>
+                      <button class="btn-boxes" type="button">Save</button>-->
+                    </div>
+                  </div>
+                <!--</div>-->
+                        <div role="tabpanel" class="tab-pane fade" id="three">
+                          <div class=" faq-cat-content">
+                            <div class="card-details-heading">
+                          <ul>
+                            <li><h4>Your saved debit and credit cards</h4></li>
+                            <li><p>Name </p></li>
+                            <li><p>Expires date</p></li>
+                          </ul> 
+                            </div>
+                    <div class="tab-pane active in fade" id="faq-cat-1">
+                        <div class="panel-group" id="accordion-cat-1">
+                            <div class="panel panel-default panel-faq">
+                                <div class="panel-heading">
+                                    <a data-toggle="collapse" data-parent="#accordion-cat-1" href="#faq-cat-1-sub-1">
+                                         <div class="card">
+                                            <ul>
+                                              <li><input type="radio" name="card-details"></li>
+                                              <li><img src="images/mastercard_logo.gif"></li>
+                                              <li><h6>Master Card <span> ending in 1234</span></h6></li>
+                                              <li><p><span>Name</span>Sukendu</p></li>
+                                              <li><p><span>Expires date</span>19-1-2019</p></li>
+                                            </ul>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div id="faq-cat-1-sub-1" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <div class="card-cvv">
+                                            <ul>
+                                                <li>
+                                                    <div class="card-cvv-drop-left">
+                                                        <label>Name on card</label>
+                                                        <p>SUKHENDU MUKHERJEE</p>
+                                                    </div>
+                                                    <div class="card-cvv-drop-right">
+                                                        <div>
+                                                            <label>Billing Address</label>
+                                                            <p><strong>Sukhendu Mukherjee</strong></p>
+                                                            <p>Sukhendu Mukherjee</p>
+                                                            <p>Sukhendu Mukherjee</p>
+                                                            <p>Sukhendu Mukherjee</p>                             
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li> 
+                                                    <div class="card-cvv-drop-last">
+                                                        <a href="#">Remove</a>
+                                                        <a href="#" onclick="document.getElementById('pop-up-box').style.display='block'">Edit</a>
+                                                    </div>                                               
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default panel-faq">
+                                 <div class="panel-heading">
+                                    <a data-toggle="collapse" data-parent="#accordion-cat-1" href="#faq-cat-1-sub-2">
+                                        <div class="card">
+                                            <ul>
+                                              <li><input type="radio" name="card-details"></li>
+                                              <li><img src="images/visa.png"></li>
+                                              <li><h6>Visa Card <span> ending in 1234</span></h6></li>
+                                              <li><p><span>Name</span>Sukendu</p></li>
+                                              <li><p><span>Expires date</span>19-1-2019</p></li>
+                                            </ul>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div id="faq-cat-1-sub-2" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <div class="card-cvv">
+                                            <ul>
+                                                <li>
+                                                    <div class="card-cvv-drop-left">
+                                                        <label>Name on card</label>
+                                                        <p>SUKHENDU MUKHERJEE</p>
+                                                    </div>
+                                                    <div class="card-cvv-drop-right">
+                                                        <div>
+                                                            <label>Billing Address</label>
+                                                            <p><strong>Sukhendu Mukherjee</strong></p>
+                                                            <p>Sukhendu Mukherjee</p>
+                                                            <p>Sukhendu Mukherjee</p>
+                                                            <p>Sukhendu Mukherjee</p>                             
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li> 
+                                                    <div class="card-cvv-drop-last">
+                                                        <a href="#">Remove</a>
+                                                        <a href="#" onclick="document.getElementById('pop-up-box').style.display='block'">Edit</a>
+                                                    </div>                                               
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default panel-faq">
+                                 <div class="panel-heading">
+                                    <a data-toggle="collapse" data-parent="#accordion-cat-1" href="#faq-cat-1-sub-3">
+                                        <div class="card">
+                                            <ul>
+                                              <li><input type="radio" name="card-details"></li>
+                                              <li><img src="images/ame.png"></li>
+                                              <li><h6>American Card <span> ending in 1234</span></h6></li>
+                                              <li><p><span>Name</span>Sukendu</p></li>
+                                              <li><p><span>Expires date</span>19-1-2019</p></li>
+                                            </ul>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div id="faq-cat-1-sub-3" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <div class="card-cvv">
+                                            <ul>
+                                                <li>
+                                                    <div class="card-cvv-drop-left">
+                                                        <label>Name on card</label>
+                                                        <p>SUKHENDU MUKHERJEE</p>
+                                                    </div>
+                                                    <div class="card-cvv-drop-right">
+                                                        <div>
+                                                            <label>Billing Address</label>
+                                                            <p><strong>Sukhendu Mukherjee</strong></p>
+                                                            <p>Sukhendu Mukherjee</p>
+                                                            <p>Sukhendu Mukherjee</p>
+                                                            <p>Sukhendu Mukherjee</p>                             
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li> 
+                                                    <div class="card-cvv-drop-last">
+                                                        <a href="#">Remove</a>
+                                                        <a href="#" onclick="document.getElementById('pop-up-box').style.display='block'">Edit</a>
+                                                    </div>                                               
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+                <div class="card-payment-option">
+                  <details  onclick="newcard()">
+                    <summary>Add a card</summary>
+                  </details>
+                  <div id="new-card">
+                    <form class="new-card-form">
+                      <p>Enter your card information</p>
+                      <ul>
+                        <li>
+                          <label>Name on card</label>
+                          <input type="text" name="">
+                        </li>
+                        <li>
+                          <label>Card number</label>
+                          <input type="text" name="">
+                        </li>
+                        <li>
+                          <label>Expiry date</label>
+                          <select>
+                            <option></option>
+                          </select>
+                          <select>
+                            <option></option>
+                          </select>
+                        </li>
+
+                        <li>
+                          <input type="button" name="" class="btn" value="Add Your Card">
+                        </li>
+                      </ul>
+                    </form>
+                  </div>
+                  <script>
+                    function newcard() {
+                      var x = document.getElementById("new-card");
+                      if (x.style.display === "block") 
+                      {
+                        x.style.display = "none";
+                      } 
+                      else 
+                      {
+                        x.style.display = "block";
+                      }
+                    }
+                  </script>
+                </div>
+                <div class="tab-button">
+                  <button class="btn-boxes" type="button" onClick="location.href=location.href">Cancel</button>
+                  <!--<button class="btn-boxes" type="button">Edit</button>
+                  <button class="btn-boxes" type="button">Save</button>-->
+                </div>
+              </div> 
+              <div role="tabpanel" class="tab-pane fade" id="four">
+							<h5>Manage FIT settings</h5>
+							<h6>How often would you like to receive Fixes?</h6>
+							<div class="checkbox-sitting">
+                <input id="try_new_items_with_scheduled_fixes12" value="1" name="try_new_items_with_scheduled_fixes" type="checkbox">
+                <label for="try_new_items_with_scheduled_fixes12">Try new items with scheduled Fixes.</label>
+              </div>
+              <ul>
+                <li>
+                    <input class="radio-box" value="1" name="how_often_would_you_lik_fixes" id="how_often_would_you_lik_fixes1" type="radio">
+                    <label for="how_often_would_you_lik_fixes1">
+                        <h5>Running Refresh</h5>
+                        <p>Get a rotating selection of new items with a Fix every 2-3 weeks.</p>
+                    </label>
+                </li>
+                <li>
+                    <input class="radio-box" value="2" id="how_often_would_you_lik_fixes2" checked="" name="how_often_would_you_lik_fixes" type="radio">
+                    <label for="how_often_would_you_lik_fixes2">
+                        <h5>Monthly Pick-Me-Up</h5>
+                        <p>Busy schedule? We’ll do the work &amp; send a Fix every month.</p>
+                    </label>
+                </li>
+                <li>
+                    <input class="radio-box" value="3" id="how_often_would_you_lik_fixes3" type="radio" name="how_often_would_you_lik_fixes">
+                    <label for="how_often_would_you_lik_fixes3">
+                        <h5>Occasional Update</h5>
+                        <p>Build upon a solid base with a Fix every 2 months.</p>
+                    </label>
+                </li>
+                <li>
+                    <input class="radio-box" value="4" id="how_often_would_you_lik_fixes4" type="radio" name="how_often_would_you_lik_fixes">
+                    <label for="how_often_would_you_lik_fixes4">
+                        <h5>Quarterly Top-Off</h5>
+                        <p>Get a fresh supply of goods with a Fix every 3 months.</p>
+                    </label>
+                </li>
+              </ul>
+              <p>We'll send you shipments at the frequency you choose until you change it or cancel, which you may do anytime via your online account. Before each Fix is styled, you'll be charged a $20 styling fee, which will be credited to any items you choose to buy.</p>
+  	          <div class="tab-button">
+  							<button class="btn-boxes" type="button" onClick="location.href=location.href">Cancel</button>
+  							<!--<button class="btn-boxes" type="button">Edit</button>-->
+  							<button class="btn-boxes" type="button">Save</button>
+  						</div>						
+              </div>
+  					  <div role="tabpanel" class="tab-pane fade" id="five">
+    						<h5>ACCOUNT CREDIT <span>credit balance :$0.00</span></h5>
+    						<p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.</p>
+    						<div class="acc">
+                  <label>Redeem your promo code.</label>
+                  <form method="post" name="credit_info" id="credit_info">
+                      <input type="text" name="promocode" id="promocode">
+                      <input type="hidden" name="user_id" id="user_id" value="264">
+                      <button class="save" type="submit" name="credit_info" value="credit_info" id="credit_info">SAVE PAYMENT INFO</button>
+                  </form>
+                  <label class="acclab"><a href="#">or,Redeem a gift code</a></label>
+                </div>
+                <div class="credit-right">
+                  <h2>You'll get $25,<br> they'll get $25.</h2>
+                  <form>
+                    <p>who are you inviting ?</p>
+                    <input type="text">
+                    <p>choose a way to share</p>
+                    <button class="save">SAVE PAYMENT INFO</button>
+                  </form>
+                  <ul>
+                  	<li>Or share via :</li>
+                      <li><a href="https://mail.google.com"><i class="fas fa-envelope"></i></a></li>
+                      <li><a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a></li>
+                      <li><a href="https://www.messenger.com/"><i class="fab fa-facebook-messenger"></i></a></li>
+                  </ul>
+                </div>
+    	          <div class="tab-button">
+    							<button class="btn-boxes" type="button" onClick="location.href=location.href">Cancel</button>
+    							<!--<button class="btn-boxes" type="button">Edit</button>
+    							<button class="btn-boxes" type="button">Save</button>-->
+    						</div>	
+              </div>
+              <div role="tabpanel" class="tab-pane fade" id="six">
+                <h5>EMAIL PREFERENCES</h5>
+                <h6>Your email address on file is : dfgdfg@gmail.com</h6>
+                <h6>I'd like to recive</h6>
+                <div class="email-label">
+                  <label for="exclusive_offers" class="input-control radio">
+                    <input type="radio" id="exclusive_offers" name="email_preferences" value="1">
+                    <span class="input-control__indicator"></span>Exclusive offers,news,styling,tips and more !
+                  </label>
+                  <label for="exclusive_offers2" class="input-control radio">
+                      <input type="radio" id="exclusive_offers2" name="email_preferences" value="0" checked="">
+                      <span class="input-control__indicator"></span>No emails, please
+                  </label>
+                </div>
+                <div class="tab-button">
+    							<button class="btn-boxes" type="button" onClick="location.href=location.href">Cancel</button>
+    							<button class="btn-boxes" type="button">Edit</button>
+    							<button class="btn-boxes" type="button">Save</button>
+    						</div>
+              </div>
+              <div role="tabpanel" class="tab-pane fade" id="seven">
+    						<h5>FACEBOOK SETTING</h5>
+    						<h6>Sign in with Facebook</h6>
+    						<p>Sign in with Facebook Connecting your Facebook account allows you to sign into DrapeFit without needing a new password.</p>
+    						<a href="#" class="loginBtn loginBtn--facebook">CONNECT FACEBOOK</a>
+              </div>
+              <div role="tabpanel" class="tab-pane fade" id="eight">
+                dfhkljshfakjsahf
+              </div>
+              </div>
+            </div>
+          </div>
+
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          <div class="row">
+
+
+
+
+
+
+
+              <div class="tab-pane fade" id="faq-cat-2">
+                        <div class="panel-group" id="accordion-cat-2">
+                            <div class="panel panel-default panel-faq">
+                                <div class="panel-heading">
+
+
+
+
+
+
+
+
+            <div class="col-sm-3 col-lg-3 col-md-3">
+              <div class="setting-left">                 
+                <ul class="nav nav-tabs nav-stacked text-center" role="tablist">
+                  <!--<li role="presentation"><a class="cli" href="#one" aria-controls="home" role="tab" data-toggle="tab">Login details »</a></li>
+                  <li role="presentation"><a class="cli" href="#two" aria-controls="profile" role="tab" data-toggle="tab">Your Address »</a></li>
+                  <li role="presentation"><a class="cli" href="#three" aria-controls="messages" role="tab" data-toggle="tab">Payment details »</a></li>-->
+                  <li role="presentation"><a class="cli" href="#four" aria-controls="home" role="tab" data-toggle="tab">Manage FIT settings»</a></li>
+                  <!--<li role="presentation"><a class="cli" href="#five" aria-controls="profile" role="tab" data-toggle="tab">Account Credit »</a></li>-->
+                  <li role="presentation"><a class="cli" href="#six" aria-controls="messages" role="tab" data-toggle="tab">Email preferences »</a></li>
+                  <!--<li role="presentation"><a class="cli" href="#seven" aria-controls="messages" role="tab" data-toggle="tab">Manage Facebook Settings »</a></li>
+                  <li role="presentation">
+                    <a class="cli" href="#eight" aria-controls="messages" role="tab" data-toggle="tab">Manage Contact Settings »
+                    </a>
+                  </li>-->
+                </ul>
+              </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+            <div class="col-sm-9 col-lg-9 col-md-9">
+              <div class="tab-content">
+                <ul id="customers">
+                  <!--<li>
+                    <strong>LOGIN DETAILS</strong>
+                    <span>»</span>
+                    <span>dfgdfg@gmail.com</span>
+                  </li>
+                  <li>
+                    <strong>YOUR ADDRESS</strong>
+                    <span>»</span>
+                    <span>******</span>
+                  </li>
+                  <li>
+                    <strong>PAYMENT DETAILS</strong>
+                    <span>»</span>
+                    <span>Manage your address book settings.</span>
+                  </li>
+                  <li>-->
+                  <strong>MANAGE FIT DETAILS</strong>
+                    <span>»</span>
+                    <span>Sign into Stitch Fix with Facebook—no password required.</span>
+                  </li>
+                  <!--<li>
+                    <strong>ACCOUNT CREDIT</strong>
+                    <span>»</span>
+                    <span>$0.00</span>
+                  </li>-->
+                  <li>
+                    <strong>EMAIL PREFERENCE</strong>
+                    <span>»</span>
+                    <span>You are currently receiving Fixes on demand.</span>
+                  </li>
+                  <!--<li>
+                    <strong>MANAGE FACEBOOK SETTING</strong>
+                    <span>»</span>
+                    <span>Currently receiving exclusive offers, news, styling tips and more.</span>
+                  </li>
+                  <li>
+                    <strong>MANAGE CONTACT SETTING</strong>
+                    <span>»</span>
+                    <span>
+                      <b></b>
+                      <br>
+                      <b></b>
+                    </span>
+                  </li>
+                  <li>
+                    <strong>BILLING INFO</strong>
+                    <span>»</span>
+                    <span>sorry there is no card saved</span>
+                  </li>-->
+               </ul>
+
+
+                <div role="tabpanel" class="tab-pane fade" id="four">
+              <h5>Manage FIT settings</h5>
+              <h6>How often would you like to receive Fixes?</h6>
+              <div class="checkbox-sitting">
+                <input id="try_new_items_with_scheduled_fixes12" value="1" name="try_new_items_with_scheduled_fixes" type="checkbox">
+                <label for="try_new_items_with_scheduled_fixes12">Try new items with scheduled Fixes.</label>
+              </div>
+              <ul>
+                <li>
+                    <input class="radio-box" value="1" name="how_often_would_you_lik_fixes" id="how_often_would_you_lik_fixes1" type="radio">
+                    <label for="how_often_would_you_lik_fixes1">
+                        <h5>Running Refresh</h5>
+                        <p>Get a rotating selection of new items with a Fix every 2-3 weeks.</p>
+                    </label>
+                </li>
+                <li>
+                    <input class="radio-box" value="2" id="how_often_would_you_lik_fixes2" checked="" name="how_often_would_you_lik_fixes" type="radio">
+                    <label for="how_often_would_you_lik_fixes2">
+                        <h5>Monthly Pick-Me-Up</h5>
+                        <p>Busy schedule? We’ll do the work &amp; send a Fix every month.</p>
+                    </label>
+                </li>
+                <li>
+                    <input class="radio-box" value="3" id="how_often_would_you_lik_fixes3" type="radio" name="how_often_would_you_lik_fixes">
+                    <label for="how_often_would_you_lik_fixes3">
+                        <h5>Occasional Update</h5>
+                        <p>Build upon a solid base with a Fix every 2 months.</p>
+                    </label>
+                </li>
+                <li>
+                    <input class="radio-box" value="4" id="how_often_would_you_lik_fixes4" type="radio" name="how_often_would_you_lik_fixes">
+                    <label for="how_often_would_you_lik_fixes4">
+                        <h5>Quarterly Top-Off</h5>
+                        <p>Get a fresh supply of goods with a Fix every 3 months.</p>
+                    </label>
+                </li>
+              </ul>
+              <p>We'll send you shipments at the frequency you choose until you change it or cancel, which you may do anytime via your online account. Before each Fix is styled, you'll be charged a $20 styling fee, which will be credited to any items you choose to buy.</p>
+              <div class="tab-button">
+                <button class="btn-boxes" type="button" onClick="location.href=location.href">Cancel</button>
+                <!--<button class="btn-boxes" type="button">Edit</button>-->
+               <button class="btn-boxes" type="button">Save</button>
+              </div>            
+            </div>
+
+
+
+
+
+
+
+
+                <div role="tabpanel" class="tab-pane fade" id="six">
+            <h5>EMAIL PREFERENCES</h5>
+            <h6>Your email address on file is : dfgdfg@gmail.com</h6>
+            <h6>I'd like to recive</h6>
+            <div class="email-label">
+              <label for="exclusive_offers" class="input-control radio">
+                <input type="radio" id="exclusive_offers" name="email_preferences" value="1">
+                <span class="input-control__indicator"></span>Exclusive offers,news,styling,tips and more !
+              </label>
+              <label for="exclusive_offers2" class="input-control radio">
+                  <input type="radio" id="exclusive_offers2" name="email_preferences" value="0" checked="">
+                  <span class="input-control__indicator"></span>No emails, please
+              </label>
+            </div>
+            <div class="tab-button">
+              <button class="btn-boxes" type="button" onClick="location.href=location.href">Cancel</button>
+              <button class="btn-boxes" type="button">Edit</button>
+              <button class="btn-boxes" type="button">Save</button>
+            </div>
+          </div>
+
+
+
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+  </div>
+</section>
+
+
+      <div id="pop-up-box" class="pop-up">
+        <form class="pop-up-content">  
+          <span onclick="document.getElementById('pop-up-box').style.display='none'" class="close1" id="close1" title="Close Modal">&times;</span>
+            <div class="row pop-up-top">
+              <div class="col-md-12">
+                <p>Edit Payment Method</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-5">
+                <label>
+                  Payment Method
+                </label>
+                <div>
+                  <img src="images/visa.png">
+                  <span><strong> visa </strong> endding with 3465 </span>
+                </div>
+              </div>
+              <div class="col-md-4 card-holder-name">
+               <label>
+                 Name on card
+               </label>
+               <input type="text" name="neme on card">
+              </div>
+              <div class="col-md-3 date">
+               <label>
+                 Expiration date
+               </label>
+               <span>
+                 <select>
+                   <option>03</option>
+                 </select>
+                 <select>
+                   <option>2022</option>
+                 </select>
+               </span>
+              </div>
+            </div>
+            <div class="row setting-pop-up-address-details">
+              <div class="col-md-12">
+                <label>Billing Address</label>
+                <p>Sukhendu Mukharjee</p>
+                <p>Sukhendu Mukharjee</p>
+                <p>Sukhendu Mukharjee</p>
+                <p>Sukhendu Mukharjee</p>
+                <p>Sukhendu Mukharjee</p>
+                <a href="#">change</a>
+                <div class="setting-pop-up-buttons">
+                  <a href="#">Cancel</a>
+                  <a href="#">Save</a>
+                </div>
+              </div>
+            </div>
+        </form>
+      </div>
+      <script>
+        var modal = document.getElementById('pop-up-box');
+        window.onclick = function(event) 
+          {
+            if (event.target == modal) 
+              {
+                modal.style.display = "none";
+              }
+          }
+      </script>
+
+
+    <section class="footer">
+      <div class="container"> 
+        <div class="row">
+          <div class="col-md-3">
+            <div class="footer-logo">
+              <a href="#"> 
+                <img src="./images/logo.png" alt="">
+              </a></br>
+              <p>Style For Everyone</p>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="footer-links">
+              <h3>About Us</h3>
+              <ul>
+                <li><a href="#">Who we are</a></li>
+                <li><a href="#">Work with us</a></li>
+                <li><a href="#">Careers</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="footer-links">
+              <h3>Service</h3>
+              <ul>
+                <li><a href="#">Men</a></li>
+                <li><a href="#">Women</a></li>
+                <li><a href="#">Kids</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="footer-links">
+              <h3>Questions ?</h3>
+              <ul>
+                <li><a href="#">FAQ</a></li>                
+                <li><a href="#">Contact Us</a></li>
+                <li><a href="#">Help Center</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms & Conditions</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="footer-social">
+              <h3>Follow Us :</h3>
+              <ul>
+                <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+                <li><a href="#"><i class="fab fa-google-plus-g"></i></a></li>
+                <li><a href="#"><i class="fab fa-pinterest-p"></i></a></li>
+                <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+              </ul>
+            </div>           
+          </div>         
+        </div>
+      </div>
+    </section>
+    <section class="copy-right">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">         
+            <span> &copy 2019 DrapeFit.</span>                        
+          </div>
+        </div>        
+      </div>
+      <a href="#" class="live-chat">Live Chat</a>
+    </section>
+    <script type="text/javascript" >
+		$(document).ready(function(){
+			$(".cli").click(function(){
+				$("#customers").hide();
+			});
+		});
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,9 @@
+fb
+----
+App id-983100288424786
+App secret-e7d2e8606340bd514ed066521115d4f6
+
+G+
+---
+client id- 1038931100597-0iqchct4us9e3fvq9b7166qqthihlnbe.apps.googleusercontent.com 
+secret- he6VjYO3L22nZfBbZx7UbuUI 
