@@ -27,7 +27,7 @@
                 <!-- Tab panes -->
                 <div class="tab-content tabs data-filup ">
                     <div role="tabpanel" class="tab-pane fade in active" id="Section1">
-                        <h1>Hi, <?php echo $userDetails->user_detail->first_name;?></h1>
+                        <h1>Hii, <?php echo $userDetails->user_detail->first_name;?></h1>
                         <p>Want to keep your Stylist in the loop? Update your Style Profile to reflect your current tastes and needs.</p>
                         <p><span>We currently carry sizes 0–24W (XS–3X), as well as maternity and petite clothing.</span></p>
                         <div class="form-box-data">
