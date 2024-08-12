@@ -1,3 +1,0 @@
-[11-May-2018 05:42:48 CST6CDT] PHP Warning:  require(vendorss/autoload.php): failed to open stream: No such file or directory in /home/maritim/public_html/smtp/phpmailer/index.php on line 9
-[11-May-2018 05:42:48 CST6CDT] PHP Warning:  require(vendorss/autoload.php): failed to open stream: No such file or directory in /home/maritim/public_html/smtp/phpmailer/index.php on line 9
-[11-May-2018 05:42:48 CST6CDT] PHP Fatal error:  require(): Failed opening required 'vendorss/autoload.php' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/maritim/public_html/smtp/phpmailer/index.php on line 9

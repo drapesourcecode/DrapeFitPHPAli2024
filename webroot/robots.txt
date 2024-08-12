@@ -1,8 +1,0 @@
-User-Agent: *
-Allow: /
-Disallow: /cgi-bin/
-Disallow: /?title/
-Disallow: /?search/
-Disallow: /files/investors/
-
-Sitemap: https://www.drapefit.com/sitemap.xml
