@@ -15,6 +15,7 @@ use Cake\Core\Configure;
 
 class AjaxsController extends AppController
 {
+    
 
     public function initialize()
     {
