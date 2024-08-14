@@ -1,15 +1,27 @@
+name: Deploy and Setup
+
 on:
   push:
-    branches: [ "uat" ]
+    branches: 
+      - uat
+      - prod
 
 permissions:
   contents: read
 
 jobs:
   build:
-
-    runs-on: self-hosted
-
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        branch: [uat, prod]
+        runner: [self-hosted, self-hosted]
+        include:
+          - branch: uat
+            runner: [self-hosted,test]
+          - branch: prod
+            runner: [self-hosted,prod]
+    
     steps:
     - uses: actions/checkout@v4
 
@@ -34,5 +46,3 @@ jobs:
         unzip -o $PROJECT_ROOT/merchandise/merchandise_vendor.zip -d $PROJECT_ROOT/merchandise/
         unzip -o $PROJECT_ROOT/supplier/supplier_vendor.zip -d $PROJECT_ROOT/supplier/
         unzip -o $PROJECT_ROOT/inventory/inventory_vendor.zip -d $PROJECT_ROOT/inventory/
- 
- 
