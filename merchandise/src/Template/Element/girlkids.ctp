@@ -503,10 +503,13 @@
                                     <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="exampleInputPassword1">Clearance status</label>
-                                                <select name="is_clearance" class="form-control">
-                                                    <option <?php if (@$editproduct->is_clearance == '') { ?> selected="" <?php } ?> value="">--</option>
-                                                    <option <?php if (@$editproduct->is_clearance == 1) { ?> selected="" <?php } ?> value="1">Set for clearance</option>                                
-                                                    <option <?php if (@$editproduct->is_clearance == 2) { ?> selected="" <?php } ?> value="2">Not set for clearance</option>
+                                                <select name="product_status" class="form-control">
+                                                    <option <?php if (@$editproduct->product_status == '') { ?> selected="" <?php } ?> value="">--</option>
+                                                    <option <?php if (@$editproduct->product_status == 'S') { ?> selected="" <?php } ?> value="S"><?=Configure::read('S');?></option>                                
+                                                    <option <?php if (@$editproduct->product_status == 'O') { ?> selected="" <?php } ?> value="O"><?=Configure::read('O');?></option>                                
+                                                    <option <?php if (@$editproduct->product_status == 'C') { ?> selected="" <?php } ?> value="C"><?=Configure::read('C');?></option>                                
+                                                    <option <?php if (@$editproduct->product_status == 'R') { ?> selected="" <?php } ?> value="R"><?=Configure::read('R');?></option>                                
+                                                    <option <?php if (@$editproduct->product_status == 'F') { ?> selected="" <?php } ?> value="F"><?=Configure::read('F');?></option> 
                                                 </select>
                                             </div>
                                         </div>

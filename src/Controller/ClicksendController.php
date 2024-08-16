@@ -262,16 +262,24 @@ class ClicksendController extends AppController {
 
     public function beforeFilter(Event $event) {
 
-        $this->Auth->allow(['sendSms','sendSmsPost']);
+        $this->Auth->allow(['sendSms','sendSmsPost','getClickSendApiKeys']);
 
+    }
+
+    public function getClickSendApiKeys(){
+        $this->loadModel('CofigKeys');
+        $get_api_key = $this->CofigKeys->find('all')->where(['name'=>'click_send'])->first();
+        $apikey = json_decode($get_api_key->key_val, true);
+        return $apikey;
     }
 
     public function sendSms($phone, $mssg)
     {
-       $phone = !empty($phone)?$phone:'+12148626575';
-       $mssg = !empty($mssg)?$mssg:'';
-        $username = 'taylor@drapefit.com';
-        $apiKey = '6619F116-722E-09E7-53EF-2622EBA7943F';
+        $api_key_data = $this->getClickSendApiKeys();
+        $phone = !empty($phone)?$phone:'+12148626575';
+        $mssg = !empty($mssg)?$mssg:'';
+        $username = $api_key_data['username'];//'taylor@drapefit.com';
+        $apiKey =  $api_key_data['apiKey'];//'6619F116-722E-09E7-53EF-2622EBA7943F';
 
         
         $config = Configuration::getDefaultConfiguration()
@@ -321,8 +329,9 @@ class ClicksendController extends AppController {
             // $username = 'sukhendu.mukherjee@drapefit.com';
             // $apiKey = '32DE7A55-8A97-ADCD-7BA2-E2ED5ABF474D';     
             
-            $username = 'taylor@drapefit.com';
-            $apiKey = '6619F116-722E-09E7-53EF-2622EBA7943F';
+            $api_key_data = $this->getClickSendApiKeys();       
+            $username = $api_key_data['username'];//'taylor@drapefit.com';
+            $apiKey =  $api_key_data['apiKey'];//'6619F116-722E-09E7-53EF-2622EBA7943F';
     
             
             $config = Configuration::getDefaultConfiguration()

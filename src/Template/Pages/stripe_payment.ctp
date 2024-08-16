@@ -22,7 +22,7 @@
 
     // This is your test publishable API key.
 //    const stripe = Stripe("pk_test_51JY90jITPrbxGSMcuo8bhxqQhCbSvHghLQaYIxtqVSe9u2xxm80SDtIVQ9acsLTW4WyPJX5G0nIMxaLXwtXbsN0N00vkBYmYDU");
-    const stripe = Stripe("pk_live_51JY90jITPrbxGSMc2biBXo0DoiP6kSUOwvQQix5RmbPTlEIeJSPL3inlSdqhoJ4dh5oV5FJHpcuCMTuk3V2Hymqa00sVontf8A");
+    const stripe = Stripe("<?=$stripe_api_key['publishable_key'];?>");
 
 // The items the customer wants to buy
     const items = [{id: "Gift <?= $my_type; ?>"}];

@@ -28,11 +28,9 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Helper;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-class AppadminsController extends AppController
-{
+class AppadminsController extends AppController {
 
-    public function initialize()
-    {
+    public function initialize() {
 
         parent::initialize();
 
@@ -65,20 +63,18 @@ class AppadminsController extends AppController
         $this->viewBuilder()->layout('admin');
     }
 
-    public function beforeFilter(Event $event)
-    {
+    public function beforeFilter(Event $event) {
 
         $this->Auth->allow(['logout', 'generatePoPdf']);
     }
 
     public $paginate = ['limit' => 50];
 
-    public function index()
-    {
+    public function index() {
+        
     }
 
-    public function createEmployee($id = null)
-    {
+    public function createEmployee($id = null) {
         $admin = $this->Users->newEntity();
         if ($id) {
             $editAdmin = $this->Users->find('all')->where(['Users.id' => $id])->first();
@@ -133,14 +129,12 @@ class AppadminsController extends AppController
         $this->set(compact('admin', 'id', 'editAdmin'));
     }
 
-    public function viewEmployee()
-    {
+    public function viewEmployee() {
         $adminLists = $this->Users->find('all')->order(['Users.id' => 'DESC'])->where(['Users.type IN' => [21, 22, 23, 24, 25]]);
         $this->set(compact('adminLists'));
     }
 
-    public function createStaff($id = null, $option = null)
-    {
+    public function createStaff($id = null, $option = null) {
 
 
         if ($option == "collaborate") {
@@ -249,16 +243,14 @@ class AppadminsController extends AppController
         $this->set(compact('admin', 'id', 'editAdmin'));
     }
 
-    public function viewStaff()
-    {
+    public function viewStaff() {
 
         $adminLists = $this->InUsers->find('all', ['InUsers.id' => 'DESC'])->where(['InUsers.type' => 3]);
 
         $this->set(compact('adminLists'));
     }
 
-    public function setBrandPassword($id = null)
-    {
+    public function setBrandPassword($id = null) {
 
         $passwordData = $this->InUsers->newEntity();
 
@@ -319,7 +311,7 @@ class AppadminsController extends AppController
     public function currentprediction()
     {
         $end_date = date('Y-m-d',strtotime('last day of +0 month'));
-        $start_date = date('Y-m-d', strtotime('first day of -2 month'));
+        $start_date = date('Y-m-d', strtotime('first day of -3 month'));
         $next_month = date('Y-m-d',strtotime('last day of +0 month'));
         $one_nxt_month = date('m');
         $one_nxt_month_name = date('F');
@@ -336,7 +328,7 @@ class AppadminsController extends AppController
         $this->PaymentGetways->hasOne('parent_fix', ['className' => 'LetsPlanYourFirstFix', 'foreignKey' => 'user_id', 'bindingKey' => 'user_id'])->setConditions(['parent_fix.kid_id' => 0]);
         $this->PaymentGetways->hasOne('parent_detail', ['className' => 'UserDetails', 'foreignKey' => 'user_id', 'bindingKey' => 'user_id']);
         
-        $current_paid_customer = $this->PaymentGetways->find('all')->where(['PaymentGetways.payment_type' => 1, 'PaymentGetways.kid_id' => 0])->order(['PaymentGetways.id' => 'DESC'])->group(['PaymentGetways.user_id'])->contain(['parent_fix', 'parent_detail', 'product', 'usr', 'usr_dtl', 'in_prod'])->where([
+        $current_paid_customer = $this->PaymentGetways->find('all')->where(['PaymentGetways.payment_type' => 1, 'PaymentGetways.status' => 1, 'PaymentGetways.kid_id' => 0])->order(['PaymentGetways.id' => 'DESC'])->group(['PaymentGetways.user_id'])->contain(['parent_fix', 'parent_detail', 'product', 'usr', 'usr_dtl', 'in_prod'])->where([
             'PaymentGetways.created_dt BETWEEN :start AND :end'
         ])
             ->bind(':start', date('Y-m-01'), 'date')
@@ -390,7 +382,7 @@ class AppadminsController extends AppController
     }
     public function prediction()
     {
-        $end_date = date('Y-m-d');
+        $end_date = date('Y-m-d', strtotime('last day of +0 month'));
         $start_date = date('Y-m-01', strtotime('first day of -2 month'));
         $next_month = date('Y-m-01', strtotime('first day of +1 month'));
         $one_nxt_month = date('m', strtotime('first day of +1 month'));
@@ -407,7 +399,7 @@ class AppadminsController extends AppController
         $this->PaymentGetways->hasOne('parent_fix', ['className' => 'LetsPlanYourFirstFix', 'foreignKey' => 'user_id', 'bindingKey' => 'user_id'])->setConditions(['parent_fix.kid_id' => 0]);
         $this->PaymentGetways->hasOne('parent_detail', ['className' => 'UserDetails', 'foreignKey' => 'user_id', 'bindingKey' => 'user_id']);
 
-        $paid_customer = $this->PaymentGetways->find('all')->where(['PaymentGetways.payment_type' => 1, 'PaymentGetways.kid_id' => 0])->order(['PaymentGetways.id' => 'desc'])->group(['PaymentGetways.user_id'])->contain(['parent_fix', 'parent_detail', 'product', 'usr', 'usr_dtl', 'in_prod'])->where([
+        $paid_customer = $this->PaymentGetways->find('all')->where(['PaymentGetways.payment_type' => 1,  'PaymentGetways.status' => 1, 'PaymentGetways.kid_id' => 0])->order(['PaymentGetways.id' => 'desc'])->group(['PaymentGetways.user_id'])->contain(['parent_fix', 'parent_detail', 'product', 'usr', 'usr_dtl', 'in_prod'])->where([
             'PaymentGetways.created_dt BETWEEN :start AND :end'
         ])
             ->bind(':start', $start_date, 'date')
@@ -420,7 +412,7 @@ class AppadminsController extends AppController
         $this->PaymentGetways->belongsTo('kid_detail', ['className' => 'KidsDetails', 'foreignKey' => 'kid_id']);
         $this->PaymentGetways->hasMany('in_produc', ['className' => 'InProducts', 'foreignKey' => 'allocate_to_kid_id', 'bindingKey' => 'kid_id'])->setConditions(['in_produc.allocate_to_kid_id !=' => 0]);
 
-        $paid_customer_kid = $this->PaymentGetways->find('all')->where(['PaymentGetways.payment_type' => 1, 'PaymentGetways.kid_id !=' => 0])->order(['PaymentGetways.id' => 'desc'])->group(['PaymentGetways.kid_id'])->contain(['kid_fix', 'kid_detail', 'product', 'usr', 'in_produc'])->where([
+        $paid_customer_kid = $this->PaymentGetways->find('all')->where(['PaymentGetways.payment_type' => 1,  'PaymentGetways.status' => 1, 'PaymentGetways.kid_id !=' => 0])->order(['PaymentGetways.id' => 'desc'])->group(['PaymentGetways.kid_id'])->contain(['kid_fix', 'kid_detail', 'product', 'usr', 'in_produc'])->where([
             'PaymentGetways.created_dt BETWEEN :start AND :end'
         ])
             ->bind(':start', $start_date, 'date')
@@ -519,18 +511,14 @@ class AppadminsController extends AppController
                 /* $where_profle = ['profile_type' => $gender];
                   //echo $getData->user_id; exit;
                   $getProducts = $this->Custom->menMatching($getData->user_id); */
-                $getProducts = $conn->execute('SELECT *
-FROM `in_products`
-
-WHERE `in_products`.`id` IN (
-
+                $getProducts = $conn->execute('SELECT * FROM `in_products` 
+                    WHERE `in_products`.`id` IN (
     SELECT `in_pud`.`id`
     FROM `in_products` as  `in_pud`, `typically_wear_men`
     WHERE
       `in_pud`.`profile_type` = 1 AND
       `in_pud`.`match_status` = 2 AND
-      `in_pud`.`available_status` = 1 AND
-       (`in_pud`.`is_clearance` = 2 OR `in_pud`.`is_clearance` IS NULL) AND
+      `in_pud`.`available_status` = 1 AND       
       ' . $season_cnd . ' 
       (
         (
@@ -563,7 +551,6 @@ WHERE `in_products`.`id` IN (
       `in_pud`.`profile_type` = 2 AND
       `in_pud`.`match_status` = 2 AND
       `in_pud`.`available_status` = 1 AND
-       (`in_pud`.`is_clearance` = 2 OR `in_pud`.`is_clearance` IS NULL) AND
       ' . $season_cnd . '
       (
         (
@@ -599,7 +586,6 @@ WHERE `in_products`.`id` IN (
       `in_pud`.`profile_type` = 4 AND
       `in_pud`.`match_status` = 2 AND
       `in_pud`.`available_status` = 1 AND
-       (`in_pud`.`is_clearance` = 2 OR `in_pud`.`is_clearance` IS NULL) AND
       ' . $season_cnd . '
       (
         (
@@ -624,7 +610,6 @@ WHERE `in_products`.`id` IN (
       `in_pud`.`profile_type` = 3 AND
       `in_pud`.`match_status` = 2 AND
       `in_pud`.`available_status` = 1 AND
-       (`in_pud`.`is_clearance` = 2 OR `in_pud`.`is_clearance` IS NULL) AND
       ' . $season_cnd . '
       (
         (
@@ -658,7 +643,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
 
             if (!empty($all_prd_ids)) {
                 $this->InProducts->hasOne('match_case', ['className' => 'MatchingCase', 'foreignKey' => 'product_id'])->setConditions(['payment_id' => $id]);
-                $all_product = $this->InProducts->find('all')->contain(['match_case' /* => ['sort' => ['match_case.count' => 'DESC']] */])->where(['OR' => ['InProducts.is_clearance' => 2, 'InProducts.is_clearance IS' => NULL], 'InProducts.available_status !=' => 2, 'InProducts.is_active !=' => 0, 'InProducts.id IN' => $all_prd_ids])->order(['match_case.count' => 'DESC']);
+                $all_product = $this->InProducts->find('all')->contain(['match_case' /* => ['sort' => ['match_case.count' => 'DESC']] */])->where([/*'OR' => ['InProducts.is_clearance' => 2, 'InProducts.is_clearance IS' => NULL],*/ 'InProducts.available_status !=' => 2, 'InProducts.is_active !=' => 0, 'InProducts.id IN' => $all_prd_ids])->order(['match_case.count' => 'DESC']);
                 $this->paginate['limit'] = 10;
                 // pj($all_product);exit;
                 if (!empty($_GET['search_for']) && !empty($_GET['search_data'])) {
@@ -724,7 +709,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
           $one_nxt_month_name = date('F', strtotime('first day of +2 month'));
           $prev_month = date('Y-m-01');
          */
-        $end_date = date('Y-m-d'/* , strtotime('first day of +1 month') */);
+        $end_date = date('Y-m-d', strtotime('last day of +0 month'));
         $start_date = date('Y-m-01', strtotime('first day of -2 month'));
         //        $next_month = date('Y-m-01', strtotime('first day of +1 month'));
         $next_month = date('Y-m-01', strtotime('first day of +2 month'));
@@ -742,7 +727,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         $this->PaymentGetways->hasOne('parent_fix', ['className' => 'LetsPlanYourFirstFix', 'foreignKey' => 'user_id', 'bindingKey' => 'user_id'])->setConditions(['parent_fix.kid_id' => 0]);
         $this->PaymentGetways->hasOne('parent_detail', ['className' => 'UserDetails', 'foreignKey' => 'user_id', 'bindingKey' => 'user_id']);
 
-        $paid_customer = $this->PaymentGetways->find('all')->where(['PaymentGetways.payment_type' => 1, 'PaymentGetways.kid_id' => 0])->order(['PaymentGetways.id' => 'desc'])->group(['PaymentGetways.user_id'])->contain(['parent_fix', 'parent_detail', 'product', 'usr', 'usr_dtl', 'in_prod'])->where([
+        $paid_customer = $this->PaymentGetways->find('all')->where(['PaymentGetways.payment_type' => 1,  'PaymentGetways.status' => 1, 'PaymentGetways.kid_id' => 0])->order(['PaymentGetways.id' => 'desc'])->group(['PaymentGetways.user_id'])->contain(['parent_fix', 'parent_detail', 'product', 'usr', 'usr_dtl', 'in_prod'])->where([
             'PaymentGetways.created_dt BETWEEN :start AND :end'
         ])
             ->bind(':start', $start_date, 'date')
@@ -752,7 +737,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         $this->PaymentGetways->belongsTo('kid_detail', ['className' => 'KidsDetails', 'foreignKey' => 'kid_id']);
         $this->PaymentGetways->hasMany('in_produc', ['className' => 'InProducts', 'foreignKey' => 'allocate_to_kid_id', 'bindingKey' => 'kid_id'])->setConditions(['in_produc.allocate_to_kid_id !=' => 0]);
 
-        $paid_customer_kid = $this->PaymentGetways->find('all')->where(['PaymentGetways.payment_type' => 1, 'PaymentGetways.kid_id !=' => 0])->order(['PaymentGetways.id' => 'desc'])->group(['PaymentGetways.kid_id'])->contain(['kid_fix', 'kid_detail', 'product', 'usr', 'in_produc'])->where([
+        $paid_customer_kid = $this->PaymentGetways->find('all')->where(['PaymentGetways.payment_type' => 1,  'PaymentGetways.status' => 1, 'PaymentGetways.kid_id !=' => 0])->order(['PaymentGetways.id' => 'desc'])->group(['PaymentGetways.kid_id'])->contain(['kid_fix', 'kid_detail', 'product', 'usr', 'in_produc'])->where([
             'PaymentGetways.created_dt BETWEEN :start AND :end'
         ])
             ->bind(':start', $start_date, 'date')
@@ -769,6 +754,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
 
     public function nxtNxtPrediction()
     {
+    //   echo $end_date = date('Y-m-d');exit;
         /* $end_date = date('Y-m-01', strtotime('first day of +1 month'));
           $start_date = date('Y-m-01', strtotime('first day of -1 month'));
           $next_month = date('Y-m-01', strtotime('first day of +2 month'));
@@ -776,8 +762,8 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
           $one_nxt_month_name = date('F', strtotime('first day of +2 month'));
           $prev_month = date('Y-m-01');
          */
-        $end_date = date('Y-m-d'/* , strtotime('first day of +1 month') */);
-        $start_date = date('Y-m-01', strtotime('first day of -1 month'));
+        $end_date = date('Y-m-d' , strtotime('last day of +0 month') );
+        $start_date = date('Y-m-01', strtotime('first day of -2 month'));
         //        $next_month = date('Y-m-01', strtotime('first day of +1 month'));
         $next_month = date('Y-m-01', strtotime('first day of +3 month'));
         $one_nxt_month = date('m', strtotime('first day of +3 month'));
@@ -794,7 +780,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         $this->PaymentGetways->hasOne('parent_detail', ['className' => 'UserDetails', 'foreignKey' => 'user_id', 'bindingKey' => 'user_id']);
         $this->PaymentGetways->hasMany('in_prod', ['className' => 'InProducts', 'foreignKey' => 'allocate_to_user_id', 'bindingKey' => 'user_id'])->setConditions(['in_prod.allocate_to_kid_id' => 0]);
 
-        $paid_customer = $this->PaymentGetways->find('all')->where(['PaymentGetways.payment_type' => 1, 'PaymentGetways.kid_id' => 0])->order(['PaymentGetways.id' => 'desc'])->group(['PaymentGetways.user_id'])->contain(['parent_fix', 'parent_detail', 'product', 'usr', 'usr_dtl', 'in_prod'])->where([
+        $paid_customer = $this->PaymentGetways->find('all')->where(['PaymentGetways.payment_type' => 1, 'PaymentGetways.status' => 1, 'PaymentGetways.kid_id' => 0])->order(['PaymentGetways.id' => 'desc'])->group(['PaymentGetways.user_id'])->contain(['parent_fix', 'parent_detail', 'product', 'usr', 'usr_dtl', 'in_prod'])->where([
             'PaymentGetways.created_dt BETWEEN :start AND :end'
         ])
             ->bind(':start', $start_date, 'date')
@@ -804,7 +790,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         $this->PaymentGetways->belongsTo('kid_detail', ['className' => 'KidsDetails', 'foreignKey' => 'kid_id']);
         $this->PaymentGetways->hasMany('in_produc', ['className' => 'InProducts', 'foreignKey' => 'allocate_to_kid_id', 'bindingKey' => 'kid_id'])->setConditions(['in_produc.allocate_to_kid_id !=' => 0]);
 
-        $paid_customer_kid = $this->PaymentGetways->find('all')->where(['PaymentGetways.payment_type' => 1, 'PaymentGetways.kid_id !=' => 0])->order(['PaymentGetways.id' => 'desc'])->group(['PaymentGetways.kid_id'])->contain(['kid_fix', 'kid_detail', 'product', 'in_produc', 'usr'])->where([
+        $paid_customer_kid = $this->PaymentGetways->find('all')->where(['PaymentGetways.payment_type' => 1,  'PaymentGetways.status' => 1, 'PaymentGetways.kid_id !=' => 0])->order(['PaymentGetways.id' => 'desc'])->group(['PaymentGetways.kid_id'])->contain(['kid_fix', 'kid_detail', 'product', 'in_produc', 'usr'])->where([
             'PaymentGetways.created_dt BETWEEN :start AND :end'
         ])
             ->bind(':start', $start_date, 'date')
@@ -819,15 +805,13 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         $this->set(compact('paid_customer', 'paid_customer_kid', 'one_nxt_month_name', 'prev_month', 'next_month', 'one_nxt_month'));
     }
 
-
-    public function browseProducts($payment_id)
-    {
+    public function browseProducts($payment_id) {
         $this->loadModel('PurchaseOrderProducts');
         $getData = $this->PaymentGetways->find('all')->where(['id' => $payment_id])->first();
         if ($getData->kid_id == 0) {
             $userDetails = $this->UserDetails->find('all')->where(['user_id' => $getData->user_id])->first();
             $products = $this->Products->find('all')->where(['user_id' => $getData->user_id]);
-            $allocated_prd = $this->InProducts->find('all')->where(['allocate_to_user_id'=>$getData->user_id]);
+            $allocated_prd = $this->InProducts->find('all')->where(['allocate_to_user_id' => $getData->user_id]);
             $gender = $userDetails->gender;
             $u_name = $userDetails->first_name;
             if ($gender == 1) { // Men                
@@ -838,8 +822,8 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
             }
         } else {
             $userDetails = $this->KidsDetails->find('all')->where(['id' => $getData->kid_id])->first();
-            $products = $this->Products->find('all')->where(['user_id' => $getData->user_id, 'kid_id' => $getData->kid_id]);            
-            $allocated_prd = $this->InProducts->find('all')->where(['allocate_to_user_id'=>$getData->user_id, 'allocate_to_kid_id'=> $getData->kid_id]);
+            $products = $this->Products->find('all')->where(['user_id' => $getData->user_id, 'kid_id' => $getData->kid_id]);
+            $allocated_prd = $this->InProducts->find('all')->where(['allocate_to_user_id' => $getData->user_id, 'allocate_to_kid_id' => $getData->kid_id]);
             if ($userDetails->kids_clothing_gender == 'girls') {
                 $gender = 4; // Girl kid
                 $user_type = "GirlKids";
@@ -852,10 +836,10 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
 
         $prev_products = !empty($products) ? Hash::extract($products->toArray(), '{n}.prod_id') : [];
         $prev_products = array_filter($prev_products);
-        
+
         $all_alocated_prd = !empty($allocated_prd) ? Hash::extract($allocated_prd->toArray(), '{n}.prod_id') : [];
 //        print_r($prev_products);exit;
-        $prev_products =array_merge($prev_products,array_filter($all_alocated_prd));
+        $prev_products = array_merge($prev_products, array_filter($all_alocated_prd));
         $prev_products = array_unique($prev_products);
 //        print_r($prev_products);
 //        exit;
@@ -864,10 +848,10 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         $this->InProducts->belongsTo('brand', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
         if (!empty($prev_products)) {
             /* $product_list */
-            $product_list1 = $this->InProducts->find('all')->contain(['brand', 'pop'])->order(['InProducts.id' => 'DESC'])->where(['InProducts.profile_type' => $gender,  'InProducts.prod_id NOT IN' => $prev_products, 'InProducts.match_status'=>2,/*'InProducts.quantity >' => 0, */  /*'InProducts.allocate_to_user_id IS' => NULL, 'InProducts.allocate_to_kid_id IS' => NULL*/])->group('prod_id');
+            $product_list1 = $this->InProducts->find('all')->contain(['brand', 'pop'])->order(['InProducts.id' => 'DESC'])->where(['InProducts.profile_type' => $gender, 'InProducts.prod_id NOT IN' => $prev_products, 'InProducts.match_status' => 2, /* 'InProducts.quantity >' => 0, */ /* 'InProducts.allocate_to_user_id IS' => NULL, 'InProducts.allocate_to_kid_id IS' => NULL */])->group('prod_id');
         } else {
             /* $product_list */
-            $product_list1 = $this->InProducts->find('all')->contain(['brand', 'pop'])->order(['InProducts.id' => 'DESC'])->where(['InProducts.profile_type' => $gender,'InProducts.match_status'=>2, /* 'InProducts.quantity >' => 0, */  /*'InProducts.allocate_to_user_id IS' => NULL, 'InProducts.allocate_to_kid_id IS' => NULL*/])->group('prod_id');
+            $product_list1 = $this->InProducts->find('all')->contain(['brand', 'pop'])->order(['InProducts.id' => 'DESC'])->where(['InProducts.profile_type' => $gender, 'InProducts.match_status' => 2, /* 'InProducts.quantity >' => 0, */ /* 'InProducts.allocate_to_user_id IS' => NULL, 'InProducts.allocate_to_kid_id IS' => NULL */])->group('prod_id');
         }
         if (!empty($_GET['search_for']) && !empty($_GET['search_data'])) {
             if ($_GET['search_for'] == "product_name1") {
@@ -915,31 +899,27 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         $this->set(compact('product_list', 'getData', 'userDetails', 'payment_id', 'u_name'));
     }
 
-
-    public function allocate($prod_id, $user_id, $kid_id)
-    {
+    public function allocate($prod_id, $user_id, $kid_id) {
         $this->InProducts->updateAll(
-            ['allocate_to_user_id' => $user_id, 'allocate_to_kid_id' => $kid_id, 'match_status'=>1],
-            ['id' => $prod_id]
+                ['allocate_to_user_id' => $user_id, 'allocate_to_kid_id' => $kid_id, 'match_status' => 1],
+                ['id' => $prod_id]
         );
 
         $this->Flash->success(__('Product Allocation to PO'));
         return $this->redirect($this->referer());
     }
 
-    public function release($prod_id)
-    {
+    public function release($prod_id) {
         $this->InProducts->updateAll(
-            ['allocate_to_user_id' => null, 'allocate_to_kid_id' => null, 'match_status'=>2],
-            ['id' => $prod_id]
+                ['allocate_to_user_id' => null, 'allocate_to_kid_id' => null, 'match_status' => 2],
+                ['id' => $prod_id]
         );
 
         $this->Flash->success(__('Product Release to PO'));
         return $this->redirect($this->referer());
     }
 
-    public function logout()
-    {
+    public function logout() {
 
         session_destroy();
 
@@ -982,8 +962,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         return $this->redirect(HTTP_ROOT);
     }
 
-    public function setPassword($id = null)
-    {
+    public function setPassword($id = null) {
         $passwordData = $this->Users->newEntity();
         $setPassword = $this->Users->find('all')->where(['Users.id' => $id])->first();
         if ($this->request->is('post')) {
@@ -1015,8 +994,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         $this->set(compact('passwordData', 'setPassword'));
     }
 
-    public function deactive($id = null, $table = null)
-    {
+    public function deactive($id = null, $table = null) {
         if ($table == 'Events') {
             $active_column = 'status';
         } else {
@@ -1034,8 +1012,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         }
     }
 
-    public function active($id = null, $table = null)
-    {
+    public function active($id = null, $table = null) {
         if ($table == 'Events') {
             $active_column = 'status';
         } else {
@@ -1052,8 +1029,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         }
     }
 
-    public function delete($id = null, $table = null)
-    {
+    public function delete($id = null, $table = null) {
         $getDetail = $this->$table->find('all')->where([$table . '.id' => $id])->first();
         $data = $this->$table->get($id);
         $dataDelete = $this->$table->delete($data);
@@ -1069,8 +1045,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         }
     }
 
-    public function addPoRequest()
-    {
+    public function addPoRequest() {
         $this->loadModel('PurchaseOrderProducts');
         $this->loadModel('InProducts');
         $this->loadModel('InProductLogs');
@@ -1094,8 +1069,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         exit;
     }
 
-    public function existingBrandPo($tab = null, $option = null, $id = null)
-    {
+    public function existingBrandPo($tab = null, $option = null, $id = null) {
         $this->loadModel('PurchaseOrderProducts');
         $this->loadModel('PurchaseOrders');
         $this->PurchaseOrderProducts->belongsTo('brand', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
@@ -1134,8 +1108,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         $this->set(compact('tab', 'option', 'id', 'tab1_brand_list', 'tab1_data_list'));
     }
 
-    public function placePo()
-    {
+    public function placePo() {
         //        echo WWW_ROOT;exit;
         $this->viewBuilder()->layout('');
 
@@ -1258,8 +1231,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         }
     }
 
-    public function placeNewbrandPo()
-    {
+    public function placeNewbrandPo() {
         //        echo WWW_ROOT;exit;
         $this->viewBuilder()->layout('');
 
@@ -1386,8 +1358,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         }
     }
 
-    public function generatePoPdf($product_id, $brand_id, $po_number)
-    {
+    public function generatePoPdf($product_id, $brand_id, $po_number) {
         $this->viewBuilder()->layout('');
 
         $this->loadModel('PurchaseOrderProducts');
@@ -1415,8 +1386,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         }
     }
 
-    public function completeExistingBrandReceive($product_id, $po_number)
-    {
+    public function completeExistingBrandReceive($product_id, $po_number) {
         $this->loadModel('PurchaseOrderProducts');
         $this->loadModel('InProducts');
         $this->loadModel('InProductLogs');
@@ -1470,8 +1440,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         return $this->redirect($this->referer());
     }
 
-    public function completeNewBrandReceive($product_id, $po_number)
-    {
+    public function completeNewBrandReceive($product_id, $po_number) {
         $this->loadModel('PurchaseOrderProducts');
         $this->loadModel('InProducts');
         $this->loadModel('InProductLogs');
@@ -1488,8 +1457,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         return $this->redirect($this->referer());
     }
 
-    public function processPoReceived($brand_id)
-    {
+    public function processPoReceived($brand_id) {
         $this->loadModel('PurchaseOrderProducts');
         $this->loadModel('InProducts');
         $this->loadModel('PurchaseOrders');
@@ -1506,8 +1474,8 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         $this->Flash->success(__('Po received.'));
         return $this->redirect(HTTP_ROOT . 'appadmins/existing-brand-po/tab4');
     }
-    public function processNewbrandPoReceived($brand_id)
-    {
+
+    public function processNewbrandPoReceived($brand_id) {
         $this->loadModel('PurchaseOrderProducts');
         $this->loadModel('InProducts');
         $this->loadModel('PurchaseOrders');
@@ -1525,8 +1493,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         return $this->redirect(HTTP_ROOT . 'appadmins/new-brand-po/tab4');
     }
 
-    public function newBrandPo($tab = null, $option = null, $id = null)
-    {
+    public function newBrandPo($tab = null, $option = null, $id = null) {
         $this->loadModel('PurchaseOrderProducts');
         $this->loadModel('PurchaseOrders');
         $this->loadModel('InProducts');
@@ -1623,8 +1590,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         $this->set(compact('utype', 'in_rack', 'productType', 'id', 'editproduct', 'profile', 'brandsListings', 'product_ctg_nme', 'product_sub_ctg_nme', 'tab', 'option', 'id', 'tab1_brand_list', 'tab1_data_list'));
     }
 
-    public function addPoProduct()
-    {
+    public function addPoProduct() {
 
         $this->loadModel('PurchaseOrderProducts');
         $this->loadModel('PurchaseOrders');
@@ -1669,6 +1635,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
                 if (empty($data[$d_ix])) {
 
                     if ((@$data['jeans'] == 0) || (@$data['jeans'] == 00) || (@$data['pants'] == 0) || (@$data['pants'] == 00)) {
+                        
                     } else {
 
                         unset($data[$d_ix]);
@@ -3174,8 +3141,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         exit;
     }
 
-    public function getSubCatgList()
-    {
+    public function getSubCatgList() {
 
         $html = '<option value="" selected disabled>No data found</option>';
 
@@ -3183,7 +3149,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
 
             $data = $this->request->data;
 
-            $allData = $this->InRack->find('all')->where(['in_product_type_id' => $data['id'],'is_active'=>1]);
+            $allData = $this->InRack->find('all')->where(['in_product_type_id' => $data['id'], 'is_active' => 1]);
 
             if (!empty($allData->count())) {
 
@@ -3201,8 +3167,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         exit;
     }
 
-    public function getInuserComment()
-    {
+    public function getInuserComment() {
         $this->loadModel('InuserComments');
 
         $this->viewBuilder()->layout('');
@@ -3213,18 +3178,21 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
             $all_cmts = $this->InuserComments->find('all')->where(['ProductComments.inuser_id' => $inuser_id])->order(['InuserComments.id' => 'DESC']);
             $this->set(compact('all_cmts'));
         } else {
+            
         }
     }
-    public function postInuserComment()
-    {
+
+    public function postInuserComment() {
         $this->loadModel('InuserComments');
 
         $this->viewBuilder()->layout('');
         if ($this->request->is('post')) {
             $postData = $this->request->data;
             $postArr = [];
+            $time = strtotime(date('Y-m-d H:i:s')) . rand(1111, 9999);
             $postArr['inuser_id'] = $postData['inuser_id'];
-            $postArr['user_id'] = $this->request->session()->read('Auth.User.id');;
+            $postArr['user_id'] = $this->request->session()->read('Auth.User.id');
+            ;
             $postArr['comment'] = !empty($postData['comment']) ? $postData['comment'] : "";
             if (!empty($data['photos']['name'])) {
                 $file_name = 'files/chat_image/' . $time . $data['photos']['name'];
@@ -3238,8 +3206,8 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         }
         exit;
     }
-    public function productType($id = null)
-    {
+
+    public function productType($id = null) {
 
 
         if (@$id) {
@@ -3337,8 +3305,8 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
 
         $this->set(compact('id', 'editData', 'datas'));
     }
-    public function productTypeDelete($id = null)
-    {
+
+    public function productTypeDelete($id = null) {
 
 
 
@@ -3357,8 +3325,8 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
             $this->redirect($this->referer());
         }
     }
-    public function rackSet($catg = null, $id = null)
-    {
+
+    public function rackSet($catg = null, $id = null) {
 
         $all_category = $this->InProductType->find('all');
 
@@ -3373,13 +3341,13 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
 
             @$getNumber = $this->InRack->find('all')->order(['id' => 'DESC'])->first()->rack_number + 1;
         }
-        
-        if(!empty($_GET['typ']) && !empty($_GET['id'])){
-            if($_GET['typ'] == "active"){
-                $this->InRack->updateAll(['is_active'=>0],['id'=>$_GET['id']]);
+
+        if (!empty($_GET['typ']) && !empty($_GET['id'])) {
+            if ($_GET['typ'] == "active") {
+                $this->InRack->updateAll(['is_active' => 0], ['id' => $_GET['id']]);
             }
-            if($_GET['typ'] == "in_active"){
-                $this->InRack->updateAll(['is_active'=>1],['id'=>$_GET['id']]);
+            if ($_GET['typ'] == "in_active") {
+                $this->InRack->updateAll(['is_active' => 1], ['id' => $_GET['id']]);
             }
             $this->Flash->success(__('Status updated'));
             return $this->redirect(HTTP_ROOT . 'appadmins/rack_set');
@@ -3479,8 +3447,8 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
 
         $this->set(compact('id', 'editData', 'getNumber', 'datas', 'all_category', 'catg'));
     }
-    public function rackDelete($id = null)
-    {
+
+    public function rackDelete($id = null) {
 
 
 
@@ -3499,8 +3467,8 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
             $this->redirect($this->referer());
         }
     }
-    public function inColor($id = null, $option = null)
-    {
+
+    public function inColor($id = null, $option = null) {
 
         $all_data = $this->InColors->find('all');
 
@@ -3554,8 +3522,8 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
 
         $this->set(compact('editData', 'all_data'));
     }
-    public function missingFields()
-    {
+
+    public function missingFields() {
 
         $inv_user = $this->Users->find('all')->where(['type' => 7]);
         $type = $this->request->session()->read('Auth.User.type');
@@ -3588,10 +3556,10 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
                 $end_date = date('Y-m-d', strtotime($_GET['end_date']));
 
                 $all_employee_prds = $all_employee_prds->where([
-                    'InProductLogs.created_on BETWEEN :start AND :end'
-                ])
-                    ->bind(':start', $start_date, 'datetime')
-                    ->bind(':end', $end_date, 'datetime');
+                            'InProductLogs.created_on BETWEEN :start AND :end'
+                        ])
+                        ->bind(':start', $start_date, 'datetime')
+                        ->bind(':end', $end_date, 'datetime');
             } else if (!empty($_GET['start_date'])) {
 
                 $start_date = date('Y-m-d', strtotime($_GET['start_date']));
@@ -3648,8 +3616,8 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
 
         $this->set(compact('inv_user', 'all_prod_list', 'all_prod_list'));
     }
-    public function getComment()
-    {
+
+    public function getComment() {
         $this->loadModel('AdminComments');
 
         $this->viewBuilder()->layout('');
@@ -3662,11 +3630,11 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
             $currentUserId = $this->Auth->user('id');
             $this->set(compact('all_cmts', 'currentUserId'));
         } else {
+            
         }
     }
 
-    public function postComment($id = null)
-    {
+    public function postComment($id = null) {
         $this->loadModel('AdminComments');
         $this->viewBuilder()->setLayout('');
 
@@ -3722,11 +3690,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         exit;
     }
 
-
-
-
-    public function deleteComment($id = null)
-    {
+    public function deleteComment($id = null) {
         $this->loadModel('AdminComments');
         $this->viewBuilder()->setLayout('');
 
@@ -3741,8 +3705,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         exit;
     }
 
-    public function previousOrderList($user_id, $kid_id = null)
-    {
+    public function previousOrderList($user_id, $kid_id = null) {
         //        $orderDetails = $this->PaymentGetways->find('all')->where(['id' => $payment_id])->first();
         //        $user_id = $orderDetails->user_id;
         //        $kid_id = $orderDetails->kid_id;
@@ -3771,8 +3734,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         $this->set(compact('OrderDetails', 'KidsOrderDetails', 'OrderDetailsCount', 'productDetails'));
     }
 
-    public function review($payent_id = null, $dfdgdg = null)
-    {
+    public function review($payent_id = null, $dfdgdg = null) {
 
         $this->loadModel('PaymentGetways');
         $this->loadModel('MenStats');
@@ -3863,8 +3825,7 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         $this->set(compact('style_sphere_selectionsWemen', 'wemenDesigne', 'menDesigne', 'menSccessories', 'shipping_address', 'userdetails', 'MenStats', 'TypicallyWearMen', 'MenFit', 'MenStyle', 'menbrand', 'style_sphere_selections', 'id', 'primaryinfo', 'Womeninfo', 'style_wardrobe', 'avoid_fabrics', 'avoid_prints', 'avoid_colors', 'womens_brands_plus_low_tier', 'WomenJeansStyle', 'Womenprice', 'Womenstyle', 'WomenRatherDownplay', 'WomenJeansLength', 'WomenJeansRise', 'FitCut', 'SizeChart', 'PersonalizedFix', 'womenHeelHightPrefer', 'women_shoe_prefer'));
     }
 
-    public function kidProfile($payment_id = null)
-    {
+    public function kidProfile($payment_id = null) {
         $this->loadModel('PaymentGetways');
         $this->loadModel('KidsDetails');
         $this->loadModel('KidsSizeFit');
@@ -3913,23 +3874,22 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         }
         $this->set(compact('useridDetails', 'kid_barcode', 'kid', 'KidsSizeFit', 'KidClothingType', 'designe', 'KidStyles', 'shipping_address'));
     }
-    
-    public function predictionStatus($id,$prediction_mnth_yr){        
+
+    public function predictionStatus($id, $prediction_mnth_yr) {
         $pmt_gt_data = $this->PaymentGetways->find('all')->where(['id' => $id])->first();
-        $prediction_status = !empty($pmt_gt_data->prediction_status)?$pmt_gt_data->prediction_status:'';
-        if(!empty($pmt_gt_data->prediction_status)){
-            $prediction_status .= $prediction_mnth_yr.',';
-        }else{
-            $prediction_status .= $prediction_mnth_yr.',';
+        $prediction_status = !empty($pmt_gt_data->prediction_status) ? $pmt_gt_data->prediction_status : '';
+        if (!empty($pmt_gt_data->prediction_status)) {
+            $prediction_status .= $prediction_mnth_yr . ',';
+        } else {
+            $prediction_status .= $prediction_mnth_yr . ',';
         }
 //        echo $pmt_gt_data->prediction_status."<br>".$prediction_status;exit;
         $this->PaymentGetways->updateAll(['prediction_status' => $prediction_status], ['id' => $id]);
         $this->Flash->success(__("Prediction status added"));
         return $this->redirect($this->referer());
     }
-    
-    public function onePreviousMonthprediction()
-    {
+
+    public function onePreviousMonthprediction() {
         $end_date = date('Y-m-d', strtotime('last day of -1 month'));
         $start_date = date('Y-m-01', strtotime('first day of -1 month'));
         $next_month = date('Y-m-01');
@@ -3949,24 +3909,22 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         $this->PaymentGetways->hasOne('parent_detail', ['className' => 'UserDetails', 'foreignKey' => 'user_id', 'bindingKey' => 'user_id']);
 
         $paid_customer = $this->PaymentGetways->find('all')->where(['PaymentGetways.payment_type' => 1, 'PaymentGetways.kid_id' => 0])->order(['PaymentGetways.id' => 'desc'])->group(['PaymentGetways.user_id'])->contain(['parent_fix', 'parent_detail', 'product', 'usr', 'usr_dtl', 'in_prod'])->where([
-            'PaymentGetways.created_dt BETWEEN :start AND :end'
-        ])
-            ->bind(':start', $start_date, 'date')
-            ->bind(':end', $end_date, 'date');
+                    'PaymentGetways.created_dt BETWEEN :start AND :end'
+                ])
+                ->bind(':start', $start_date, 'date')
+                ->bind(':end', $end_date, 'date');
 //        foreach($paid_customer as $pd_cus){ echo "<pre>";print_r($pd_cus);echo "</pre>"; }
 //        exit;
-
-
         //$allocateData = $this->PaymentGetways->find('all')->contain(['in_prod']);
         $this->PaymentGetways->hasOne('kid_fix', ['className' => 'LetsPlanYourFirstFix', 'foreignKey' => 'kid_id', 'bindingKey' => 'kid_id']);
         $this->PaymentGetways->belongsTo('kid_detail', ['className' => 'KidsDetails', 'foreignKey' => 'kid_id']);
         $this->PaymentGetways->hasMany('in_produc', ['className' => 'InProducts', 'foreignKey' => 'allocate_to_kid_id', 'bindingKey' => 'kid_id'])->setConditions(['in_produc.allocate_to_kid_id !=' => 0]);
 
         $paid_customer_kid = $this->PaymentGetways->find('all')->where(['PaymentGetways.payment_type' => 1, 'PaymentGetways.kid_id !=' => 0])->order(['PaymentGetways.id' => 'desc'])->group(['PaymentGetways.kid_id'])->contain(['kid_fix', 'kid_detail', 'product', 'usr', 'in_produc'])->where([
-            'PaymentGetways.created_dt BETWEEN :start AND :end'
-        ])
-            ->bind(':start', $start_date, 'date')
-            ->bind(':end', $end_date, 'date');
+                    'PaymentGetways.created_dt BETWEEN :start AND :end'
+                ])
+                ->bind(':start', $start_date, 'date')
+                ->bind(':end', $end_date, 'date');
         //pj($paid_customer_kid);exit;
         //        $two_nxt_month = date('m', strtotime('first day of +2 month'));
         //        $three_nxt_month = date('m', strtotime('first day of +3 month'));
@@ -3976,12 +3934,11 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
 
         $this->set(compact('paid_customer', 'paid_customer_kid', 'one_nxt_month_name', 'prev_month', 'next_month', 'one_nxt_month'));
     }
-    
-    public function twoPreviousMonthprediction()
-    {
+
+    public function twoPreviousMonthprediction() {
         $end_date = date('Y-m-d', strtotime('last day of -2 month'));
         $start_date = date('Y-m-01', strtotime('first day of -2 month'));
-        $next_month = date('Y-m-01',strtotime('first day of -1 month'));
+        $next_month = date('Y-m-01', strtotime('first day of -1 month'));
         $one_nxt_month = date('m');
         $one_nxt_month_name = date('F');
         $prev_month = date('Y-m-d');
@@ -3998,24 +3955,22 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         $this->PaymentGetways->hasOne('parent_detail', ['className' => 'UserDetails', 'foreignKey' => 'user_id', 'bindingKey' => 'user_id']);
 
         $paid_customer = $this->PaymentGetways->find('all')->where(['PaymentGetways.payment_type' => 1, 'PaymentGetways.kid_id' => 0])->order(['PaymentGetways.id' => 'desc'])->group(['PaymentGetways.user_id'])->contain(['parent_fix', 'parent_detail', 'product', 'usr', 'usr_dtl', 'in_prod'])->where([
-            'PaymentGetways.created_dt BETWEEN :start AND :end'
-        ])
-            ->bind(':start', $start_date, 'date')
-            ->bind(':end', $end_date, 'date');
+                    'PaymentGetways.created_dt BETWEEN :start AND :end'
+                ])
+                ->bind(':start', $start_date, 'date')
+                ->bind(':end', $end_date, 'date');
 //        foreach($paid_customer as $pd_cus){ echo "<pre>";print_r($pd_cus);echo "</pre>"; }
 //        exit;
-
-
         //$allocateData = $this->PaymentGetways->find('all')->contain(['in_prod']);
         $this->PaymentGetways->hasOne('kid_fix', ['className' => 'LetsPlanYourFirstFix', 'foreignKey' => 'kid_id', 'bindingKey' => 'kid_id']);
         $this->PaymentGetways->belongsTo('kid_detail', ['className' => 'KidsDetails', 'foreignKey' => 'kid_id']);
         $this->PaymentGetways->hasMany('in_produc', ['className' => 'InProducts', 'foreignKey' => 'allocate_to_kid_id', 'bindingKey' => 'kid_id'])->setConditions(['in_produc.allocate_to_kid_id !=' => 0]);
 
         $paid_customer_kid = $this->PaymentGetways->find('all')->where(['PaymentGetways.payment_type' => 1, 'PaymentGetways.kid_id !=' => 0])->order(['PaymentGetways.id' => 'desc'])->group(['PaymentGetways.kid_id'])->contain(['kid_fix', 'kid_detail', 'product', 'usr', 'in_produc'])->where([
-            'PaymentGetways.created_dt BETWEEN :start AND :end'
-        ])
-            ->bind(':start', $start_date, 'date')
-            ->bind(':end', $end_date, 'date');
+                    'PaymentGetways.created_dt BETWEEN :start AND :end'
+                ])
+                ->bind(':start', $start_date, 'date')
+                ->bind(':end', $end_date, 'date');
         //pj($paid_customer_kid);exit;
         //        $two_nxt_month = date('m', strtotime('first day of +2 month'));
         //        $three_nxt_month = date('m', strtotime('first day of +3 month'));
@@ -4025,9 +3980,8 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
 
         $this->set(compact('paid_customer', 'paid_customer_kid', 'one_nxt_month_name', 'prev_month', 'next_month', 'one_nxt_month'));
     }
-    
-    public function getMerchandisePredictionComment()
-    {
+
+    public function getMerchandisePredictionComment() {
         $this->loadModel('MerchandisePredictionComments');
         $this->viewBuilder()->layout('');
 
@@ -4036,14 +3990,13 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
             $payment_id = $postData['payment_id'];
             $month_year = $postData['month_year'];
             $this->MerchandisePredictionComments->belongsTo('Users', ['className' => 'Users', 'foreignKey' => 'user_id']);
-            $all_cmts = $this->MerchandisePredictionComments->find('all')->where(['MerchandisePredictionComments.payment_id' => $payment_id,'month_year'=>$month_year])->contain(['Users'])->order(['MerchandisePredictionComments.id' => 'DESC']);
+            $all_cmts = $this->MerchandisePredictionComments->find('all')->where(['MerchandisePredictionComments.payment_id' => $payment_id, 'month_year' => $month_year])->contain(['Users'])->order(['MerchandisePredictionComments.id' => 'DESC']);
             $currentUserId = $this->Auth->user('id');
             $this->set(compact('all_cmts', 'currentUserId'));
         }
     }
 
-    public function postMerchandisePredictionComment($id = null)
-    {
+    public function postMerchandisePredictionComment($id = null) {
         $this->loadModel('MerchandisePredictionComments');
         $this->viewBuilder()->layout('');
 
@@ -4051,7 +4004,8 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
             $postData = $this->request->data;
             $postArr = [];
             $postArr['payment_id'] = $postData['payment_id'];
-            $postArr['user_id'] = $this->request->session()->read('Auth.User.id');;
+            $postArr['user_id'] = $this->request->session()->read('Auth.User.id');
+            ;
             $postArr['comment'] = $postData['comment'];
             $postArr['month_year'] = $postData['month_year'];
 
@@ -4072,9 +4026,8 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         }
         exit;
     }
-    
-    public function deleteMerchandisePredictionComment($id = null)
-    {
+
+    public function deleteMerchandisePredictionComment($id = null) {
         $this->loadModel('MerchandisePredictionComments');
         $this->viewBuilder()->layout('');
 
@@ -4088,9 +4041,8 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         }
         exit;
     }
-    
-    public function editMerchandisePredictionComment()
-    {
+
+    public function editMerchandisePredictionComment() {
         $this->loadModel('MerchandisePredictionComments');
 
         if ($this->request->is('post')) {
@@ -4107,4 +4059,542 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         }
         return $this->response;
     }
+
+    public function addVariantProduct($tab = null, $option = null, $id = null) {
+        $this->loadModel('PurchaseOrderProducts');
+        $this->loadModel('PurchaseOrders');
+        $this->loadModel('InProducts');
+        $this->loadModel('InSizes');
+        $this->loadModel('InColors');
+        $this->loadModel('InProductVariants');
+        $this->loadModel('InProductVariantList');
+
+        $all_sizes = $this->InSizes->find('all')->where(['is_active' => 1]);
+        $all_colors = $this->InColors->find('all')->where(['is_active' => 1]);
+
+        $this->PurchaseOrderProducts->belongsTo('brand', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
+
+        $tab1_brand_list = $this->PurchaseOrderProducts->find('all')->where(['PurchaseOrderProducts.status' => 1, 'PurchaseOrderProducts.is_new_brand' => 1])->group(['PurchaseOrderProducts.brand_id'])->contain(['brand']);
+
+        $this->PurchaseOrderProducts->hasMany('prd_detl', ['className' => 'InProducts', 'foreignKey' => 'prod_id', 'bindingKey' => 'product_id']);
+        $tab1_data_list = $this->PurchaseOrderProducts->find('all')->contain(['prd_detl', 'brand']);
+
+        if (empty($tab) || ($tab == 'tab1')) {
+            $tab1_data_list = $tab1_data_list->where(['PurchaseOrderProducts.status' => 1, 'is_new_brand' => 1]);
+            if (!empty($_GET) && !empty($_GET['brand_id'])) {
+                $tab1_data_list = $tab1_data_list->where(['PurchaseOrderProducts.brand_id' => $_GET['brand_id']]);
+            }
+        }
+
+        if (!empty($tab) && ($tab == 'tab2')) {
+            $tab1_brand_list = $this->PurchaseOrderProducts->find('all')->where(['PurchaseOrderProducts.is_new_brand' => 1, 'PurchaseOrderProducts.status !=' => 4])->group(['PurchaseOrderProducts.brand_id'])->contain(['brand']);
+
+            if (!empty($_GET) && !empty($_GET['brand_id'])) {
+                $tab1_data_list = $tab1_data_list->where(['PurchaseOrderProducts.status IN' => [2, 3], 'PurchaseOrderProducts.brand_id' => $_GET['brand_id']]);
+            }
+        }
+        if (!empty($tab) && ($tab == 'tab3')) {
+            $tab1_brand_list = $this->PurchaseOrderProducts->find('all')->where(['PurchaseOrderProducts.is_new_brand' => 1])->group(['PurchaseOrderProducts.brand_id'])->contain(['brand']);
+
+            if (!empty($_GET) && !empty($_GET['brand_id'])) {
+                $tab1_data_list = $tab1_data_list->where(['PurchaseOrderProducts.status IN' => [2, 3], 'PurchaseOrderProducts.brand_id' => $_GET['brand_id']]);
+            }
+        }
+        if (!empty($tab) && ($tab == 'tab4')) {
+            $tab1_brand_list = $this->PurchaseOrderProducts->find('all')->where(['PurchaseOrderProducts.is_new_brand' => 1])->group(['PurchaseOrderProducts.brand_id'])->contain(['brand']);
+
+            if (!empty($_GET) && !empty($_GET['brand_id'])) {
+                $tab1_data_list = $tab1_data_list->where(['PurchaseOrderProducts.status >' => 3, 'PurchaseOrderProducts.brand_id' => $_GET['brand_id']]);
+            }
+        }
+
+
+
+        $editproduct = [];
+
+        $in_rack = [];
+
+        $user_type_arr = ['Men' => '1', 'Women' => '2', 'BoyKids' => '3', 'GirlKids' => '4'];
+        $profile = $option;
+        if (empty($profile)) {
+            $profile = "Men";
+        }
+
+        $product_ctg_nme = '';
+        $product_sub_ctg_nme = '';
+
+        if (!empty($id)) {
+
+            $editproduct = $this->InProducts->find('all')->where(['id' => $id])->first();
+
+            $productType_name_get = $this->InProductType->find('all')->where(['user_type' => $editproduct->profile_type])->where(['id' => $editproduct->product_type])->first();
+            $product_ctg_nme = $productType_name_get->product_type;
+            $in_rack = $this->InRack->find('all')->where(['in_product_type_id' => $editproduct->product_type])->order(['sort_order' => 'ASC']);
+
+            if (!empty($editproduct->product_type) && !empty($editproduct->rack)) {
+
+                $in_rack_name_get = $this->InRack->find('all')->where(['in_product_type_id' => $editproduct->product_type])->where(['id' => $editproduct->rack])->first();
+                $product_sub_ctg_nme = $in_rack_name_get->rack_number;
+            }
+        }
+
+
+
+        $utype = $this->request->session()->read('Auth.User.type');
+
+        $getExstingProductBrndList = $this->InProducts->find('all')->group(['brand_id']);
+        // $allExistingBrand = !empty($getExstingProductBrndList) ? Hash::extract($getExstingProductBrndList->toArray(), '{n}.brand_id') : [];
+        //        echo "<pre>";count($allExistingBrand);echo implode(',',array_filter($allExistingBrand));
+        // $brandsListings = $this->InUsers->find('all')->where(['type' => 3, 'id NOT IN' => array_filter($allExistingBrand)])->order(['id']);
+        $brandsListings = $this->InUsers->find('all')->where(['type' => 3, 'is_collaborated' => 1])->order(['id']);
+        //        print_r(!empty($brandsListings) ? Hash::extract($brandsListings->toArray(), '{n}.id') : []);exit;
+
+        $productType = $this->InProductType->find('all')->where(['user_type' => $user_type_arr[$profile]])->order(['sort_order' => 'ASC']);
+
+        if (!empty($_GET['ctg'])) {
+            $productType_name_get = $this->InProductType->find('all')->where(['user_type' => $user_type_arr[$profile]])->where(['id' => $_GET['ctg']])->first();
+            $product_ctg_nme = $productType_name_get->product_type;
+            $in_rack = $this->InRack->find('all')->where(['in_product_type_id' => $_GET['ctg']])->order(['sort_order' => 'ASC']);
+        }
+        if (!empty($_GET['ctg']) && !empty($_GET['sub_ctg'])) {
+
+            $in_rack_name_get = $this->InRack->find('all')->where(['in_product_type_id' => $_GET['ctg']])->where(['id' => $_GET['sub_ctg']])->first();
+            $product_sub_ctg_nme = $in_rack_name_get->rack_number;
+        }
+//        echo $file_path2 = str_replace('merchandise', 'inventory/webroot/', ROOT);exit;
+
+        if ($this->request->is('post')) {
+            $postData = $this->request->data;
+//            echo "<pre>";
+//            print_r($postData);
+//            echo "</pre>";
+//            exit;
+            
+            $variant_data = $postData['variant_data'];
+//            var_dump(!empty($postData['product_image']['name']));
+            $postData['user_id'] = $this->request->session()->read('Auth.User.id');
+            $postData['color'] = !empty($postData['color']) ? json_encode($postData['color']) : NULL;
+            $postData['size'] = !empty($postData['size']) ? json_encode($postData['size']) : NULL;
+            $postData['variant_data'] = !empty($postData['variant_data']) ? json_encode($postData['variant_data']) : NULL;
+            $postData['season'] = !empty($postData['season']) ? json_encode($postData['season']) : NULL;
+            $postData['profession'] = !empty($postData['profession']) ? json_encode($postData['profession']) : NULL;
+            $postData['variant_size_related'] = !empty($postData['variant_size_related']) ? json_encode($postData['variant_size_related']) : NULL;
+            $postData['better_body_shape'] = !empty($postData['better_body_shape']) ? json_encode($postData['better_body_shape']) : NULL;
+            $postData['skin_tone'] = !empty($postData['skin_tone']) ? json_encode($postData['skin_tone']) : NULL;
+            $postData['work_type'] = !empty($postData['work_type']) ? json_encode($postData['work_type']) : NULL;
+            $postData['style_sphere_selections_v5'] = !empty($postData['style_sphere_selections_v5']) ? json_encode($postData['style_sphere_selections_v5']) : NULL;
+            $postData['budget_value'] = !empty($postData[$postData['budget_type']]) ? $postData[$postData['budget_type']] : NULL;
+            $postData['take_note_of'] = !empty($postData['take_note_of']) ? json_encode($postData['take_note_of']) : NULL;
+            $postData['outfit_prefer'] = !empty($postData['outfit_prefer']) ? json_encode($postData['outfit_prefer']) : NULL;
+            $postData['wo_top_half'] = !empty($postData['wo_top_half']) ? json_encode($postData['wo_top_half']) : NULL;
+            $postData['wo_style_insp'] = !empty($postData['wo_style_insp']) ? json_encode($postData['wo_style_insp']) : NULL;
+            $postData['denim_styles'] = !empty($postData['denim_styles']) ? json_encode($postData['denim_styles']) : NULL;
+            $postData['occasional_dress'] = !empty($postData['occasional_dress']) ? json_encode($postData['occasional_dress']) : NULL;
+            $postData['occasional_dress'] = !empty($postData['occasional_dress']) ? json_encode($postData['occasional_dress']) : NULL;
+
+            //InProductVariantList
+            if (!empty($postData['product_image']['tmp_name'])) {
+                if ($postData['product_image']['size'] <= 20000) {
+                    $new_name = time().rand(1111,9999);
+                    $file_path = str_replace('merchandise', 'webroot/', ROOT);
+                    $avatarName = $this->Custom->uploadAvatarImage($postData['product_image']['tmp_name'], $postData['product_image']['name'], $file_path . PRODUCT_IMAGES, 500, $new_name);
+//                    var_dump([$postData['product_image']['tmp_name'], $avatarName]);
+                    
+                    $file_path2 = str_replace('merchandise', 'inventory/webroot/', ROOT);
+//                    $avatarName = $this->Custom->uploadAvatarImage($postData['product_image']['tmp_name'], $postData['product_image']['name'], $file_path2 . PRODUCT_IMAGES, 500, $new_name);
+                    copy($file_path . PRODUCT_IMAGES.$avatarName, $file_path2.PRODUCT_IMAGES.$avatarName);
+                    
+                    $postData['feature_image'] = $avatarName;
+                } else {
+                    $this->Flash->error(__('Image size should be 8  to 20 kb'));
+                }
+            }
+//            echo "<pre>";
+//            print_r($postData);
+//            echo "</pre>";
+//            exit;
+
+            $newRow = $this->InProductVariants->newEntity();
+            $newRow = $this->InProductVariants->patchEntity($newRow, $postData);
+            $newRow = $this->InProductVariants->save($newRow);
+            foreach ($variant_data as $key => $variant_list) {
+                foreach ($variant_list as $keyx => $variant_list_list) {
+                    $var_prd_rw = [];
+                    $var_prd_rw['color'] = $key;
+                    $var_prd_rw['size'] = $keyx;
+                    $var_prd_rw['in_product_variants_id'] = $newRow->id;
+                    $var_prd_rw += $variant_list_list;
+                    $nwRw = $this->InProductVariantList->newEntity();
+                    $nwRw = $this->InProductVariantList->patchEntity($nwRw, $var_prd_rw);
+                    $nwRw = $this->InProductVariantList->save($nwRw);
+                }
+            }
+
+            $this->Flash->success(__("Product Variant added"));
+//            echo "<pre>";
+//            print_r($postData);
+//            echo "</pre>";
+//            exit;
+            return $this->redirect($this->referer());
+        }
+
+        $this->set(compact('utype', 'in_rack', 'productType', 'id', 'editproduct', 'profile', 'brandsListings', 'product_ctg_nme', 'product_sub_ctg_nme', 'tab', 'option', 'id', 'tab1_brand_list', 'tab1_data_list', 'all_sizes', 'all_colors'));
+    }
+
+    public function variantProductList($profile = null, $category = null) {
+        $this->loadModel('PurchaseOrderProducts');
+        $this->loadModel('PurchaseOrders');
+        $this->loadModel('InProducts');
+        $this->loadModel('InSizes');
+        $this->loadModel('InColors');
+        $this->loadModel('InProductVariants');
+
+        $utype = $this->request->session()->read('Auth.User.type');
+
+        $where_arr = [];
+
+        if (!empty($category)) {
+
+            $where_arr['product_type'] = $category;
+        }
+
+        if (!empty($_GET['search_for']) && !empty(!empty($_GET['search_data']))) {
+
+            if ($_GET['search_for'] == 'product_name_one') {
+
+                $where_arr['InProductVariants.product_name_one LIKE'] = "%" . $_GET['search_data'] . "%";
+            }
+
+            if ($_GET['search_for'] == 'product_name_two') {
+
+                $where_arr['InProductVariants.product_name_two LIKE'] = "%" . $_GET['search_data'] . "%";
+            }
+
+            if ($_GET['search_for'] == 'style_no') {
+
+                $where_arr['InProductVariants.style_number LIKE'] = "%" . $_GET['search_data'] . "%";
+            }
+
+            if ($_GET['search_for'] == 'prod_id') {
+
+                $where_arr['InProductVariants.prod_id LIKE'] = "%" . $_GET['search_data'] . "%";
+            }
+        }
+
+
+
+
+
+        //        if ($this->request->session()->read('Auth.User.type') == 1) {
+
+
+        $this->InProductVariants->belongsTo('InUsers', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
+
+        /* $menproductdetails */
+        $menproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '1', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers']);
+
+        /* $womenproductdetails */
+        $womenproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '2', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers']);
+
+        /* $boyskidsproductdetails */
+        $boyskidsproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '3', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers']);
+
+        /* $girlkidsproductdetails */
+        $girlkidsproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '4', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers']);
+
+        if (!empty($where_arr)) {
+
+            /* $menproductdetails */
+            $menproductdetails1 = $menproductdetails1->where($where_arr);
+
+            /* $womenproductdetails */
+            $womenproductdetails1 = $womenproductdetails1->where($where_arr);
+
+            /* $boyskidsproductdetails */
+            $boyskidsproductdetails1 = $boyskidsproductdetails1->where($where_arr);
+
+            /* $girlkidsproductdetails */
+            $girlkidsproductdetails1 = $girlkidsproductdetails1->where($where_arr);
+        }
+
+        if (!empty($_GET['search_for']) && !empty(!empty($_GET['search_data']))) {
+
+            if ($_GET['search_for'] == "brand_name") {
+                $bnd_nm = trim($_GET['search_data']);
+                $menproductdetails1 = $menproductdetails1->where(['InUsers.brand_name' => $bnd_nm]);
+                $womenproductdetails1 = $womenproductdetails1->where(['InUsers.brand_name' => $bnd_nm]);
+                $boyskidsproductdetails1 = $boyskidsproductdetails1->where(['InUsers.brand_name' => $bnd_nm]);
+                $girlkidsproductdetails1 = $girlkidsproductdetails1->where(['InUsers.brand_name' => $bnd_nm]);
+            }
+        }
+
+        //        } else {
+        //
+        //            /* $menproductdetails */$menproductdetails1 = $this->InProducts->find('all')->order(['InProducts.id' => 'DESC'])->where(['profile_type' => '1', 'brand_id' => $this->request->session()->read('Auth.User.id')])->group('prod_id');
+        //
+        //            /* $womenproductdetails */$womenproductdetails1 = $this->InProducts->find('all')->order(['InProducts.id' => 'DESC'])->where(['profile_type' => '2', 'brand_id' => $this->request->session()->read('Auth.User.id')])->group('prod_id');
+        //
+        //            /* $boyskidsproductdetails */$boyskidsproductdetails1 = $this->InProducts->find('all')->order(['InProducts.id' => 'DESC'])->where(['profile_type' => '3', 'brand_id' => $this->request->session()->read('Auth.User.id')])->group('prod_id');
+        //
+        //            /* $girlkidsproductdetails */$girlkidsproductdetails1 = $this->InProducts->find('all')->order(['InProducts.id' => 'DESC'])->where(['profile_type' => '4', 'brand_id' => $this->request->session()->read('Auth.User.id')])->group('prod_id');
+        //            if (!empty($where_arr)) {
+        //                /* $menproductdetails */$menproductdetails1 = $menproductdetails1->where($where_arr);
+        //                /* $womenproductdetails */$womenproductdetails1 = $womenproductdetails1->where($where_arr);
+        //                /* $boyskidsproductdetails */$boyskidsproductdetails1 = $boyskidsproductdetails1->where($where_arr);
+        //                /* $girlkidsproductdetails */$girlkidsproductdetails1 = $girlkidsproductdetails1->where($where_arr);
+        //            }
+        //        }
+        //        $this->paginate['limit'] = 20;
+
+        $productType = $this->InProductType->find('all')->order(['id' => 'ASC']);
+
+        if (@$profile == 'Men' || @$profile == '') {
+
+            $menproductdetails = $this->paginate($menproductdetails1);
+
+            $productType = $productType->where(['user_type' => 1]);
+        }
+
+        if (@$profile == 'Women') {
+
+            $womenproductdetails = $this->paginate($womenproductdetails1);
+            $productType = $productType->where(['user_type' => 2]);
+        }
+
+        if (@$profile == 'BoyKids') {
+
+            $boyskidsproductdetails = $this->paginate($boyskidsproductdetails1);
+            $productType = $productType->where(['user_type' => 3]);
+        }
+
+        if (@$profile == 'GirlKids') {
+
+            $girlkidsproductdetails = $this->paginate($girlkidsproductdetails1);
+            $productType = $productType->where(['user_type' => 4]);
+        }
+
+
+
+        //        $menproductdetails = $menproductdetails1;
+        //        $womenproductdetails = $womenproductdetails1;
+        //        $boyskidsproductdetails = $boyskidsproductdetails1;
+        //        $girlkidsproductdetails = $girlkidsproductdetails1;
+
+
+
+
+
+        $brandsListings = $this->InUsers->find('all')->where(['type' => 3])->order(['id']);
+
+        $this->set(compact('menproductdetails', 'womenproductdetails', 'boyskidsproductdetails', 'girlkidsproductdetails', 'profile', 'category', 'utype', 'brandsListings', 'productType'));
+    }
+
+    public function variantProductDetails($varient_id) {
+        $this->loadModel('InProductVariants');
+        $this->loadModel('InProductVariantList');
+        $this->loadModel('InProductImages');
+        $variant_details = $this->InProductVariants->find('all')->where(['id' => $varient_id])->first();
+        $variant_color_images = $this->InProductImages->find('all')->where(['in_product_variants_id' => $varient_id]);
+        $variant_products_details = $this->InProductVariantList->find('all')->where(['in_product_variants_id' => $varient_id]);
+        $this->set(compact('variant_details', 'variant_products_details', 'varient_id','variant_color_images'));
+    }
+
+    public function generateProduct($product_variant_list_id) {
+        $this->loadModel('InProductVariants');
+        $this->loadModel('InProductVariantList');
+        $this->loadModel('InProducts');
+        $this->loadModel('InColors');
+
+        $variant_products_details = $this->InProductVariantList->find('all')->where(['id' => $product_variant_list_id])->first();
+        $variant_details = $this->InProductVariants->find('all')->where(['id' => $variant_products_details->in_product_variants_id])->first();
+        echo "<pre>";
+
+        if ($variant_products_details->quantity > 0) {
+            for ($i = 1; $i <= $variant_products_details->quantity; $i++) {
+                $newRw = [];
+
+                $newRw['in_product_variant_list_id'] = $variant_products_details->id;
+                $newRw['in_product_variants_id'] = $variant_details->id;
+                $newRw['user_id'] = $variant_details->user_id;
+                $newRw['profile_type'] = $variant_details->profile_type;
+                $newRw['product_type'] = $variant_details->product_type;
+                $newRw['p_type'] = $variant_details->product_type;
+                $newRw['product_name_one'] = $variant_details->product_name_one;
+                $newRw['brand_id'] = $variant_details->brand_id;
+                $newRw['tall_feet'] = $variant_products_details->tall_feet1;
+                $newRw['tall_feet2'] = $variant_products_details->tall_feet2;
+                $newRw['tall_inch'] = $variant_products_details->tall_inch1;
+                $newRw['tall_inch2'] = $variant_products_details->tall_inch2;
+                $newRw['best_fit_for_weight'] = $variant_products_details->best_fit_for_weight1;
+                $newRw['best_fit_for_weight2'] = $variant_products_details->best_fit_for_weight2;
+                $newRw['age1'] = $variant_products_details->age1;
+                $newRw['age2'] = $variant_products_details->age2;
+                $newRw['best_size_fit'] = $variant_details->best_size_fit;
+                $newRw['budget_type'] = $variant_details->budget_type;
+                $newRw['budget_value'] = $variant_details->budget_value;
+                $newRw['primary_size'] = $variant_details->primary_size;
+                $newRw['picked_size'] = $variant_details->primary_size;
+
+                if (!empty($variant_details->primary_size)) {
+                    $newRw[$variant_details->primary_size] = $variant_products_details->size;
+                }
+                if (!empty($variant_details->variant_size_related)) {
+                    $variant_size_related = json_decode($variant_details->variant_size_related, true);
+                    foreach ($variant_size_related as $var_sz_rel_ky => $var_sz_rel) {
+                        $newRw[$var_sz_rel_ky] = $var_sz_rel;
+                    }
+                }
+
+                $newRw['better_body_shape'] = $variant_details->better_body_shape;
+                $newRw['skin_tone'] = $variant_details->skin_tone;
+                $newRw['work_type'] = $variant_details->work_type;
+                $newRw['jeans_Fit'] = $variant_details->jeans_Fit;
+                $get_color_id = $this->InColors->find('all')->where(['name' => $variant_products_details->color])->first();
+                $newRw['color'] = $get_color_id->id;
+                $newRw['men_bottom_prefer'] = $variant_details->men_bottom_prefer;
+                $newRw['style_sphere_selections_v5'] = $variant_details->style_sphere_selections_v5;
+                $newRw['note'] = $variant_details->note;
+                $newRw['product_image'] = $variant_details->feature_image;
+                $newRw['available_status'] = $variant_details->available_status;
+                $newRw['rack'] = $variant_details->rack;
+                $newRw['profession'] = $variant_details->profession;
+                $newRw['take_note_of'] = $variant_details->take_note_of;
+                $newRw['display_status'] = $variant_details->display_status;
+                $newRw['product_status'] = $variant_details->product_status;
+                $newRw['purchase_price'] = $variant_products_details->purchase_price;
+                $newRw['sale_price'] = $variant_products_details->sale_price;
+                $newRw['clearance_price'] = $variant_products_details->clearance_price;
+                $newRw['quantity'] = 1;
+                $newRw['is_active'] = 1;
+                $newRw['created'] = date('Y-m-d H:i:s');
+
+                if (!empty($variant_details->profile_type) && ($variant_details->profile_type == '1')) {
+                    $profile = "MEN";
+                    $nw_profile = "M";
+                } else if (!empty($variant_details->profile_type) && ($variant_details->profile_type == 2)) {
+                    $profile = "WOM";
+                    $nw_profile = "W";
+                } else if (!empty($variant_details->profile_type) && ($variant_details->profile_type == 3)) {
+                    $profile = "BOY";
+                    $nw_profile = "B";
+                } else if (!empty($variant_details->profile_type) && ($variant_details->profile_type == 4)) {
+                    $profile = "GIRL";
+                    $nw_profile = "G";
+                }
+
+                $dtls = $this->Custom->dtls($nw_profile, $variant_details->brand_id, $variant_details->rack, $variant_details->product_type, $variant_products_details->size);
+
+                $newRw['prod_id'] = $dtls;
+
+                $newRwInsert = $this->InProducts->newEntity();
+                $newRwInsert = $this->InProducts->patchEntity($newRwInsert, $newRw);
+                $newRwInsert = $this->InProducts->save($newRwInsert);
+                $last_insert_id = $newRwInsert->id;
+                $last_id = 'DF' . $newRwInsert->id;
+                $style_number = $dtls . '-' . $last_id . '-' . $i;
+
+                $br_name = $last_id . '.png';
+                $barcode_value = $last_id;
+                $this->Custom->create_image($br_name);
+                $generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
+                $dataImg = "data:image/png;base64," . base64_encode($generator->getBarcode($barcode_value, $generator::TYPE_CODE_128));
+                list($type, $dataImg) = explode(';', $dataImg);
+                list(, $dataImg) = explode(',', $dataImg);
+                $dataImg = base64_decode($dataImg);
+                file_put_contents(BARCODE . $br_name, $dataImg);
+                $file_path1 = str_replace('merchandise', 'webroot/', ROOT);
+                $file_path2 = str_replace('merchandise', 'inventory/webroot/', ROOT);
+                file_put_contents($file_path1 . BARCODE . $br_name, $dataImg);
+                file_put_contents($file_path2 . BARCODE . $br_name, $dataImg);
+
+                $this->InProducts->updateAll(['bar_code_img' => $br_name, 'style_number' => $style_number, 'dtls' => $barcode_value], ['id' => $last_insert_id]);
+
+                print_r($newRw);
+            }
+        }
+//exit;
+        print_r($variant_products_details);
+        echo "Variant details";
+        print_r($variant_details);
+
+        echo $product_variant_list_id;
+        echo "Check previously product created Or not as per quantity<br>";
+        echo "If not created then need to create<br>";
+        $this->Flash->success(__("Product Generated successfully"));
+        return $this->redirect($this->referer());
+
+        exit;
+    }
+
+    
+    public function productColorImages($in_product_variants_id = null, $color = null) {
+        $this->loadModel('InProductImages');
+        $this->loadModel('InColors');
+
+        if ($this->request->is('post')) {
+            $postData = $this->request->data;
+            
+            $get_color_id = $this->InColors->find('all')->where(['name' => $postData['color']])->first();
+            
+            if(!empty($postData['photos']) && (count($postData['photos'] > 0))){
+                foreach($postData['photos'] as $pht_ky => $pht_val){
+//                    echo "<pre>";
+//                    print_r($pht_val);
+                    if(!empty($pht_val['tmp_name']) && (strstr($pht_val['type'],"image"))){
+                        
+                        $newRw = [];
+                        $newRw['in_product_variants_id'] = $postData['in_product_variants_id'];
+                        $newRw['color'] = $postData['color'];
+                        $newRw['color_id'] = $get_color_id->id;
+                        $ext = pathinfo($pht_val['name'], PATHINFO_EXTENSION);
+                        $file_path = str_replace('merchandise', 'webroot/', ROOT);
+                        $file_name=  PRODUCT_IMAGES.time().rand(1111,9999).'.'.$ext;
+                        move_uploaded_file($pht_val['tmp_name'],$file_path .$file_name);
+                        $newRw['image'] = $file_name;
+                        
+//                        print_r($newRw);
+                        
+                        
+                        $newRwInsert = $this->InProductImages->newEntity();
+                        $newRwInsert = $this->InProductImages->patchEntity($newRwInsert, $newRw);
+                        $newRwInsert = $this->InProductImages->save($newRwInsert);
+                    }
+                }
+
+            }
+            $this->Flash->success(__("Photos Added successfully"));
+            return $this->redirect($this->referer());
+            
+//            echo "<pre>";
+//            print_r($postData);
+            exit;
+            // 
+
+        }
+    }
+    public function deleteVariantPhoto() {        
+        $this->loadModel('InProductImages');
+        if ($this->request->is('post')) {
+            $postData = $this->request->data;
+            $img_data = $this->InProductImages->find('all')->where(['id' => $postData['id']])->first();
+            if(!empty($img_data) && !empty($img_data->image)){
+                 $file_path = str_replace('merchandise', 'webroot/', ROOT);
+                 unlink($file_path.$img_data->image);
+            }
+            $this->InProductImages->deleteAll(['id' => $postData['id']]);
+            echo json_encode(true);
+            exit;
+        }
+        echo json_encode(false);
+        exit;
+    }
+    
+     public function testsql(){
+        $this->InProducts->belongsTo('usr', ['className' => 'Users', 'foreignKey' => 'allocate_to_user_id']);
+        $query = $this->InProducts->find('all')->where(['InProducts.shirt_blouse LIKE'=>'%18W%'])->contain(['usr']);
+        echo "<pre>";
+        print_r($query);
+        exit;
+    }
+    
 }

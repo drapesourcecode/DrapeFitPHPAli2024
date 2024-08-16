@@ -37,8 +37,74 @@
                 <div class="box">
 
                     <div class="box-body">
+
+                        <div class="single category">
+                            <h3 class="side-title">Look 1</h3>
+
+                            <ul class="list-unstyled">
+                                <li>
+                                    <a href="" title="">Business 
+                                        <span class="pull-right">13</span>
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                        </div>
+                        
+                        <div class="single category">
+                            <h3 class="side-title">Look 2</h3>
+
+                            <ul class="list-unstyled">
+                                <li>
+                                    <a href="" title="">Business 
+                                        <span class="pull-right">13</span>
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                        </div>
+
+                        <div class="single category">
+                            <h3 class="side-title">Look 3</h3>
+
+                            <ul class="list-unstyled">
+                                <li>
+                                    <a href="" title="">Business 
+                                        <span class="pull-right">13</span>
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                        </div>
+
+                        <div class="single category">
+                            <h3 class="side-title">Look 4</h3>
+
+                            <ul class="list-unstyled">
+                                <li>
+                                    <a href="" title="">Business 
+                                        <span class="pull-right">13</span>
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                        </div>
+
+                        <div class="single category">
+                            <h3 class="side-title">Look 5</h3>
+
+                            <ul class="list-unstyled">
+                                <li>
+                                    <a href="" title="">Business 
+                                        <span class="pull-right">13</span>
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                        </div>
+
                         <table id="exampleXX" class="table table-bordered table-striped">
-                            <thead>
+                            <!-- <thead>
                                 <tr>
                                     <th>Matching percentage</th>
                                     <th>Brand Name</th>
@@ -51,9 +117,9 @@
                                     <th>Quantity</th>
                                     <th>Action</th>
                                 </tr>
-                            </thead>
+                            </thead> -->
                             <tbody>
-                                <?php
+                                <?php /*
                                 $color_arr = $this->Custom->inColor();
 
 //                                foreach ($getProducts as $key => $prodDetls):
@@ -62,7 +128,7 @@
                                     ?>
                                     <tr>
                                         <td> 
-<!--                                            <span style="display:none;"><?php echo 1000-count($getProducts[$ap_li->id]);;/*count($getProducts[$ap_li->id]) * 10*/ ?></span>
+<!--                                            <span style="display:none;"><?php echo 1000-count($getProducts[$ap_li->id]); //count($getProducts[$ap_li->id]) * 10 ?></span>
                                             <a href='#' class="navbar-btn sidebar-toggle" data-html="true" data-toggle="tooltip" role="button" data-tooltip="tooltip"  data-placement="right" title="<?php
                                             foreach ($getProducts[$ap_li->id] as $pds_key => $pds_val) {
                                                 if ($pds_key != 'product_id') {
@@ -187,11 +253,11 @@
                                         </div>
                                     </div>
                                 </div>
-                            <?php endforeach; ?>
+                            <?php endforeach; */ ?>
 
                         </table>
 
-                        <?php
+                        <?php /*
                          echo $this->Paginator->counter('Page {{page}} of {{pages}}, Showing {{current}} records out of {{count}} total');
 //                        echo $this->Paginator->counter(
 //    'Page {{page}} of {{pages}}, showing {{current}} records out of
@@ -201,7 +267,7 @@
                         echo $this->Paginator->prev('< ' . __('prev'), array('tag' => 'li', 'currentTag' => 'a', 'currentClass' => 'disabled'), null, array('class' => 'prev disabled'));
                         echo $this->Paginator->numbers(array('first' => 3, 'last' => 3, 'separator' => '', 'tag' => 'li', 'currentTag' => 'a', 'currentClass' => 'active'));
                         echo $this->Paginator->next(__('next') . ' >', array('tag' => 'li', 'currentTag' => 'a', 'currentClass' => 'disabled'), null, array('class' => 'next disabled'));
-                        echo "</div></ul>";
+                        echo "</div></ul>"; */
                         ?>
                     </div>
                 </div>

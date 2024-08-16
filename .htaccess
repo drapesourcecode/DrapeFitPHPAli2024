@@ -2,6 +2,4 @@
     RewriteEngine on
     RewriteRule    ^$    webroot/ [L]
     RewriteRule    (.*) webroot/$1 [L]
- 
-#AddHandler application/x-httpd-php56 .php
 </IfModule>

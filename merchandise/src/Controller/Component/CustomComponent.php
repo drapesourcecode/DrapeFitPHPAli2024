@@ -241,7 +241,7 @@ class CustomComponent extends Component {
         }
     }
     
-    function uploadAvatarImage($tmp_name, $name, $path, $imgWidth) {
+    function uploadAvatarImage($tmp_name, $name, $path, $imgWidth,$new_name=null) {
         if ($name) {
             $image = strtolower($name);
             $extname = $this->getExtension($image); //$extname = substr(strrchr($image, "."), 1);
@@ -263,7 +263,7 @@ class CustomComponent extends Component {
                 list($width, $height) = getimagesize($tmp_name);
 
                 if ($extname == 'gif' || $width <= $imgWidth) {
-                    $time = time() . rand(100, 999);
+                    $time = (!empty($new_name))?$new_name:time() . rand(100, 999);
                     $filepath = md5($time).'1' . "." . $extname;
                     $targetpath = $path . $filepath;
                     if (!is_dir($path)) {
@@ -276,7 +276,7 @@ class CustomComponent extends Component {
                     $newheight = ($height / $width) * $newwidth;
                     $tmp = imagecreatetruecolor($newwidth, $newheight);
                     imagecopyresampled($tmp, $src, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
-                    $time = time();
+                    $time = (!empty($new_name))?$new_name:time();
                     $filepath = md5($time).'1' . "." . $extname;
                     $filename = $path . $filepath;
                     imagejpeg($tmp, $filename, 100);
@@ -3932,6 +3932,22 @@ class CustomComponent extends Component {
 
         return json_encode($related_seasons);
 //        return json_encode([$city_name,$temp, $all_datas,$related_seasons]);
+    }
+
+    public function getStripeKey() {
+        $payment_mode_tb = TableRegistry::get('Paymentmode');
+        $cofig_keys_tb = TableRegistry::get('CofigKeys');
+
+        $get_payment_mode = $payment_mode_tb->find('all')->first();
+        if($get_payment_mode->value == 1 ){
+            $stripe_key = $cofig_keys_tb->find('all')->where(['name' => 'stripe_live_key'])->first();
+        }else{
+            $stripe_key = $cofig_keys_tb->find('all')->where(['name' => 'stripe_test_key'])->first();
+        }
+
+        $stripe_api_key = json_decode($stripe_key->key_val, true);
+        return $stripe_api_key;
+
     }
 
 }
