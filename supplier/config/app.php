@@ -1,5 +1,5 @@
 <?php
-
+   $domain = $_SERVER['HTTP_HOST'];
   return [
 
      /*      * *********************************************************************************
@@ -303,7 +303,7 @@
            'className' => 'Cake\Database\Connection',
            'driver' => 'Cake\Database\Driver\Mysql',
            'persistent' => false,
-           'host' => '104.131.0.179',
+           'host' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'104.131.0.179',
          //   'host' => '108.167.139.168',
            /**
             * CakePHP will use the default DB port based on the driver selected
@@ -312,9 +312,12 @@
             */
            //'port' => 'non_standard_port_number',
            //'port' => 'non_standard_port_number',
-           'username' => 'drapefit_test12',
+        //     'username' => 'drapefit_invuser',
+        //   'password' => 'lJ?I04elWC#M',
+        //   'database' => 'drapefit_invateroy',
+           'username' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'drapefit_test12',
            'password' => 'g_G-=EVqW^TO',
-           'database' => 'drapefit_test12',         
+           'database' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'drapefit_test12',       
            'encoding' => 'utf8',
            'timezone' => 'UTC',
            'flags' => [],

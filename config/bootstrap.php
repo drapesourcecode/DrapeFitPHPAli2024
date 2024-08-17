@@ -139,7 +139,7 @@ $errorHandler = new AppError();
   if($domain == "localhost"){
      $siteName = 'http://' . $domain . '/2024/df_tst/DrapeFitPHPAli2024/';
    }else{  
-    $siteName = 'http://198.211.97.225/';
+    $siteName = 'http://' . $domain . '/';
   }
    define('WS_URL', 'wss://drapefit.com/wss2/');
   // define('WS_URL', 'ws://localhost.com:8081');
