@@ -304,6 +304,7 @@
            'driver' => 'Cake\Database\Driver\Mysql',
            'persistent' => false,
             'host' => '104.131.0.179',
+            // 'host' => '108.167.139.168',
            /**
             * CakePHP will use the default DB port based on the driver selected
             * MySQL on MAMP uses port 8889, MAMP users will want to uncomment
@@ -311,7 +312,7 @@
             */
            //'port' => 'non_standard_port_number',
            //'port' => 'non_standard_port_number',
-        'username' => 'drapefit_test12',
+           'username' => 'drapefit_test12',
            'password' => 'g_G-=EVqW^TO',
            'database' => 'drapefit_test12',
            'encoding' => 'utf8',
@@ -417,7 +418,7 @@
       * To use database sessions, load the SQL file located at config/Schema/sessions.sql
       */
      'Session' => [
-        'defaults' => 'cake',
+        'defaults' => 'php',
          'timeout'  => 1800
      ],
   ];

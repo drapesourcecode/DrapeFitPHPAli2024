@@ -1,12 +1,12 @@
 # Ignore .htaccess files
-merchandise/.htaccess
-merchandise/webroot/.htaccess
+# merchandise/.htaccess
+# merchandise/webroot/.htaccess
 
-supplier/webroot/.htaccess
-supplier/.htaccess
+# supplier/webroot/.htaccess
+# supplier/.htaccess
 
-inventory/webroot/.htaccess
-inventory/.htaccess
+# inventory/webroot/.htaccess
+# inventory/.htaccess
 
 # Ignore everything within vendor directories
 ./vendor
@@ -32,5 +32,11 @@ inventory/logs/
 inventory/tmp/
 
 # Ignore htaccess files (if any)
-.htaccess
-webroot/.htaccess
+# .htaccess
+# webroot/.htaccess
+
+# ignore config/app.php
+# config/app.php
+# inventory/config/app.php
+# merchandise/config/app.php
+# supplier/config/app.php

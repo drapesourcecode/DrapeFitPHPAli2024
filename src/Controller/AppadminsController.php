@@ -3257,15 +3257,14 @@ class AppadminsController extends AppController {
 //        require_once(ROOT . DS . 'vendor' . DS . "stripe-php" . DS . "init.php");
         //require_once('stripe-php/init.php');
         //set stripe secret key and publishable key
+        
+        $stripe_api_key = $this->Custom->getStripeKey();
+
         $stripe = array(
             // "secret_key"      => "Your_Stripe_API_Secret_Key",
             // "publishable_key" => "Your_API_Publishable_Key"             
-//            "secret_key" => "sk_test_51JY90jITPrbxGSMcpa6GFAxK96iCUrRjwWpJPY0gbh53l1EXf1F5aLYkNqc8V3h6baqk0gm9N79qazLZrp6bNg1H00TRuPEAeg",
-//            "publishable_key" => "pk_test_51JY90jITPrbxGSMcuo8bhxqQhCbSvHghLQaYIxtqVSe9u2xxm80SDtIVQ9acsLTW4WyPJX5G0nIMxaLXwtXbsN0N00vkBYmYDU"
-
-          //  "secret_key" => "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",
-            "secret_key" => "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",
-            "publishable_key" => "pk_live_51JY90jITPrbxGSMc2biBXo0DoiP6kSUOwvQQix5RmbPTlEIeJSPL3inlSdqhoJ4dh5oV5FJHpcuCMTuk3V2Hymqa00sVontf8A"
+            "secret_key" => $stripe_api_key['secret_key'],
+            "publishable_key" => $stripe_api_key['publishable_key']
         );
         \Stripe\Stripe::setApiKey($stripe['secret_key']);
 
@@ -8927,14 +8926,13 @@ class AppadminsController extends AppController {
         extract($arr_data);
 
         require_once(ROOT . DS . 'vendor' . DS . "stripe-php2" . DS . "init.php");
+        $stripe_api_key = $this->Custom->getStripeKey();
+       
         $stripe_token = array(
             // "secret_key"      => "Your_Stripe_API_Secret_Key",
             // "publishable_key" => "Your_API_Publishable_Key"
-//            "secret_key" => "sk_test_51JY90jITPrbxGSMcpa6GFAxK96iCUrRjwWpJPY0gbh53l1EXf1F5aLYkNqc8V3h6baqk0gm9N79qazLZrp6bNg1H00TRuPEAeg",
-//            "publishable_key" => "pk_test_51JY90jITPrbxGSMcuo8bhxqQhCbSvHghLQaYIxtqVSe9u2xxm80SDtIVQ9acsLTW4WyPJX5G0nIMxaLXwtXbsN0N00vkBYmYDU"
-
-            "secret_key" => "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",
-            "publishable_key" => "pk_live_51JY90jITPrbxGSMc2biBXo0DoiP6kSUOwvQQix5RmbPTlEIeJSPL3inlSdqhoJ4dh5oV5FJHpcuCMTuk3V2Hymqa00sVontf8A"
+            "secret_key" => $stripe_api_key['secret_key'],
+            "publishable_key" => $stripe_api_key['publishable_key']
         );
         \Stripe\Stripe::setApiKey($stripe_token['secret_key']);
         try {
@@ -10011,14 +10009,12 @@ class AppadminsController extends AppController {
         extract($arr_data);
         $ord_idd = "DFPYMID" . @$invice;
         require_once(ROOT . DS . 'vendor' . DS . "stripe-php2" . DS . "init.php");
+        $stripe_api_key = $this->Custom->getStripeKey();  
         $stripe_token = array(
             // "secret_key"      => "Your_Stripe_API_Secret_Key",
-            // "publishable_key" => "Your_API_Publishable_Key"
-            /* "secret_key" => "sk_test_51JY90jITPrbxGSMcpa6GFAxK96iCUrRjwWpJPY0gbh53l1EXf1F5aLYkNqc8V3h6baqk0gm9N79qazLZrp6bNg1H00TRuPEAeg",
-              "publishable_key" => "pk_test_51JY90jITPrbxGSMcuo8bhxqQhCbSvHghLQaYIxtqVSe9u2xxm80SDtIVQ9acsLTW4WyPJX5G0nIMxaLXwtXbsN0N00vkBYmYDU"
-             */
-            "secret_key" => "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",
-            "publishable_key" => "pk_live_51JY90jITPrbxGSMc2biBXo0DoiP6kSUOwvQQix5RmbPTlEIeJSPL3inlSdqhoJ4dh5oV5FJHpcuCMTuk3V2Hymqa00sVontf8A"
+            // "publishable_key" => "Your_API_Publishable_Key"             
+            "secret_key" => $stripe_api_key['secret_key'],
+            "publishable_key" => $stripe_api_key['publishable_key']
         );
 
         $stripe = new \Stripe\StripeClient($stripe_token['secret_key']);
