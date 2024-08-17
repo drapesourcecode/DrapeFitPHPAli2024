@@ -134,12 +134,16 @@ $errorHandler = new AppError();
    * If you define fullBaseUrl in your config file you can remove this.
    */
   $domain = $_SERVER['HTTP_HOST'];
- 
-  $siteName = 'https://' . $domain . '/inventory/';
-  $siteName1 = 'https://' . $domain . '/';
+  if($domain == "localhost"){
+     $siteName = 'http://' . $domain . '/2024/df_tst/DrapeFitPHPAli2024/inventory/';
+     $siteName1 = 'http://' . $domain . '/2024/df_tst/DrapeFitPHPAli2024/';
+   }else{ 
+    $siteName = 'http://' . $domain . '/inventory/';
+    $siteName1 = 'http://' . $domain . '/';
+  }
    define('WS_URL', 'wss://drapefittest.com/wss2/');
   // define('WS_URL', 'ws://localhost.com:8081');
-  
+  // echo $siteName1;exit;
 define('HTTP_ROOT_BASE', $siteName1);
 define('HTTP_ROOT', $siteName);
   define('SITE_NAME', "Drape Fit");
@@ -281,7 +285,8 @@ define('FACEBOOK_REDIRECT_URI_CON', HTTP_ROOT . 'users/fbreturncon');
   Type::build('datetime')
        ->useImmutable();
   
-  //Constant values
+ // include_once CONFIG.'constants.php';
+//Constant values
 
 Configure::write('Onboard_in_Progress', 'OIQ');
 Configure::write('OIQ','Onboard_in_Progress');
@@ -313,3 +318,18 @@ Configure::write('RCQ', 'Support_Tab_Recovery_queue');
 Configure::write('Previous_Worklist_queue', 'PWQ');
 Configure::write('PWQ', 'Previous_Worklist_queue');
 
+// Stock - S. , Orphan - O , Clearance - C , Rental - R , Freestyle - F
+Configure::write('Stock', 'S');
+Configure::write('S', 'Stock');
+
+Configure::write('Orphan', 'O');
+Configure::write('O', 'Orphan');
+
+Configure::write('Clearance', 'C');
+Configure::write('C', 'Clearance');
+
+Configure::write('Rental', 'R');
+Configure::write('R', 'Rental');
+
+Configure::write('Freestyle', 'F');
+Configure::write('F', 'Freestyle');

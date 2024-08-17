@@ -37,8 +37,102 @@
                 <div class="box">
 
                     <div class="box-body">
+
+                        <div class="single category">
+                            <h3 class="side-title">Look 1 (<?=$final_season_name;?>)</h3>
+
+                            <ul class="list-unstyled">
+                                <li>
+                                    <div id="look_data_1">
+
+                                    </div>
+                                </li>
+                                
+                            </ul>
+                        </div>
+                        
+                        
+                        <div class="single category">
+                            <h3 class="side-title">Look 2 (<?=$final_season_name;?>)</h3>
+
+                            <ul class="list-unstyled">
+                                <li>
+                                    <div id="look_data_2">
+
+                                    </div>
+                                </li>
+                                
+                            </ul>
+                        </div>
+
+                        <div class="single category">
+                            <h3 class="side-title">Look 3 (<?=$final_season_name;?>)</h3>
+
+                            <ul class="list-unstyled">
+                                <li>
+                                    <div id="look_data_3">
+
+                                    </div>
+                                </li>
+                                
+                            </ul>
+                        </div>
+
+                        <div class="single category">
+                            <h3 class="side-title">Look 4 (<?=$final_season_name;?>)</h3>
+
+                            <ul class="list-unstyled">
+                                <li>
+                                    <div id="look_data_4">
+
+                                    </div>
+                                </li>
+                                
+                            </ul>
+                        </div>
+
+                        <div class="single category">
+                            <h3 class="side-title">Look 5 (<?=$final_season_name;?>)</h3>
+
+                            <ul class="list-unstyled">
+                                <li>
+                                    <div id="look_data_5">
+
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <script>
+                            $(document).ready(function(){
+                                var $digi_array = [1, 2, 3, 4, 5];
+                                for (var $i = 1; $i <= $digi_array.length; $i++) {
+                                    getLookData($i);
+                                }
+                            });
+
+                            function getLookData(look_count){
+                                let season_nm = '<?=$final_season_name;?>';
+                                let payment_id= <?=$id;?>;
+                                $.ajax({
+                                    type: "POST",
+                                    url: "<?= HTTP_ROOT; ?>appadmins/getLookData",
+                                    data: {
+                                        payment_id: payment_id,
+                                        season_nm : season_nm,
+                                        look_count : look_count,
+                                    },
+                                    dataType: 'html',
+                                    success: function(result) {
+                                        $('#look_data_'+look_count).html(result);
+                                    }
+                                });
+                            }
+
+                        </script>
+
                         <table id="exampleXX" class="table table-bordered table-striped">
-                            <thead>
+                            <!-- <thead>
                                 <tr>
                                     <th>Matching percentage</th>
                                     <th>Brand Name</th>
@@ -51,9 +145,9 @@
                                     <th>Quantity</th>
                                     <th>Action</th>
                                 </tr>
-                            </thead>
+                            </thead> -->
                             <tbody>
-                                <?php
+                                <?php /*
                                 $color_arr = $this->Custom->inColor();
 
 //                                foreach ($getProducts as $key => $prodDetls):
@@ -62,7 +156,7 @@
                                     ?>
                                     <tr>
                                         <td> 
-<!--                                            <span style="display:none;"><?php echo 1000-count($getProducts[$ap_li->id]);;/*count($getProducts[$ap_li->id]) * 10*/ ?></span>
+<!--                                            <span style="display:none;"><?php echo 1000-count($getProducts[$ap_li->id]); //count($getProducts[$ap_li->id]) * 10 ?></span>
                                             <a href='#' class="navbar-btn sidebar-toggle" data-html="true" data-toggle="tooltip" role="button" data-tooltip="tooltip"  data-placement="right" title="<?php
                                             foreach ($getProducts[$ap_li->id] as $pds_key => $pds_val) {
                                                 if ($pds_key != 'product_id') {
@@ -187,11 +281,11 @@
                                         </div>
                                     </div>
                                 </div>
-                            <?php endforeach; ?>
+                            <?php endforeach; */ ?>
 
                         </table>
 
-                        <?php
+                        <?php /*
                          echo $this->Paginator->counter('Page {{page}} of {{pages}}, Showing {{current}} records out of {{count}} total');
 //                        echo $this->Paginator->counter(
 //    'Page {{page}} of {{pages}}, showing {{current}} records out of
@@ -201,7 +295,7 @@
                         echo $this->Paginator->prev('< ' . __('prev'), array('tag' => 'li', 'currentTag' => 'a', 'currentClass' => 'disabled'), null, array('class' => 'prev disabled'));
                         echo $this->Paginator->numbers(array('first' => 3, 'last' => 3, 'separator' => '', 'tag' => 'li', 'currentTag' => 'a', 'currentClass' => 'active'));
                         echo $this->Paginator->next(__('next') . ' >', array('tag' => 'li', 'currentTag' => 'a', 'currentClass' => 'disabled'), null, array('class' => 'next disabled'));
-                        echo "</div></ul>";
+                        echo "</div></ul>"; */
                         ?>
                     </div>
                 </div>

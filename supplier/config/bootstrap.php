@@ -134,9 +134,15 @@ $errorHandler = new AppError();
    * If you define fullBaseUrl in your config file you can remove this.
    */
   $domain = $_SERVER['HTTP_HOST'];
+   if($domain == "localhost"){
+     $siteName = 'http://' . $domain . '/2024/df_tst/DrapeFitPHPAli2024/supplier/';
+     $siteName1 = 'http://' . $domain . '/2024/df_tst/DrapeFitPHPAli2024/';
+   }else{
+      $siteName = 'http://' . $domain . '/supplier/';
+      $siteName1 = 'http://' . $domain . '/';
+   }
  
-   $siteName = 'https://' . $domain . '/supplier/';
-   $siteName1 = 'https://' . $domain . '/';
+  
    define('WS_URL', 'wss://drapefittest.com/wss2/');
   // define('WS_URL', 'ws://localhost.com:8081');
 
@@ -280,3 +286,52 @@ define('FACEBOOK_REDIRECT_URI_CON', HTTP_ROOT . 'users/fbreturncon');
        ->useImmutable();
   Type::build('datetime')
        ->useImmutable();
+
+       // include_once CONFIG.'constants.php';
+//Constant values
+
+Configure::write('Onboard_in_Progress', 'OIQ');
+Configure::write('OIQ','Onboard_in_Progress');
+
+Configure::write('Cant_Ship_now', 'CSQ');
+Configure::write('CSQ', 'Cant_Ship_now');
+
+Configure::write('Stylist_Queue', 'SLQ');
+Configure::write('SLQ', 'Stylist_Queue');
+
+Configure::write('Inv_Queue', 'IVQ');
+Configure::write('IVQ', 'Inv_Queue');
+
+Configure::write('QA_Queue', 'QAQ');
+Configure::write('QAQ', 'QA_Queue');
+
+Configure::write('Support_Tab_Ready_to_Ship_Queue', 'RSQ');
+Configure::write('RSQ', 'Support_Tab_Ready_to_Ship_Queue');
+
+Configure::write('Support_Tab_Support_Queue', 'SPQ');
+Configure::write('SPQ', 'Support_Tab_Support_Queue');
+
+Configure::write('Inv_Tab_Return_Queue', 'RTQ');
+Configure::write('RTQ', 'Inv_Tab_Return_Queue');
+
+Configure::write('Support_Tab_Recovery_queue', 'RCQ');
+Configure::write('RCQ', 'Support_Tab_Recovery_queue');
+
+Configure::write('Previous_Worklist_queue', 'PWQ');
+Configure::write('PWQ', 'Previous_Worklist_queue');
+
+// Stock - S. , Orphan - O , Clearance - C , Rental - R , Freestyle - F
+Configure::write('Stock', 'S');
+Configure::write('S', 'Stock');
+
+Configure::write('Orphan', 'O');
+Configure::write('O', 'Orphan');
+
+Configure::write('Clearance', 'C');
+Configure::write('C', 'Clearance');
+
+Configure::write('Rental', 'R');
+Configure::write('R', 'Rental');
+
+Configure::write('Freestyle', 'F');
+Configure::write('F', 'Freestyle');

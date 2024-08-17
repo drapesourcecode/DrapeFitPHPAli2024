@@ -181,7 +181,7 @@
 
                                                                 <?php
                                                                     //                                                    echo "<br>" . $p_c_list->user_id . " - " . $p_c_list->id . ' - ' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' - ' . date('Y-m-d', strtotime($p_c_list->created_dt)) . ' - ' . date('Y-m-d', strtotime('first day of +' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) . ' - ' . $p_c_list->parent_detail->first_name . ' ' . $p_c_list->parent_detail->last_name;
-                                                                } else if (($p_c_list->parent_fix->how_often_would_you_lik_fixes == 2) && (date('Y-m-d', strtotime('first day of +1 month', strtotime($p_c_list->created_dt))) == $next_month) || (date('Y-m-d', strtotime('first day of +' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) == $prev_month)) {
+                                                                } else if (($p_c_list->parent_fix->how_often_would_you_lik_fixes == 2) && (date('Y-m-d', strtotime('first day of +1 month', strtotime($p_c_list->created_dt))) <= $next_month) || (date('Y-m-d', strtotime('first day of +' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) == $prev_month)) {
                                                                 ?>
                                                                     <tr>
 
@@ -222,7 +222,7 @@
 
                                                                 <?php
                                                                     //                                                    echo "<br>" . $p_c_list->user_id . " - " . $p_c_list->id . ' - ' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' - ' . date('Y-m-d', strtotime($p_c_list->created_dt)) . ' - ' . date('Y-m-d', strtotime('first day of +' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) . ' - ' . $p_c_list->parent_detail->first_name . ' ' . $p_c_list->parent_detail->last_name;
-                                                                } else if (($p_c_list->parent_fix->how_often_would_you_lik_fixes == 3) && date('Y-m-d', strtotime('first day of +2 month', strtotime($p_c_list->created_dt))) == $next_month) {
+                                                                } else if (($p_c_list->parent_fix->how_often_would_you_lik_fixes == 3) && date('Y-m-d', strtotime('first day of +2 month', strtotime($p_c_list->created_dt))) <= $next_month) {
                                                                 ?>
                                                                     <tr>
 
@@ -344,9 +344,16 @@
                                                 }
                                                 
                                                 foreach ($paid_customer as $p_c_list) {
-                                                    //            echo "<pre>";
-                                                    //            print_r($p_c_list);
-                                                    //            echo "</pre>";
+                                                                // echo "<pre>";
+                                                                // print_r([$p_c_list->user_id,
+                                                                // $p_c_list->usr_dtl->gender,
+                                                                // $p_c_list->parent_fix->try_new_items_with_scheduled_fixes,
+                                                                // $p_c_list->parent_fix->how_often_would_you_lik_fixes,
+                                                                // (date('Y-m-d', strtotime('first day of +' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) <= $next_month),
+                                                                // $next_month, 
+                                                                // date('Y-m-d', strtotime('first day of +' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt)))
+                                                                // ]);
+                                                                // echo "</pre>";
                                                     //     Product not return to store check       
                                                     //            $product_store_return = 0;
                                                     //            if (!empty($p_c_list->product)) {
@@ -360,7 +367,7 @@
                                                     if (!empty($p_c_list->usr_dtl) && ($p_c_list->usr_dtl->gender == 2)) {
                                                         if (!empty($p_c_list->transactions_id)) {
                                                             if ($p_c_list->parent_fix->try_new_items_with_scheduled_fixes == 1) {
-                                                                if (($p_c_list->parent_fix->how_often_would_you_lik_fixes == 1) && date('Y-m-d', strtotime('first day of +' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) <= $next_month) {
+                                                                if (($p_c_list->parent_fix->how_often_would_you_lik_fixes == 1) && (date('Y-m-d', strtotime('first day of +' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) <= $next_month)) {
                                                 ?>
                                                                     <tr>
 
@@ -402,7 +409,7 @@
 
                                                                 <?php
                                                                     //                                                    echo "<br>" . $p_c_list->user_id . " - " . $p_c_list->id . ' - ' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' - ' . date('Y-m-d', strtotime($p_c_list->created_dt)) . ' - ' . date('Y-m-d', strtotime('first day of +' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) . ' - ' . $p_c_list->parent_detail->first_name . ' ' . $p_c_list->parent_detail->last_name;
-                                                                } else if (($p_c_list->parent_fix->how_often_would_you_lik_fixes == 2) && (date('Y-m-d', strtotime('first day of +' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) == $next_month) || (date('Y-m-d', strtotime('first day of +' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) == $prev_month)) {
+                                                                } else if (($p_c_list->parent_fix->how_often_would_you_lik_fixes == 2) && (date('Y-m-d', strtotime('first day of +' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) <= $next_month) || (date('Y-m-d', strtotime('first day of +' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) == $prev_month)) {
                                                                 ?>
                                                                     <tr>
 
@@ -442,7 +449,7 @@
 
                                                                 <?php
                                                                     //                                                    echo "<br>" . $p_c_list->user_id . " - " . $p_c_list->id . ' - ' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' - ' . date('Y-m-d', strtotime($p_c_list->created_dt)) . ' - ' . date('Y-m-d', strtotime('first day of +' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) . ' - ' . $p_c_list->parent_detail->first_name . ' ' . $p_c_list->parent_detail->last_name;
-                                                                } else if (($p_c_list->parent_fix->how_often_would_you_lik_fixes == 3) && date('Y-m-d', strtotime('first day of +' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) == $next_month) {
+                                                                } else if (($p_c_list->parent_fix->how_often_would_you_lik_fixes == 3) && date('Y-m-d', strtotime('first day of +' . $p_c_list->parent_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) <= $next_month) {
                                                                 ?>
                                                                     <tr>
 
@@ -610,7 +617,7 @@
 
                                                                 <?php
                                                                     //                                                    echo "<br>" . $p_c_list->user_id . " - " . $p_c_list->kid_id . " - " . $p_c_list->id . ' - ' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' - ' . date('Y-m-d', strtotime($p_c_list->created_dt)) . ' - ' . date('Y-m-d', strtotime('first day of +' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) . " - " . $p_c_list->kid_detail->kids_first_name;
-                                                                } else if (($p_c_list->kid_fix->how_often_would_you_lik_fixes == 2) && (date('Y-m-d', strtotime('first day of +' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) == $next_month) || (date('Y-m-d', strtotime('first day of +' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) == $prev_month)) {
+                                                                } else if (($p_c_list->kid_fix->how_often_would_you_lik_fixes == 2) && (date('Y-m-d', strtotime('first day of +' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) <= $next_month) || (date('Y-m-d', strtotime('first day of +' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) == $prev_month)) {
                                                                 ?>
                                                                     <tr>
 
@@ -648,7 +655,7 @@
 
                                                                 <?php
                                                                     //                                                    echo "<br>" . $p_c_list->user_id . " - " . $p_c_list->kid_id . " - " . $p_c_list->id . ' - ' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' - ' . date('Y-m-d', strtotime($p_c_list->created_dt)) . ' - ' . date('Y-m-d', strtotime('first day of +' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) . " - " . $p_c_list->kid_detail->kids_first_name;
-                                                                } else if (($p_c_list->kid_fix->how_often_would_you_lik_fixes == 3) && date('Y-m-d', strtotime('first day of +' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) == $next_month) {
+                                                                } else if (($p_c_list->kid_fix->how_often_would_you_lik_fixes == 3) && date('Y-m-d', strtotime('first day of +' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) <= $next_month) {
                                                                 ?>
                                                                     <tr>
 
@@ -815,7 +822,7 @@
 
                                                                 <?php
                                                                     //                                                    echo "<br>" . $p_c_list->user_id . " - " . $p_c_list->kid_id . " - " . $p_c_list->id . ' - ' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' - ' . date('Y-m-d', strtotime($p_c_list->created_dt)) . ' - ' . date('Y-m-d', strtotime('first day of +' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) . " - " . $p_c_list->kid_detail->kids_first_name;
-                                                                } else if (($p_c_list->kid_fix->how_often_would_you_lik_fixes == 2) && (date('Y-m-d', strtotime('first day of +' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) == $next_month) || (date('Y-m-d', strtotime('first day of +' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) == $prev_month)) {
+                                                                } else if (($p_c_list->kid_fix->how_often_would_you_lik_fixes == 2) && (date('Y-m-d', strtotime('first day of +' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) <= $next_month) || (date('Y-m-d', strtotime('first day of +' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) == $prev_month)) {
                                                                 ?>
                                                                     <tr>
 
@@ -853,7 +860,7 @@
 
                                                                 <?php
                                                                     //                                                    echo "<br>" . $p_c_list->user_id . " - " . $p_c_list->kid_id . " - " . $p_c_list->id . ' - ' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' - ' . date('Y-m-d', strtotime($p_c_list->created_dt)) . ' - ' . date('Y-m-d', strtotime('first day of +' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) . " - " . $p_c_list->kid_detail->kids_first_name;
-                                                                } else if (($p_c_list->kid_fix->how_often_would_you_lik_fixes == 3) && date('Y-m-d', strtotime('first day of +' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) == $next_month) {
+                                                                } else if (($p_c_list->kid_fix->how_often_would_you_lik_fixes == 3) && date('Y-m-d', strtotime('first day of +' . $p_c_list->kid_fix->how_often_would_you_lik_fixes . ' month', strtotime($p_c_list->created_dt))) <= $next_month) {
                                                                 ?>
                                                                     <tr>
 

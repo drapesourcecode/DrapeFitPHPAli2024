@@ -69,11 +69,17 @@ $paramAction = $this->request->params['action'];
                 <li class="treeview <?php if ($paramController == 'Appadmins' && $paramAction == 'inColor') { ?> active <?php } ?>">
                     <a href="<?php echo HTTP_ROOT ?>appadmins/in_color" ><i class="fa fa-tint"></i> <span>Manage color</span></a>
                 </li>
+                <li class="treeview <?php if ($paramController == 'Appadmins' && $paramAction == 'inSize') { ?> active <?php } ?>">
+                    <a href="<?php echo HTTP_ROOT ?>appadmins/in_size" ><i class="fa fa-tint"></i> <span>Manage Size</span></a>
+                </li>
                 <li class="treeview <?php if ($paramController == 'Appadmins' && $paramAction == 'missingFields') { ?> active <?php } ?>">
                     <a href="<?php echo HTTP_ROOT ?>appadmins/missing_fields" ><i class="fa fa-spinner"></i> <span>Missing fields</span></a>
                 </li>
 
             <li class="treeview <?php if ($paramController == 'Appadmins' && $paramAction == 'index') { ?> active <?php } ?>"><a href="<?= h(HTTP_ROOT) ?>appadmins/"><i class="fa fa-gears"></i> <span>Setting</span></a></li>
+            <li class="treeview <?php if ($paramController == 'Appadmins' && $paramAction == 'addVariantProduct') { ?> active <?php } ?>"><a href="<?= h(HTTP_ROOT) ?>appadmins/add_variant_product"><i class="fa fa-gears"></i> <span>Add Product Variants</span></a></li>
+            <li class="treeview <?php if ($paramController == 'Appadmins' && $paramAction == 'variantProductList') { ?> active <?php } ?>"><a href="<?= h(HTTP_ROOT) ?>appadmins/variant_product_list"><i class="fa fa-gears"></i> <span>Variant Product List</span></a></li>
+            
 
             <li><a style="color: red;" href="<?= h(HTTP_ROOT) ?>appadmins/logout"><i class="fa fa-key"></i> <span>Logout</span></a></li>
         </ul>
