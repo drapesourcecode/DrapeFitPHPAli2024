@@ -464,241 +464,294 @@ class AppadminsController extends AppController {
             }
         }
 
-        $all_productsx = $this->Products->find('all')->where(['user_id' => $getData->user_id]);
-        //pj($products); exit;
-        $product_Id = [];
-        foreach ($all_productsx as $pd) {
-            $product_Id[] = $pd->id;
-        }
-        $prev_products = !empty($all_productsx) ? Hash::extract($all_productsx->toArray(), '{n}.prod_id') : [];
-        $prev_products = array_filter($prev_products);
-        $prv_cnd = '';
-        if (!empty($prev_products)) {
-            $prv_cnd = implode('","', $prev_products);
-        }
-        if (!empty($prv_cnd)) {
-            $prv_cnd = 'AND `in_products`.`prod_id` NOT IN ("' . $prv_cnd . '")';
-        }
+        // $all_productsx = $this->Products->find('all')->where(['user_id' => $getData->user_id]);
+        // //pj($products); exit;
+        // $product_Id = [];
+        // foreach ($all_productsx as $pd) {
+        //     $product_Id[] = $pd->id;
+        // }
+        // $prev_products = !empty($all_productsx) ? Hash::extract($all_productsx->toArray(), '{n}.prod_id') : [];
+        // $prev_products = array_filter($prev_products);
+        // $prv_cnd = '';
+        // if (!empty($prev_products)) {
+        //     $prv_cnd = implode('","', $prev_products);
+        // }
+        // if (!empty($prv_cnd)) {
+        //     $prv_cnd = 'AND `in_products`.`prod_id` NOT IN ("' . $prv_cnd . '")';
+        // }
 
         //        echo $prv_cnd;exit;
         $seasons = $this->Custom->getSeason($shipping_address->city);
         //        print_r($seasons);//exit;
         $seasons_arry = !empty($seasons) ? json_decode($seasons, true) : [];
-        //        print_r($seasons_arry);exit;
-        $season_cnd = '';
-        if (!empty(count($seasons_arry))) {
-            foreach ($seasons_arry as $sean_ky => $sean_li) {
-                if ($sean_ky == 0) {
-                    $season_cnd .= '(';
-                }
-                if ($sean_ky > 0) {
-                    $season_cnd .= ' OR ';
-                }
-                $season_cnd .= '`in_pud`.`season` LIKE \'%"' . $sean_li . '"%\' ';
-            }
+        if(!empty($seasons_arry)){
+            $final_season_name = $seasons_arry[0];
+        }else{
+            $final_season_name = "Summer";
         }
-        if (!empty($season_cnd)) {
-            $season_cnd .= ' ) AND ';
-        }
-        //        echo $season_cnd;exit;
-
-        $conn = ConnectionManager::get('default');
-
-        if ($getData->kid_id == 0) {
-            $userDetails = $this->UserDetails->find('all')->where(['user_id' => $getData->user_id])->first();
-            $gender = $userDetails->gender;
-            if ($gender == 1) { // Men
-                /* $where_profle = ['profile_type' => $gender];
-                  //echo $getData->user_id; exit;
-                  $getProducts = $this->Custom->menMatching($getData->user_id); */
-                $getProducts = $conn->execute('SELECT * FROM `in_products` 
-                    WHERE `in_products`.`id` IN (
-    SELECT `in_pud`.`id`
-    FROM `in_products` as  `in_pud`, `typically_wear_men`
-    WHERE
-      `in_pud`.`profile_type` = 1 AND
-      `in_pud`.`match_status` = 2 AND
-      `in_pud`.`available_status` = 1 AND       
-      ' . $season_cnd . ' 
-      (
-        (
-          (`in_pud`.`waist_size` = `typically_wear_men`.`waist` AND `typically_wear_men`.`user_id` = ' . $getData->user_id . ') OR
-          (`in_pud`.`shirt_size` = `typically_wear_men`.`size` AND  `typically_wear_men`.`user_id` = ' . $getData->user_id . ') OR
-          (`in_pud`.`shoe_size` = `typically_wear_men`.`shoe` AND `typically_wear_men`.`user_id` = ' . $getData->user_id . ') OR
-          (`in_pud`.`men_bottom` = `typically_wear_men`.`men_bottom` AND `typically_wear_men`.`user_id` = ' . $getData->user_id . ') 
-        ) OR `in_pud`.`primary_size` = "free_size"
-      )
-    GROUP BY `in_pud`.`prod_id`
-) ' . $prv_cnd . '
-GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
-            }
-            if ($gender == 2) { // Women
-                /* $where_profle = ['profile_type' => $gender];
-                  $getProducts = $this->Custom->womenMatching($getData->user_id);
-                  //               echo "<pre style='margin-left:233px;'>";
-                  //               print_r($getData->user_id);
-                  //               print_r($getProducts);
-                  //               echo "</pre>";exit; */
-
-                $getProducts = $conn->execute('SELECT *
-FROM `in_products`
-
-WHERE `in_products`.`id` IN (
-
-    SELECT `in_pud`.`id`
-    FROM `in_products` as  `in_pud`, `size_chart`
-    WHERE
-      `in_pud`.`profile_type` = 2 AND
-      `in_pud`.`match_status` = 2 AND
-      `in_pud`.`available_status` = 1 AND
-      ' . $season_cnd . '
-      (
-        (
-          (`in_pud`.`shirt_blouse` = `size_chart`.`shirt_blouse` AND `in_pud`.`shirt_blouse_recomend` = `size_chart`.`shirt_blouse_recomend` AND `size_chart`.`user_id` = ' . $getData->user_id . ') OR
-          (`in_pud`.`dress` = `size_chart`.`dress` AND `in_pud`.`dress_recomended` = `size_chart`.`dress_recomended` AND `size_chart`.`user_id` = ' . $getData->user_id . ') OR
-          (`in_pud`.`pants` = `size_chart`.`pants` AND `size_chart`.`user_id` = ' . $getData->user_id . ') OR
-          (`in_pud`.`wo_bottom` = `size_chart`.`wo_bottom` AND `size_chart`.`user_id` = ' . $getData->user_id . ') OR
-          (`in_pud`.`wo_jackect_size` = `size_chart`.`wo_jackect_size` AND `size_chart`.`user_id` = ' . $getData->user_id . ') OR
-          (`in_pud`.`bra` = `size_chart`.`bra` AND `in_pud`.`bra_recomend` = `size_chart`.`bra_recomend` AND `size_chart`.`user_id` = ' . $getData->user_id . ') OR
-          (`in_pud`.`skirt` = `size_chart`.`skirt` AND `size_chart`.`user_id` = ' . $getData->user_id . ') OR
-          (`in_pud`.`jeans` = `size_chart`.`jeans` AND `size_chart`.`user_id` = ' . $getData->user_id . ') OR
-          (`in_pud`.`shoe_size` = `size_chart`.`shoe` AND `size_chart`.`user_id` = ' . $getData->user_id . ') 
-        ) OR `in_pud`.`primary_size` = "free_size"
-      ) 
-    GROUP BY `in_pud`.`prod_id`
-) ' . $prv_cnd . '
-GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
-            }
-        } else {
-            $userDetails = $this->KidsDetails->find('all')->where(['id' => $getData->kid_id])->first();
-            if ($userDetails->kids_clothing_gender == 'girls') {
-                /* $gender = 4; // Girl kid
-                  $where_profle = ['profile_type' => $gender];
-                  $getProducts = $this->Custom->girlsMatching($getData->user_id, $getData->kid_id); */
-                $getProducts = $conn->execute('SELECT *
-FROM `in_products`
-
-WHERE `in_products`.`id` IN (
-
-    SELECT `in_pud`.`id`
-    FROM `in_products` as  `in_pud`, `kids_size_fit`
-    WHERE
-      `in_pud`.`profile_type` = 4 AND
-      `in_pud`.`match_status` = 2 AND
-      `in_pud`.`available_status` = 1 AND
-      ' . $season_cnd . '
-      (
-        (
-          (`in_pud`.`top_size` = `kids_size_fit`.`top_size` OR `in_pud`.`bottom_size` = `kids_size_fit`.`bottom_size` OR `in_pud`.`shoe_size` = `kids_size_fit`.`shoe_size`) AND `kids_size_fit`.`kid_id` = ' . $getData->kid_id . ' 
-        ) OR `in_pud`.`primary_size` = "free_size"
-      )
-    GROUP BY `in_pud`.`prod_id`
-) ' . $prv_cnd . '
-GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
-            } else {
-                /* $gender = 3; // Boy kid
-                  $where_profle = ['profile_type' => $gender];
-                  $getProducts = $this->Custom->boyMatching($getData->user_id, $getData->kid_id); */
-                $getProducts = $conn->execute('SELECT *
-FROM `in_products`
-
-WHERE `in_products`.`id` IN (
-
-    SELECT `in_pud`.`id`
-    FROM `in_products` as  `in_pud`, `kids_size_fit`
-    WHERE
-      `in_pud`.`profile_type` = 3 AND
-      `in_pud`.`match_status` = 2 AND
-      `in_pud`.`available_status` = 1 AND
-      ' . $season_cnd . '
-      (
-        (
-          (`in_pud`.`top_size` = `kids_size_fit`.`top_size` OR `in_pud`.`bottom_size` = `kids_size_fit`.`bottom_size` OR `in_pud`.`shoe_size` = `kids_size_fit`.`shoe_size`) AND `kids_size_fit`.`kid_id` = ' . $getData->kid_id . '
-        ) OR `in_pud`.`primary_size` = "free_size"
-      )
-    GROUP BY `in_pud`.`prod_id`
-) ' . $prv_cnd . '
-GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
-            }
-        }
-
-        $this->loadModel('MatchingCase');
-        $all_products = [];
-        $all_prd_ids = [];
-        if (!empty($getProducts)) {
-            $this->MatchingCase->deleteAll(['payment_id' => $id]);
-            foreach ($getProducts as $prd_ky => $prd_lii) {
-                if (!empty($prd_ky)) {
-                    $newRws = $this->MatchingCase->newEntity();
-                    $newRws->payment_id = $id;
-                    $newRws->product_id = $prd_lii['id']; //$prd_ky;
-                    $newRws->count = 0; //count($prd_lii);
-                    $newRws->matching = json_encode([]); //json_encode($prd_lii);
-                    $this->MatchingCase->save($newRws);
-
-                    $all_prd_ids[] = $prd_lii['id']; //$prd_ky;
-                }
-            }
-
-
-            if (!empty($all_prd_ids)) {
-                $this->InProducts->hasOne('match_case', ['className' => 'MatchingCase', 'foreignKey' => 'product_id'])->setConditions(['payment_id' => $id]);
-                $all_product = $this->InProducts->find('all')->contain(['match_case' /* => ['sort' => ['match_case.count' => 'DESC']] */])->where([/*'OR' => ['InProducts.is_clearance' => 2, 'InProducts.is_clearance IS' => NULL],*/ 'InProducts.available_status !=' => 2, 'InProducts.is_active !=' => 0, 'InProducts.id IN' => $all_prd_ids])->order(['match_case.count' => 'DESC']);
-                $this->paginate['limit'] = 10;
-                // pj($all_product);exit;
-                if (!empty($_GET['search_for']) && !empty($_GET['search_data'])) {
-                    if ($_GET['search_for'] == "product_name1") {
-                        $get_data_value = trim($_GET['search_data']);
-                        $all_product = $all_product->where(['InProducts.product_name_one LIKE' => "%" . $get_data_value . "%"]);
-                    }
-                    if ($_GET['search_for'] == "product_name2") {
-                        $get_data_value = trim($_GET['search_data']);
-                        $all_product = $all_product->where(['InProducts.product_name_two LIKE' => "%" . $get_data_value . "%"]);
-                    }
-                    if ($_GET['search_for'] == "style_number") {
-                        $get_data_value = trim($_GET['search_data']);
-                        $all_product = $all_product->where(['InProducts.style_number LIKE' => "%" . $get_data_value . "%"]);
-                    }
-                    if ($_GET['search_for'] == "bar_code") {
-                        $get_data_value = trim($_GET['search_data']);
-                        if (in_array()) {
-                        }
-                        $all_product = $all_product->where(['InProducts.dtls LIKE' => "%" . $get_data_value . "%"]);
-                    }
-
-                    if ($_GET['search_for'] == "color") {
-                        $get_data_value = trim($_GET['search_data']);
-                        $chk_color = $this->InColors->find('all')->where(['InColors.name LIKE' => '%' . $get_data_value . '%']);
-                        $color_list = [];
-                        if (!empty($chk_color)) {
-                            $color_list = Hash::extract($chk_color->toArray(), '{n}.id');
-                        }
-                        if (!empty($color_list)) {
-                            $all_product = $all_product->where(['InProducts.color IN' => $color_list]);
-                        }
-                    }
-
-                    if ($_GET['search_for'] == "brand_name") {
-                        $get_data_value = trim($_GET['search_data']);
-                        $chk_brnd = $this->InUsers->find('all')->where(['InUsers.brand_name LIKE' => '%' . $get_data_value . '%']);
-                        $brand_list = [];
-                        if (!empty($chk_brnd)) {
-                            $brand_list = Hash::extract($chk_brnd->toArray(), '{n}.id');
-                        }
-                        if (!empty($brand_list)) {
-                            $all_product = $all_product->where(['InProducts.brand_id IN' => $brand_list]);
-                        }
-                    }
-                }
-                $all_products = $this->paginate($all_product);
-                //pj($all_products);exit;
-            }
-            //        echo "<pre>";
-            //        print_r($all_products);
-            //        echo "</pre>";
-        }
-        $this->set(compact('userDetails', 'gender', 'getProducts', 'id', 'getData', 'all_products'));
+        // print_r($seasons_arry);exit;
+        // print_r($final_season);exit;
+     
+        $this->set(compact('final_season_name', 'id', 'getData'));
     }
+
+//     public function predictionMatching($id)
+//     {
+//         $this->loadModel('ShippingAddress');
+
+
+//         $getData = $this->PaymentGetways->find('all')->where(['id' => $id])->first();
+
+//         if (!empty($getData->shipping_address_id)) {
+//             $shipping_address = $this->ShippingAddress->find('all')->where(['id' => $getData->shipping_address_id])->first();
+//         } else {
+//             $shipping_address = $this->ShippingAddress->find('all')->where(['ShippingAddress.user_id' => $getData->user_id, 'default_set' => 1])->first();
+//             if (empty($shipping_address)) {
+//                 $shipping_address = $this->ShippingAddress->find('all')->where(['ShippingAddress.user_id' => $getData->user_id])->first();
+//             }
+//         }
+
+//         $all_productsx = $this->Products->find('all')->where(['user_id' => $getData->user_id]);
+//         //pj($products); exit;
+//         $product_Id = [];
+//         foreach ($all_productsx as $pd) {
+//             $product_Id[] = $pd->id;
+//         }
+//         $prev_products = !empty($all_productsx) ? Hash::extract($all_productsx->toArray(), '{n}.prod_id') : [];
+//         $prev_products = array_filter($prev_products);
+//         $prv_cnd = '';
+//         if (!empty($prev_products)) {
+//             $prv_cnd = implode('","', $prev_products);
+//         }
+//         if (!empty($prv_cnd)) {
+//             $prv_cnd = 'AND `in_products`.`prod_id` NOT IN ("' . $prv_cnd . '")';
+//         }
+
+//         //        echo $prv_cnd;exit;
+//         $seasons = $this->Custom->getSeason($shipping_address->city);
+//         //        print_r($seasons);//exit;
+//         $seasons_arry = !empty($seasons) ? json_decode($seasons, true) : [];
+//         if(!empty($seasons_arry)){
+//             $final_season = $seasons_arry[0];
+//         }else{
+//             $final_season = "Summer";
+//         }
+//         // print_r($seasons_arry);exit;
+//         print_r($final_season);exit;
+//         $season_cnd = '';
+//         if (!empty(count($seasons_arry))) {
+//             foreach ($seasons_arry as $sean_ky => $sean_li) {
+//                 if ($sean_ky == 0) {
+//                     $season_cnd .= '(';
+//                 }
+//                 if ($sean_ky > 0) {
+//                     $season_cnd .= ' OR ';
+//                 }
+//                 $season_cnd .= '`in_pud`.`season` LIKE \'%"' . $sean_li . '"%\' ';
+//             }
+//         }
+//         if (!empty($season_cnd)) {
+//             $season_cnd .= ' ) AND ';
+//         }
+//         //        echo $season_cnd;exit;
+
+//         $conn = ConnectionManager::get('default');
+
+//         if ($getData->kid_id == 0) {
+//             $userDetails = $this->UserDetails->find('all')->where(['user_id' => $getData->user_id])->first();
+//             $gender = $userDetails->gender;
+//             if ($gender == 1) { // Men
+//                 /* $where_profle = ['profile_type' => $gender];
+//                   //echo $getData->user_id; exit;
+//                   $getProducts = $this->Custom->menMatching($getData->user_id); */
+//                 $getProducts = $conn->execute('SELECT * FROM `in_products` 
+//                     WHERE `in_products`.`id` IN (
+//     SELECT `in_pud`.`id`
+//     FROM `in_products` as  `in_pud`, `typically_wear_men`
+//     WHERE
+//       `in_pud`.`profile_type` = 1 AND
+//       `in_pud`.`match_status` = 2 AND
+//       `in_pud`.`available_status` = 1 AND       
+//       ' . $season_cnd . ' 
+//       (
+//         (
+//           (`in_pud`.`waist_size` = `typically_wear_men`.`waist` AND `typically_wear_men`.`user_id` = ' . $getData->user_id . ') OR
+//           (`in_pud`.`shirt_size` = `typically_wear_men`.`size` AND  `typically_wear_men`.`user_id` = ' . $getData->user_id . ') OR
+//           (`in_pud`.`shoe_size` = `typically_wear_men`.`shoe` AND `typically_wear_men`.`user_id` = ' . $getData->user_id . ') OR
+//           (`in_pud`.`men_bottom` = `typically_wear_men`.`men_bottom` AND `typically_wear_men`.`user_id` = ' . $getData->user_id . ') 
+//         ) OR `in_pud`.`primary_size` = "free_size"
+//       )
+//     GROUP BY `in_pud`.`prod_id`
+// ) ' . $prv_cnd . '
+// GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
+//             }
+//             if ($gender == 2) { // Women
+//                 /* $where_profle = ['profile_type' => $gender];
+//                   $getProducts = $this->Custom->womenMatching($getData->user_id);
+//                   //               echo "<pre style='margin-left:233px;'>";
+//                   //               print_r($getData->user_id);
+//                   //               print_r($getProducts);
+//                   //               echo "</pre>";exit; */
+
+//                 $getProducts = $conn->execute('SELECT *
+// FROM `in_products`
+
+// WHERE `in_products`.`id` IN (
+
+//     SELECT `in_pud`.`id`
+//     FROM `in_products` as  `in_pud`, `size_chart`
+//     WHERE
+//       `in_pud`.`profile_type` = 2 AND
+//       `in_pud`.`match_status` = 2 AND
+//       `in_pud`.`available_status` = 1 AND
+//       ' . $season_cnd . '
+//       (
+//         (
+//           (`in_pud`.`shirt_blouse` = `size_chart`.`shirt_blouse` AND `in_pud`.`shirt_blouse_recomend` = `size_chart`.`shirt_blouse_recomend` AND `size_chart`.`user_id` = ' . $getData->user_id . ') OR
+//           (`in_pud`.`dress` = `size_chart`.`dress` AND `in_pud`.`dress_recomended` = `size_chart`.`dress_recomended` AND `size_chart`.`user_id` = ' . $getData->user_id . ') OR
+//           (`in_pud`.`pants` = `size_chart`.`pants` AND `size_chart`.`user_id` = ' . $getData->user_id . ') OR
+//           (`in_pud`.`wo_bottom` = `size_chart`.`wo_bottom` AND `size_chart`.`user_id` = ' . $getData->user_id . ') OR
+//           (`in_pud`.`wo_jackect_size` = `size_chart`.`wo_jackect_size` AND `size_chart`.`user_id` = ' . $getData->user_id . ') OR
+//           (`in_pud`.`bra` = `size_chart`.`bra` AND `in_pud`.`bra_recomend` = `size_chart`.`bra_recomend` AND `size_chart`.`user_id` = ' . $getData->user_id . ') OR
+//           (`in_pud`.`skirt` = `size_chart`.`skirt` AND `size_chart`.`user_id` = ' . $getData->user_id . ') OR
+//           (`in_pud`.`jeans` = `size_chart`.`jeans` AND `size_chart`.`user_id` = ' . $getData->user_id . ') OR
+//           (`in_pud`.`shoe_size` = `size_chart`.`shoe` AND `size_chart`.`user_id` = ' . $getData->user_id . ') 
+//         ) OR `in_pud`.`primary_size` = "free_size"
+//       ) 
+//     GROUP BY `in_pud`.`prod_id`
+// ) ' . $prv_cnd . '
+// GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
+//             }
+//         } else {
+//             $userDetails = $this->KidsDetails->find('all')->where(['id' => $getData->kid_id])->first();
+//             if ($userDetails->kids_clothing_gender == 'girls') {
+//                 /* $gender = 4; // Girl kid
+//                   $where_profle = ['profile_type' => $gender];
+//                   $getProducts = $this->Custom->girlsMatching($getData->user_id, $getData->kid_id); */
+//                 $getProducts = $conn->execute('SELECT *
+// FROM `in_products`
+
+// WHERE `in_products`.`id` IN (
+
+//     SELECT `in_pud`.`id`
+//     FROM `in_products` as  `in_pud`, `kids_size_fit`
+//     WHERE
+//       `in_pud`.`profile_type` = 4 AND
+//       `in_pud`.`match_status` = 2 AND
+//       `in_pud`.`available_status` = 1 AND
+//       ' . $season_cnd . '
+//       (
+//         (
+//           (`in_pud`.`top_size` = `kids_size_fit`.`top_size` OR `in_pud`.`bottom_size` = `kids_size_fit`.`bottom_size` OR `in_pud`.`shoe_size` = `kids_size_fit`.`shoe_size`) AND `kids_size_fit`.`kid_id` = ' . $getData->kid_id . ' 
+//         ) OR `in_pud`.`primary_size` = "free_size"
+//       )
+//     GROUP BY `in_pud`.`prod_id`
+// ) ' . $prv_cnd . '
+// GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
+//             } else {
+//                 /* $gender = 3; // Boy kid
+//                   $where_profle = ['profile_type' => $gender];
+//                   $getProducts = $this->Custom->boyMatching($getData->user_id, $getData->kid_id); */
+//                 $getProducts = $conn->execute('SELECT *
+// FROM `in_products`
+
+// WHERE `in_products`.`id` IN (
+
+//     SELECT `in_pud`.`id`
+//     FROM `in_products` as  `in_pud`, `kids_size_fit`
+//     WHERE
+//       `in_pud`.`profile_type` = 3 AND
+//       `in_pud`.`match_status` = 2 AND
+//       `in_pud`.`available_status` = 1 AND
+//       ' . $season_cnd . '
+//       (
+//         (
+//           (`in_pud`.`top_size` = `kids_size_fit`.`top_size` OR `in_pud`.`bottom_size` = `kids_size_fit`.`bottom_size` OR `in_pud`.`shoe_size` = `kids_size_fit`.`shoe_size`) AND `kids_size_fit`.`kid_id` = ' . $getData->kid_id . '
+//         ) OR `in_pud`.`primary_size` = "free_size"
+//       )
+//     GROUP BY `in_pud`.`prod_id`
+// ) ' . $prv_cnd . '
+// GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
+//             }
+//         }
+
+//         $this->loadModel('MatchingCase');
+//         $all_products = [];
+//         $all_prd_ids = [];
+//         if (!empty($getProducts)) {
+//             $this->MatchingCase->deleteAll(['payment_id' => $id]);
+//             foreach ($getProducts as $prd_ky => $prd_lii) {
+//                 if (!empty($prd_ky)) {
+//                     $newRws = $this->MatchingCase->newEntity();
+//                     $newRws->payment_id = $id;
+//                     $newRws->product_id = $prd_lii['id']; //$prd_ky;
+//                     $newRws->count = 0; //count($prd_lii);
+//                     $newRws->matching = json_encode([]); //json_encode($prd_lii);
+//                     $this->MatchingCase->save($newRws);
+
+//                     $all_prd_ids[] = $prd_lii['id']; //$prd_ky;
+//                 }
+//             }
+
+
+//             if (!empty($all_prd_ids)) {
+//                 $this->InProducts->hasOne('match_case', ['className' => 'MatchingCase', 'foreignKey' => 'product_id'])->setConditions(['payment_id' => $id]);
+//                 $all_product = $this->InProducts->find('all')->contain(['match_case' /* => ['sort' => ['match_case.count' => 'DESC']] */])->where([/*'OR' => ['InProducts.is_clearance' => 2, 'InProducts.is_clearance IS' => NULL],*/ 'InProducts.available_status !=' => 2, 'InProducts.is_active !=' => 0, 'InProducts.id IN' => $all_prd_ids])->order(['match_case.count' => 'DESC']);
+//                 $this->paginate['limit'] = 10;
+//                 // pj($all_product);exit;
+//                 if (!empty($_GET['search_for']) && !empty($_GET['search_data'])) {
+//                     if ($_GET['search_for'] == "product_name1") {
+//                         $get_data_value = trim($_GET['search_data']);
+//                         $all_product = $all_product->where(['InProducts.product_name_one LIKE' => "%" . $get_data_value . "%"]);
+//                     }
+//                     if ($_GET['search_for'] == "product_name2") {
+//                         $get_data_value = trim($_GET['search_data']);
+//                         $all_product = $all_product->where(['InProducts.product_name_two LIKE' => "%" . $get_data_value . "%"]);
+//                     }
+//                     if ($_GET['search_for'] == "style_number") {
+//                         $get_data_value = trim($_GET['search_data']);
+//                         $all_product = $all_product->where(['InProducts.style_number LIKE' => "%" . $get_data_value . "%"]);
+//                     }
+//                     if ($_GET['search_for'] == "bar_code") {
+//                         $get_data_value = trim($_GET['search_data']);
+//                         if (in_array()) {
+//                         }
+//                         $all_product = $all_product->where(['InProducts.dtls LIKE' => "%" . $get_data_value . "%"]);
+//                     }
+
+//                     if ($_GET['search_for'] == "color") {
+//                         $get_data_value = trim($_GET['search_data']);
+//                         $chk_color = $this->InColors->find('all')->where(['InColors.name LIKE' => '%' . $get_data_value . '%']);
+//                         $color_list = [];
+//                         if (!empty($chk_color)) {
+//                             $color_list = Hash::extract($chk_color->toArray(), '{n}.id');
+//                         }
+//                         if (!empty($color_list)) {
+//                             $all_product = $all_product->where(['InProducts.color IN' => $color_list]);
+//                         }
+//                     }
+
+//                     if ($_GET['search_for'] == "brand_name") {
+//                         $get_data_value = trim($_GET['search_data']);
+//                         $chk_brnd = $this->InUsers->find('all')->where(['InUsers.brand_name LIKE' => '%' . $get_data_value . '%']);
+//                         $brand_list = [];
+//                         if (!empty($chk_brnd)) {
+//                             $brand_list = Hash::extract($chk_brnd->toArray(), '{n}.id');
+//                         }
+//                         if (!empty($brand_list)) {
+//                             $all_product = $all_product->where(['InProducts.brand_id IN' => $brand_list]);
+//                         }
+//                     }
+//                 }
+//                 $all_products = $this->paginate($all_product);
+//                 //pj($all_products);exit;
+//             }
+//             //        echo "<pre>";
+//             //        print_r($all_products);
+//             //        echo "</pre>";
+//         }
+//         $this->set(compact('userDetails', 'gender', 'getProducts', 'id', 'getData', 'all_products', 'final_season_name'));
+//     }
 
     public function nxtPrediction()
     {
@@ -4595,6 +4648,85 @@ GROUP BY `in_products`.`prod_id`')->fetchAll('assoc');
         echo "<pre>";
         print_r($query);
         exit;
+    }
+
+    public function getLookData(){
+        $this->viewBuilder()->layout('');
+        if ($this->request->is('post')) {
+            $postData = $this->request->data;
+            $season_name = $postData['season_nm'];
+            $payment_id = $postData['payment_id'];
+            $look_count = $postData['look_count'];
+            $getPaymentGatewayDetails = $this->PaymentGetways->find('all')->where(['id' => $payment_id])->first();
+            if($getPaymentGatewayDetails->kid_id != 0){
+                $userDetails = $this->KidsDetails->find('all')->where(['id' => $getPaymentGatewayDetails->kid_id])->first();
+                if ($userDetails->kids_clothing_gender == 'girls') {
+                    $gender = 4; // Girl kid
+                }else{
+                    $gender = 3; // Boy Kid
+                }
+                $gender = $getPaymentGatewayDetails->profile_type;
+            }else{
+                $userDetails = $this->UserDetails->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
+                $gender = $getPaymentGatewayDetails->profile_type;
+            }
+            $this->set(compact('season_name', 'payment_id', 'look_count', 'gender','getPaymentGatewayDetails'));
+        }
+
+    }
+
+    public function getSeasonWiseProduct(){
+        $this->loadModel('WomenStyle');
+        $this->loadModel('PersonalizedFix');
+        $this->loadModel('WomenInformation');
+        $this->loadModel('KidsDetails');
+        $this->loadModel('UserDetails');
+        $this->viewBuilder()->layout('');if ($this->request->is('post')) {
+            $postData = $this->request->data;
+            $payment_id = $postData['payment_id'];
+            $season_name = $postData['season'];
+            $product_type = $postData['product_type'];
+            $getPaymentGatewayDetails = $this->PaymentGetways->find('all')->where(['id' => $payment_id])->first();
+            if($getPaymentGatewayDetails->kid_id != 0){
+                $userDetails = $this->KidsDetails->find('all')->where(['id' => $getPaymentGatewayDetails->kid_id])->first();
+                if ($userDetails->kids_clothing_gender == 'girls') {
+                    $gender = 4; // Girl kid
+                }else{
+                    $gender = 3; // Boy Kid
+                }
+                $gender = $getPaymentGatewayDetails->profile_type;
+            }else{
+                $userDetails = $this->UserDetails->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
+                $gender = $getPaymentGatewayDetails->profile_type;
+            }
+            
+            $getMatchingProducts = [];
+            if($gender == 2){
+                $women_style_data = $this->WomenStyle->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
+                $women_age = $this->Custom->ageCal(date('Y-m-d', strtotime($women_style_data->birthday)), date('Y-m-d'));
+                $stats = $this->PersonalizedFix->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
+                $womenInformationsData = $this->WomenInformation->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
+
+                $getMatchingProducts = $this->InProducts->find('all')
+                ->where(['InProducts.profile_type' => 2, 
+                // 'InProducts.age1 >=' => $women_age, 'InProducts.age2 <=' => $women_age, 
+                // 'InProducts.tall_feet >=' => $stats->tell_in_feet, 'InProducts.tall_feet2 <=' => $stats->tell_in_feet,
+                // 'InProducts.best_fit_for_weight >=' => $stats->weight_lbs, 'InProducts.best_fit_for_weight2 <=' => $stats->weight_lbs,
+                'InProducts.better_body_shape LIKE' => '%"' . $womenInformationsData->body_type . '"%',
+                // 'available_status' => 1, 'match_status' => 2
+                ])
+                // ->where([
+                //     'PaymentGetways.created_dt BETWEEN :start AND :end'
+                // ])
+                //     ->bind(':start', date('Y-m-01'), 'date')
+                //     ->bind(':end', $end_date, 'date')
+                ->limit(5)
+                ->group('prod_id');
+            }
+
+            $this->set(compact('season_name', 'payment_id', 'gender','getPaymentGatewayDetails','getMatchingProducts'));
+        }
+
     }
     
 }

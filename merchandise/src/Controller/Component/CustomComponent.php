@@ -3950,4 +3950,18 @@ class CustomComponent extends Component {
 
     }
 
+    function ageCal($start_date, $end_date = null) {
+        $date1 = date('Y-m-d', strtotime($end_date));
+        $date2 = !empty($end_date) ? date('Y-m-d', strtotime($end_date)) : date('Y-m-d');
+
+        $diff = abs(strtotime($date2) - strtotime($date1));
+
+        $years = floor($diff / (365 * 60 * 60 * 24));
+        $months = floor(($diff - $years * 365 * 60 * 60 * 24) / (30 * 60 * 60 * 24));
+        $days = floor(($diff - $years * 365 * 60 * 60 * 24 - $months * 30 * 60 * 60 * 24) / (60 * 60 * 24));
+//printf("%d years, %d months, %d days\n", $years, $months, $days);
+//        printf("%d years, %d months, %d days\n", $years, $months, $days);
+        return $years;
+    }
+
 }

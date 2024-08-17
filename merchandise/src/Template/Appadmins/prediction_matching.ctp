@@ -39,69 +39,97 @@
                     <div class="box-body">
 
                         <div class="single category">
-                            <h3 class="side-title">Look 1</h3>
+                            <h3 class="side-title">Look 1 (<?=$final_season_name;?>)</h3>
 
                             <ul class="list-unstyled">
                                 <li>
-                                    <a href="" title="">Business 
-                                        <span class="pull-right">13</span>
-                                    </a>
+                                    <div id="look_data_1">
+
+                                    </div>
                                 </li>
                                 
                             </ul>
                         </div>
                         
+                        
                         <div class="single category">
-                            <h3 class="side-title">Look 2</h3>
+                            <h3 class="side-title">Look 2 (<?=$final_season_name;?>)</h3>
 
                             <ul class="list-unstyled">
                                 <li>
-                                    <a href="" title="">Business 
-                                        <span class="pull-right">13</span>
-                                    </a>
+                                    <div id="look_data_2">
+
+                                    </div>
                                 </li>
                                 
                             </ul>
                         </div>
 
                         <div class="single category">
-                            <h3 class="side-title">Look 3</h3>
+                            <h3 class="side-title">Look 3 (<?=$final_season_name;?>)</h3>
 
                             <ul class="list-unstyled">
                                 <li>
-                                    <a href="" title="">Business 
-                                        <span class="pull-right">13</span>
-                                    </a>
+                                    <div id="look_data_3">
+
+                                    </div>
                                 </li>
                                 
                             </ul>
                         </div>
 
                         <div class="single category">
-                            <h3 class="side-title">Look 4</h3>
+                            <h3 class="side-title">Look 4 (<?=$final_season_name;?>)</h3>
 
                             <ul class="list-unstyled">
                                 <li>
-                                    <a href="" title="">Business 
-                                        <span class="pull-right">13</span>
-                                    </a>
+                                    <div id="look_data_4">
+
+                                    </div>
                                 </li>
                                 
                             </ul>
                         </div>
 
                         <div class="single category">
-                            <h3 class="side-title">Look 5</h3>
+                            <h3 class="side-title">Look 5 (<?=$final_season_name;?>)</h3>
 
                             <ul class="list-unstyled">
                                 <li>
-                                    <a href="" title="">Business 
-                                        <span class="pull-right">13</span>
-                                    </a>
+                                    <div id="look_data_5">
+
+                                    </div>
                                 </li>
-                                
                             </ul>
                         </div>
+
+                        <script>
+                            $(document).ready(function(){
+                                var $digi_array = [1, 2, 3, 4, 5];
+                                for (var $i = 1; $i <= $digi_array.length; $i++) {
+                                    getLookData($i);
+                                }
+                            });
+
+                            function getLookData(look_count){
+                                let season_nm = '<?=$final_season_name;?>';
+                                let payment_id= <?=$id;?>;
+                                $.ajax({
+                                    type: "POST",
+                                    url: "<?= HTTP_ROOT; ?>appadmins/getLookData",
+                                    data: {
+                                        payment_id: payment_id,
+                                        season_nm : season_nm,
+                                        look_count : look_count,
+                                    },
+                                    dataType: 'html',
+                                    success: function(result) {
+                                        $('#look_data_'+look_count).html(result);
+                                    }
+                                });
+                            }
+
+                        </script>
 
                         <table id="exampleXX" class="table table-bordered table-striped">
                             <!-- <thead>
