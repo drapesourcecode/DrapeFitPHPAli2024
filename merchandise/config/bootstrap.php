@@ -139,9 +139,9 @@ $errorHandler = new AppError();
      $siteName1 = 'http://' . $domain . '/2024/df_tst/DrapeFitPHPAli2024/';
      $siteName3 = 'http://' . $domain . '/2024/df_tst/DrapeFitPHPAli2024/inventory/';
    }else{  
-    $siteName = 'https://' . $domain . '/merchandise/';
-    $siteName1 = 'https://' . $domain . '/';
-    $siteName3 = 'https://' . $domain . '/inventory/';
+    $siteName = 'http://' . $domain . '/merchandise/';
+    $siteName1 = 'http://' . $domain . '/';
+    $siteName3 = 'http://' . $domain . '/inventory/';
   }
    define('WS_URL', 'wss://drapefittest.com/wss2/');
   // define('WS_URL', 'ws://localhost.com:8081');

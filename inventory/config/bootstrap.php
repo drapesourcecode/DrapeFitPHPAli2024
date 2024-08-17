@@ -143,7 +143,7 @@ $errorHandler = new AppError();
   }
    define('WS_URL', 'wss://drapefittest.com/wss2/');
   // define('WS_URL', 'ws://localhost.com:8081');
-  echo $siteName1;exit;
+  // echo $siteName1;exit;
 define('HTTP_ROOT_BASE', $siteName1);
 define('HTTP_ROOT', $siteName);
   define('SITE_NAME', "Drape Fit");
