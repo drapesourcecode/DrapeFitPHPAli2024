@@ -138,8 +138,8 @@ $errorHandler = new AppError();
      $siteName = 'http://' . $domain . '/2024/df_tst/DrapeFitPHPAli2024/supplier/';
      $siteName1 = 'http://' . $domain . '/2024/df_tst/DrapeFitPHPAli2024/';
    }else{
-      $siteName = 'https://' . $domain . '/supplier/';
-      $siteName1 = 'https://' . $domain . '/';
+      $siteName = 'http://' . $domain . '/supplier/';
+      $siteName1 = 'http://' . $domain . '/';
    }
  
   
