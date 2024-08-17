@@ -11,17 +11,8 @@ permissions:
 
 jobs:
   build:
-    runs-on: ${{ matrix.runner }}
-    strategy:
-      matrix:
-        branch: [uat, prod]
-        runner: [self-hosted, self-hosted]
-        include:
-          - branch: uat
-            runner: [self-hosted,test]
-          - branch: prod
-            runner: [self-hosted,prod]
-    
+    runs-on: ${{ github.ref == 'refs/heads/prod' && 'prod' || 'test' }}
+
     steps:
     - uses: actions/checkout@v4
 
@@ -32,16 +23,11 @@ jobs:
 
     - name: Copy and unzip vendor directories
       run: |
-        # Define the project root directory
         PROJECT_ROOT="/home/drapefit/actions-runner/_work/DrapeFitPHPAli2024/DrapeFitPHPAli2024"
-        
-        # Move the zip files to the project root directory
         cp /home/drapefit/root_vendor.zip $PROJECT_ROOT/
         cp /home/drapefit/merchandise_vendor.zip $PROJECT_ROOT/merchandise/
         cp /home/drapefit/supplier_vendor.zip $PROJECT_ROOT/supplier/
         cp /home/drapefit/inventory_vendor.zip $PROJECT_ROOT/inventory/
-
-        # Unzip the files in their respective directories
         unzip -o $PROJECT_ROOT/root_vendor.zip -d $PROJECT_ROOT/
         unzip -o $PROJECT_ROOT/merchandise/merchandise_vendor.zip -d $PROJECT_ROOT/merchandise/
         unzip -o $PROJECT_ROOT/supplier/supplier_vendor.zip -d $PROJECT_ROOT/supplier/
