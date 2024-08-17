@@ -20,13 +20,15 @@ jobs:
           - branch: prod
             runner: self-hosted,prod
     
+    if: github.ref == 'refs/heads/${{ matrix.branch }}'
+    
     steps:
     - uses: actions/checkout@v4
 
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '7.4'
+        php-version: '7.4'  # Adjust the PHP version as needed
 
     - name: Copy and unzip vendor directories
       run: |
