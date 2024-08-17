@@ -303,7 +303,7 @@
            'className' => 'Cake\Database\Connection',
            'driver' => 'Cake\Database\Driver\Mysql',
            'persistent' => false,
-           'host' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'104.131.0.179',
+             'host' =>  ($domain == "142.93.58.236")?'167.71.244.74': '104.131.0.179',
          //   'host' => '108.167.139.168',
            /**
             * CakePHP will use the default DB port based on the driver selected
@@ -315,9 +315,9 @@
         //     'username' => 'drapefit_invuser',
         //   'password' => 'lJ?I04elWC#M',
         //   'database' => 'drapefit_invateroy',
-           'username' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'drapefit_test12',
+           'username' => ($domain == "142.93.58.236")?'drapefit':'drapefit_test12',
            'password' => 'g_G-=EVqW^TO',
-           'database' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'drapefit_test12',
+           'database' => ($domain == "142.93.58.236")?'drapefit_latest_db1':'drapefit_test12',
            'encoding' => 'utf8',
            'timezone' => 'UTC',
            'flags' => [],
