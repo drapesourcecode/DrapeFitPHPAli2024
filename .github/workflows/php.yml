@@ -11,17 +11,8 @@ permissions:
 
 jobs:
   build:
-    runs-on: ${{ matrix.runner }}
-    strategy:
-      matrix:
-        include:
-          - branch: uat
-            runner: self-hosted,test
-          - branch: prod
-            runner: self-hosted,prod
-    
-    if: github.ref == 'refs/heads/${{ matrix.branch }}'
-    
+    runs-on: ${{ github.ref == 'refs/heads/prod' && 'self-hosted,prod' || 'self-hosted,test' }}
+
     steps:
     - uses: actions/checkout@v4
 
