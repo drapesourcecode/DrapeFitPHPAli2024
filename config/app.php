@@ -315,6 +315,7 @@
         //     'username' => 'drapefit_invuser',
         //   'password' => 'lJ?I04elWC#M',
         //   'database' => 'drapefit_invateroy',
+
            'username' => ($domain == "142.93.58.236")?'drapefit':'drapefit_test12',
            'password' => 'g_G-=EVqW^TO',
            'database' => ($domain == "142.93.58.236")?'drapefit_latest_db1':'drapefit_test12',
