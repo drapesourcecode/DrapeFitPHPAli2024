@@ -2725,4 +2725,20 @@ class CustomComponent extends Component {
         return $msg;
     }
 
+    public function getStripeKey() {
+        $payment_mode_tb = TableRegistry::get('Paymentmode');
+        $cofig_keys_tb = TableRegistry::get('CofigKeys');
+
+        $get_payment_mode = $payment_mode_tb->find('all')->first();
+        if($get_payment_mode->value == 1 ){
+            $stripe_key = $cofig_keys_tb->find('all')->where(['name' => 'stripe_live_key'])->first();
+        }else{
+            $stripe_key = $cofig_keys_tb->find('all')->where(['name' => 'stripe_test_key'])->first();
+        }
+
+        $stripe_api_key = json_decode($stripe_key->key_val, true);
+        return $stripe_api_key;
+
+    }
+
 }

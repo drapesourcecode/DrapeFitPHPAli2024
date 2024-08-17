@@ -2140,14 +2140,13 @@ class UsersController extends AppController {
 
     public function welcome($slug = null, $sections = null, $editid = null) {
         require_once(ROOT . DS . 'vendor' . DS . "stripe-php2" . DS . "init.php");
+        $stripe_api_key = $this->Custom->getStripeKey();
+
         $stripe_key_arr = array(
             // "secret_key"      => "Your_Stripe_API_Secret_Key",
-            // "publishable_key" => "Your_API_Publishable_Key"
-//            "secret_key" => "sk_test_51JY90jITPrbxGSMcpa6GFAxK96iCUrRjwWpJPY0gbh53l1EXf1F5aLYkNqc8V3h6baqk0gm9N79qazLZrp6bNg1H00TRuPEAeg",
-//            "publishable_key" => "pk_test_51JY90jITPrbxGSMcuo8bhxqQhCbSvHghLQaYIxtqVSe9u2xxm80SDtIVQ9acsLTW4WyPJX5G0nIMxaLXwtXbsN0N00vkBYmYDU"
-
-            "secret_key" => "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",
-            "publishable_key" => "pk_live_51JY90jITPrbxGSMc2biBXo0DoiP6kSUOwvQQix5RmbPTlEIeJSPL3inlSdqhoJ4dh5oV5FJHpcuCMTuk3V2Hymqa00sVontf8A"
+            // "publishable_key" => "Your_API_Publishable_Key"             
+            "secret_key" => $stripe_api_key['secret_key'],
+            "publishable_key" => $stripe_api_key['publishable_key']
         );
 
         if ($this->request->session()->read('PROFILE') == 'KIDS') {
@@ -3241,14 +3240,13 @@ class UsersController extends AppController {
 //        require_once(ROOT . DS . 'vendor' . DS . "stripe-php" . DS . "init.php");
         //require_once('stripe-php/init.php');
         //set stripe secret key and publishable key
+        $stripe_api_key = $this->Custom->getStripeKey();
+        
         $stripe = array(
             // "secret_key"      => "Your_Stripe_API_Secret_Key",
             // "publishable_key" => "Your_API_Publishable_Key"             
-//            "secret_key" => "sk_test_51JY90jITPrbxGSMcpa6GFAxK96iCUrRjwWpJPY0gbh53l1EXf1F5aLYkNqc8V3h6baqk0gm9N79qazLZrp6bNg1H00TRuPEAeg",
-//            "publishable_key" => "pk_test_51JY90jITPrbxGSMcuo8bhxqQhCbSvHghLQaYIxtqVSe9u2xxm80SDtIVQ9acsLTW4WyPJX5G0nIMxaLXwtXbsN0N00vkBYmYDU"
-
-            "secret_key" => "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",
-            "publishable_key" => "pk_live_51JY90jITPrbxGSMc2biBXo0DoiP6kSUOwvQQix5RmbPTlEIeJSPL3inlSdqhoJ4dh5oV5FJHpcuCMTuk3V2Hymqa00sVontf8A"
+            "secret_key" => $stripe_api_key['secret_key'],
+            "publishable_key" => $stripe_api_key['publishable_key']
         );
         \Stripe\Stripe::setApiKey($stripe['secret_key']);
 
@@ -4820,7 +4818,7 @@ class UsersController extends AppController {
                 }
                 $email_message = $this->Custom->order($emailMessage1->value, $name, $sitename, $productData, $data['stylist_picks_subtotal'], $total, $data['style_fit_fee'], $data['keep_all_discount'], $refundamount = '', $gtotal, $offerData, $data['sales_tax'], '#DFPYMID' . $paymentId);
                 $this->Custom->sendEmail($to, $from, $subject, $email_message);
-                $this->Custom->sendEmail('debmicrofinet@gmail.com', $from, $subject, $email_message);
+                // $this->Custom->sendEmail('debmicrofinet@gmail.com', $from, $subject, $email_message);
                 $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
                 $this->Custom->sendEmail($toSupport, $from, $subject, $email_message);
 
@@ -7944,14 +7942,12 @@ So I started using the personal styling service, Drapefit, and I thought you’d
 
     public function addNewCard($token_key = null) {
         require_once(ROOT . DS . 'vendor' . DS . "stripe-php2" . DS . "init.php");
+        $stripe_api_key = $this->Custom->getStripeKey();
         $stripe_key_arr = array(
             // "secret_key"      => "Your_Stripe_API_Secret_Key",
-            // "publishable_key" => "Your_API_Publishable_Key"
-//            "secret_key" => "sk_test_51JY90jITPrbxGSMcpa6GFAxK96iCUrRjwWpJPY0gbh53l1EXf1F5aLYkNqc8V3h6baqk0gm9N79qazLZrp6bNg1H00TRuPEAeg",
-//            "publishable_key" => "pk_test_51JY90jITPrbxGSMcuo8bhxqQhCbSvHghLQaYIxtqVSe9u2xxm80SDtIVQ9acsLTW4WyPJX5G0nIMxaLXwtXbsN0N00vkBYmYDU"
-
-            "secret_key" => "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",
-            "publishable_key" => "pk_live_51JY90jITPrbxGSMc2biBXo0DoiP6kSUOwvQQix5RmbPTlEIeJSPL3inlSdqhoJ4dh5oV5FJHpcuCMTuk3V2Hymqa00sVontf8A"
+            // "publishable_key" => "Your_API_Publishable_Key"             
+            "secret_key" => $stripe_api_key['secret_key'],
+            "publishable_key" => $stripe_api_key['publishable_key']
         );
         $chk_usr_data = $this->Users->find('all')->where(['id' => $this->Auth->user('id')])->first();
         if (!empty($chk_usr_data->stripe_customer_key)) {
@@ -7971,19 +7967,17 @@ So I started using the personal styling service, Drapefit, and I thought you’d
             $this->Flash->error(__('Add address before add card '));
             return $this->redirect(HTTP_ROOT . 'welcome/addressbook');
         }
-        $this->set(compact('client_secret', 'token_key'));
+        $this->set(compact('client_secret', 'token_key','stripe_api_key'));
     }
 
     public function cardStatus($token_key = null) {
         require_once(ROOT . DS . 'vendor' . DS . "stripe-php2" . DS . "init.php");
+        $stripe_api_key = $this->Custom->getStripeKey();
         $stripe_key_arr = array(
             // "secret_key"      => "Your_Stripe_API_Secret_Key",
-            // "publishable_key" => "Your_API_Publishable_Key"
-//            "secret_key" => "sk_test_51JY90jITPrbxGSMcpa6GFAxK96iCUrRjwWpJPY0gbh53l1EXf1F5aLYkNqc8V3h6baqk0gm9N79qazLZrp6bNg1H00TRuPEAeg",
-//            "publishable_key" => "pk_test_51JY90jITPrbxGSMcuo8bhxqQhCbSvHghLQaYIxtqVSe9u2xxm80SDtIVQ9acsLTW4WyPJX5G0nIMxaLXwtXbsN0N00vkBYmYDU"
-
-            "secret_key" => "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",
-            "publishable_key" => "pk_live_51JY90jITPrbxGSMc2biBXo0DoiP6kSUOwvQQix5RmbPTlEIeJSPL3inlSdqhoJ4dh5oV5FJHpcuCMTuk3V2Hymqa00sVontf8A"
+            // "publishable_key" => "Your_API_Publishable_Key"             
+            "secret_key" => $stripe_api_key['secret_key'],
+            "publishable_key" => $stripe_api_key['publishable_key']
         );
         $chk_usr_data = $this->Users->find('all')->where(['id' => $this->Auth->user('id')])->first();
         if (!empty($chk_usr_data->stripe_customer_key)) {
@@ -8040,6 +8034,7 @@ So I started using the personal styling service, Drapefit, and I thought you’d
             $this->Flash->error(__('Add address before add card '));
             return $this->redirect(HTTP_ROOT . 'welcome/addressbook');
         }
+        $this->set(compact('stripe_api_key'));
     }
 
     public function notStripCustomerList() {
@@ -8075,14 +8070,12 @@ So I started using the personal styling service, Drapefit, and I thought you’d
         if ($this->request->is('post')) {
             $postData = $this->request->data;
             require_once(ROOT . DS . 'vendor' . DS . "stripe-php2" . DS . "init.php");
+            $stripe_api_key = $this->Custom->getStripeKey();
             $stripe_key_arr = array(
                 // "secret_key"      => "Your_Stripe_API_Secret_Key",
-                // "publishable_key" => "Your_API_Publishable_Key"
-//                "secret_key" => "sk_test_51JY90jITPrbxGSMcpa6GFAxK96iCUrRjwWpJPY0gbh53l1EXf1F5aLYkNqc8V3h6baqk0gm9N79qazLZrp6bNg1H00TRuPEAeg",
-//                "publishable_key" => "pk_test_51JY90jITPrbxGSMcuo8bhxqQhCbSvHghLQaYIxtqVSe9u2xxm80SDtIVQ9acsLTW4WyPJX5G0nIMxaLXwtXbsN0N00vkBYmYDU"
-
-                "secret_key" => "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",
-                "publishable_key" => "pk_live_51JY90jITPrbxGSMc2biBXo0DoiP6kSUOwvQQix5RmbPTlEIeJSPL3inlSdqhoJ4dh5oV5FJHpcuCMTuk3V2Hymqa00sVontf8A"
+                // "publishable_key" => "Your_API_Publishable_Key"             
+                "secret_key" => $stripe_api_key['secret_key'],
+                "publishable_key" => $stripe_api_key['publishable_key']
             );
 
             \Stripe\Stripe::setApiKey($stripe_key_arr['secret_key']);
@@ -8113,14 +8106,12 @@ So I started using the personal styling service, Drapefit, and I thought you’d
         $uuser_id = $payment_card_details->user_id;
         $client_secret = '';
         require_once(ROOT . DS . 'vendor' . DS . "stripe-php2" . DS . "init.php");
+        $stripe_api_key = $this->Custom->getStripeKey(); 
         $stripe_key_arr = array(
             // "secret_key"      => "Your_Stripe_API_Secret_Key",
-            // "publishable_key" => "Your_API_Publishable_Key"
-//            "secret_key" => "sk_test_51JY90jITPrbxGSMcpa6GFAxK96iCUrRjwWpJPY0gbh53l1EXf1F5aLYkNqc8V3h6baqk0gm9N79qazLZrp6bNg1H00TRuPEAeg",
-//            "publishable_key" => "pk_test_51JY90jITPrbxGSMcuo8bhxqQhCbSvHghLQaYIxtqVSe9u2xxm80SDtIVQ9acsLTW4WyPJX5G0nIMxaLXwtXbsN0N00vkBYmYDU"
-
-            "secret_key" => "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",
-            "publishable_key" => "pk_live_51JY90jITPrbxGSMc2biBXo0DoiP6kSUOwvQQix5RmbPTlEIeJSPL3inlSdqhoJ4dh5oV5FJHpcuCMTuk3V2Hymqa00sVontf8A"
+            // "publishable_key" => "Your_API_Publishable_Key"             
+            "secret_key" => $stripe_api_key['secret_key'],
+            "publishable_key" => $stripe_api_key['publishable_key']
         );
 
         if (!empty($userDetails->stripe_customer_key)) {
@@ -8141,19 +8132,17 @@ So I started using the personal styling service, Drapefit, and I thought you’d
             return $this->redirect($this->referer());
         }
 
-        $this->set(compact('payment_card_details', 'userDetails', 'client_secret', 'id', 'uuser_id'));
+        $this->set(compact('payment_card_details', 'userDetails', 'client_secret', 'id', 'uuser_id','stripe_api_key'));
     }
 
     public function striprCardStatus($id, $user_id) {
         require_once(ROOT . DS . 'vendor' . DS . "stripe-php2" . DS . "init.php");
+        $stripe_api_key = $this->Custom->getStripeKey();
         $stripe_key_arr = array(
             // "secret_key"      => "Your_Stripe_API_Secret_Key",
-            // "publishable_key" => "Your_API_Publishable_Key"
-//            "secret_key" => "sk_test_51JY90jITPrbxGSMcpa6GFAxK96iCUrRjwWpJPY0gbh53l1EXf1F5aLYkNqc8V3h6baqk0gm9N79qazLZrp6bNg1H00TRuPEAeg",
-//            "publishable_key" => "pk_test_51JY90jITPrbxGSMcuo8bhxqQhCbSvHghLQaYIxtqVSe9u2xxm80SDtIVQ9acsLTW4WyPJX5G0nIMxaLXwtXbsN0N00vkBYmYDU"
-
-            "secret_key" => "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",
-            "publishable_key" => "pk_live_51JY90jITPrbxGSMc2biBXo0DoiP6kSUOwvQQix5RmbPTlEIeJSPL3inlSdqhoJ4dh5oV5FJHpcuCMTuk3V2Hymqa00sVontf8A"
+            // "publishable_key" => "Your_API_Publishable_Key"             
+            "secret_key" => $stripe_api_key['secret_key'],
+            "publishable_key" => $stripe_api_key['publishable_key']
         );
         $chk_usr_data = $this->Users->find('all')->where(['id' => $user_id])->first();
         if (!empty($chk_usr_data->stripe_customer_key)) {
@@ -8200,14 +8189,13 @@ So I started using the personal styling service, Drapefit, and I thought you’d
 
     public function reAuthPayment($page, $id) {
         require_once(ROOT . DS . 'vendor' . DS . "stripe-php2" . DS . "init.php");
+        $stripe_api_key = $this->Custom->getStripeKey();
+        
         $stripe = array(
             // "secret_key"      => "Your_Stripe_API_Secret_Key",
             // "publishable_key" => "Your_API_Publishable_Key"             
-//            "secret_key" => "sk_test_51JY90jITPrbxGSMcpa6GFAxK96iCUrRjwWpJPY0gbh53l1EXf1F5aLYkNqc8V3h6baqk0gm9N79qazLZrp6bNg1H00TRuPEAeg",
-//            "publishable_key" => "pk_test_51JY90jITPrbxGSMcuo8bhxqQhCbSvHghLQaYIxtqVSe9u2xxm80SDtIVQ9acsLTW4WyPJX5G0nIMxaLXwtXbsN0N00vkBYmYDU"
-
-            "secret_key" => "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",
-            "publishable_key" => "pk_live_51JY90jITPrbxGSMc2biBXo0DoiP6kSUOwvQQix5RmbPTlEIeJSPL3inlSdqhoJ4dh5oV5FJHpcuCMTuk3V2Hymqa00sVontf8A"
+            "secret_key" => $stripe_api_key['secret_key'],
+            "publishable_key" => $stripe_api_key['publishable_key']
         );
         \Stripe\Stripe::setApiKey($stripe['secret_key']);
 
@@ -8227,7 +8215,7 @@ So I started using the personal styling service, Drapefit, and I thought you’d
 //        echo "</pre>";
 //        exit;
 
-        $this->set(compact('required_data', 'page', 'id','payment_dil'));
+        $this->set(compact('required_data', 'page', 'id','payment_dil', 'stripe_api_key'));
     }
 
     public function processStyleFitReAuth($id = null)
@@ -8235,14 +8223,13 @@ So I started using the personal styling service, Drapefit, and I thought you’d
         $this->viewBuilder()->layout('ajax');
         $message['Success'] = "";
         require_once(ROOT . DS . 'vendor' . DS . "stripe-php2" . DS . "init.php");
+        $stripe_api_key = $this->Custom->getStripeKey();
+        
         $stripe = array(
             // "secret_key"      => "Your_Stripe_API_Secret_Key",
             // "publishable_key" => "Your_API_Publishable_Key"             
-//            "secret_key" => "sk_test_51JY90jITPrbxGSMcpa6GFAxK96iCUrRjwWpJPY0gbh53l1EXf1F5aLYkNqc8V3h6baqk0gm9N79qazLZrp6bNg1H00TRuPEAeg",
-//            "publishable_key" => "pk_test_51JY90jITPrbxGSMcuo8bhxqQhCbSvHghLQaYIxtqVSe9u2xxm80SDtIVQ9acsLTW4WyPJX5G0nIMxaLXwtXbsN0N00vkBYmYDU"
-
-            "secret_key" => "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",
-            "publishable_key" => "pk_live_51JY90jITPrbxGSMc2biBXo0DoiP6kSUOwvQQix5RmbPTlEIeJSPL3inlSdqhoJ4dh5oV5FJHpcuCMTuk3V2Hymqa00sVontf8A"
+            "secret_key" => $stripe_api_key['secret_key'],
+            "publishable_key" => $stripe_api_key['publishable_key']
         );
         \Stripe\Stripe::setApiKey($stripe['secret_key']);
 
@@ -8491,14 +8478,13 @@ So I started using the personal styling service, Drapefit, and I thought you’d
 
 
         require_once(ROOT . DS . 'vendor' . DS . "stripe-php2" . DS . "init.php");
+        $stripe_api_key = $this->Custom->getStripeKey();
+        
         $stripe = array(
             // "secret_key"      => "Your_Stripe_API_Secret_Key",
             // "publishable_key" => "Your_API_Publishable_Key"             
-//            "secret_key" => "sk_test_51JY90jITPrbxGSMcpa6GFAxK96iCUrRjwWpJPY0gbh53l1EXf1F5aLYkNqc8V3h6baqk0gm9N79qazLZrp6bNg1H00TRuPEAeg",
-//            "publishable_key" => "pk_test_51JY90jITPrbxGSMcuo8bhxqQhCbSvHghLQaYIxtqVSe9u2xxm80SDtIVQ9acsLTW4WyPJX5G0nIMxaLXwtXbsN0N00vkBYmYDU"
-
-            "secret_key" => "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",
-            "publishable_key" => "pk_live_51JY90jITPrbxGSMc2biBXo0DoiP6kSUOwvQQix5RmbPTlEIeJSPL3inlSdqhoJ4dh5oV5FJHpcuCMTuk3V2Hymqa00sVontf8A"
+            "secret_key" => $stripe_api_key['secret_key'],
+            "publishable_key" => $stripe_api_key['publishable_key']
         );
         \Stripe\Stripe::setApiKey($stripe['secret_key']);
 
@@ -8840,7 +8826,7 @@ So I started using the personal styling service, Drapefit, and I thought you’d
         }
         $email_message = $this->Custom->order($emailMessage1->value, $name, $sitename, $productData, $data['stylist_picks_subtotal'], $total, $data['style_fit_fee'], $data['keep_all_discount'], $refundamount = '', $gtotal, $offerData, $data['sales_tax'], '#DFPYMID' . $paymentId);
         $this->Custom->sendEmail($to, $from, $subject, $email_message);
-        $this->Custom->sendEmail('debmicrofinet@gmail.com', $from, $subject, $email_message);
+        // $this->Custom->sendEmail('debmicrofinet@gmail.com', $from, $subject, $email_message);
         $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
         $this->Custom->sendEmail($toSupport, $from, $subject, $email_message);
 
@@ -8871,14 +8857,13 @@ So I started using the personal styling service, Drapefit, and I thought you’d
         $this->viewBuilder()->layout('ajax');
         $message['Success'] = "";
         require_once(ROOT . DS . 'vendor' . DS . "stripe-php2" . DS . "init.php");
+        $stripe_api_key = $this->Custom->getStripeKey();
+        
         $stripe = array(
             // "secret_key"      => "Your_Stripe_API_Secret_Key",
             // "publishable_key" => "Your_API_Publishable_Key"             
-//            "secret_key" => "sk_test_51JY90jITPrbxGSMcpa6GFAxK96iCUrRjwWpJPY0gbh53l1EXf1F5aLYkNqc8V3h6baqk0gm9N79qazLZrp6bNg1H00TRuPEAeg",
-//            "publishable_key" => "pk_test_51JY90jITPrbxGSMcuo8bhxqQhCbSvHghLQaYIxtqVSe9u2xxm80SDtIVQ9acsLTW4WyPJX5G0nIMxaLXwtXbsN0N00vkBYmYDU"
-
-            "secret_key" => "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",
-            "publishable_key" => "pk_live_51JY90jITPrbxGSMc2biBXo0DoiP6kSUOwvQQix5RmbPTlEIeJSPL3inlSdqhoJ4dh5oV5FJHpcuCMTuk3V2Hymqa00sVontf8A"
+            "secret_key" => $stripe_api_key['secret_key'],
+            "publishable_key" => $stripe_api_key['publishable_key']
         );
         \Stripe\Stripe::setApiKey($stripe['secret_key']);
 
@@ -9074,14 +9059,13 @@ So I started using the personal styling service, Drapefit, and I thought you’d
         $this->viewBuilder()->layout('ajax');
         $message['Success'] = "";
         require_once(ROOT . DS . 'vendor' . DS . "stripe-php2" . DS . "init.php");
+        $stripe_api_key = $this->Custom->getStripeKey();
+        
         $stripe = array(
             // "secret_key"      => "Your_Stripe_API_Secret_Key",
             // "publishable_key" => "Your_API_Publishable_Key"             
-//            "secret_key" => "sk_test_51JY90jITPrbxGSMcpa6GFAxK96iCUrRjwWpJPY0gbh53l1EXf1F5aLYkNqc8V3h6baqk0gm9N79qazLZrp6bNg1H00TRuPEAeg",
-//            "publishable_key" => "pk_test_51JY90jITPrbxGSMcuo8bhxqQhCbSvHghLQaYIxtqVSe9u2xxm80SDtIVQ9acsLTW4WyPJX5G0nIMxaLXwtXbsN0N00vkBYmYDU"
-
-            "secret_key" => "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",
-            "publishable_key" => "pk_live_51JY90jITPrbxGSMc2biBXo0DoiP6kSUOwvQQix5RmbPTlEIeJSPL3inlSdqhoJ4dh5oV5FJHpcuCMTuk3V2Hymqa00sVontf8A"
+            "secret_key" => $stripe_api_key['secret_key'],
+            "publishable_key" => $stripe_api_key['publishable_key']
         );
         \Stripe\Stripe::setApiKey($stripe['secret_key']);
 
@@ -9954,14 +9938,13 @@ So I started using the personal styling service, Drapefit, and I thought you’d
 
 
         require_once(ROOT . DS . 'vendor' . DS . "stripe-php2" . DS . "init.php");
+        $stripe_api_key = $this->Custom->getStripeKey();
+        
         $stripe = array(
             // "secret_key"      => "Your_Stripe_API_Secret_Key",
             // "publishable_key" => "Your_API_Publishable_Key"             
-            // "secret_key" => "sk_test_51JY90jITPrbxGSMcpa6GFAxK96iCUrRjwWpJPY0gbh53l1EXf1F5aLYkNqc8V3h6baqk0gm9N79qazLZrp6bNg1H00TRuPEAeg",
-            // "publishable_key" => "pk_test_51JY90jITPrbxGSMcuo8bhxqQhCbSvHghLQaYIxtqVSe9u2xxm80SDtIVQ9acsLTW4WyPJX5G0nIMxaLXwtXbsN0N00vkBYmYDU"
-
-            "secret_key" => "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",
-            "publishable_key" => "pk_live_51JY90jITPrbxGSMc2biBXo0DoiP6kSUOwvQQix5RmbPTlEIeJSPL3inlSdqhoJ4dh5oV5FJHpcuCMTuk3V2Hymqa00sVontf8A"
+            "secret_key" => $stripe_api_key['secret_key'],
+            "publishable_key" => $stripe_api_key['publishable_key']
         );
         \Stripe\Stripe::setApiKey($stripe['secret_key']);
 
