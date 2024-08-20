@@ -1,34 +1,24 @@
-name: Deploy and Setup
+name: Deploy to cPanel
 
 on:
   push:
-    branches: 
-      - uat
-      - prod
-
-permissions:
-  contents: read
+    branches:
+      - main
 
 jobs:
-  build:
-    runs-on: ${{ github.ref == 'refs/heads/prod' && 'prod' || 'test' }}
+  deploy:
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-    - name: Set up PHP
-      uses: shivammathur/setup-php@v2
+    - name: FTP Deploy
+      uses: SamKirkland/FTP-Deploy-Action@4.3.0
       with:
-        php-version: '7.4'  # Adjust the PHP version as needed
-
-    - name: Copy and unzip vendor directories
-      run: |
-        PROJECT_ROOT="/home/drapefit/actions-runner/_work/DrapeFitPHPAli2024/DrapeFitPHPAli2024"
-        cp /home/drapefit/root_vendor.zip $PROJECT_ROOT/
-        cp /home/drapefit/merchandise_vendor.zip $PROJECT_ROOT/merchandise/
-        cp /home/drapefit/supplier_vendor.zip $PROJECT_ROOT/supplier/
-        cp /home/drapefit/inventory_vendor.zip $PROJECT_ROOT/inventory/
-        unzip -o $PROJECT_ROOT/root_vendor.zip -d $PROJECT_ROOT/
-        unzip -o $PROJECT_ROOT/merchandise/merchandise_vendor.zip -d $PROJECT_ROOT/merchandise/
-        unzip -o $PROJECT_ROOT/supplier/supplier_vendor.zip -d $PROJECT_ROOT/supplier/
-        unzip -o $PROJECT_ROOT/inventory/inventory_vendor.zip -d $PROJECT_ROOT/inventory/
+        ftp-server: ${{ secrets.FTP_SERVER }}
+        ftp-username: ${{ secrets.FTP_USERNAME }}
+        ftp-password: ${{ secrets.FTP_PASSWORD }}
+        ftp-port: ${{ secrets.FTP_PORT }}
+        local-dir: ./  # Path to your local directory in the repo
+        server-dir: /public_html/  # Path on your FTP server
