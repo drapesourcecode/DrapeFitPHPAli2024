@@ -3,7 +3,7 @@ name: Deploy to cPanel
 on:
   push:
     branches:
-      - main
+      - uat  # Trigger the workflow only on the uat branch
 
 jobs:
   deploy:
