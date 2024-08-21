@@ -3,7 +3,7 @@ name: Deploy to cPanel
 on:
   push:
     branches:
-      - uat  # Trigger the workflow only on the uat branch
+      - uat
 
 jobs:
   deploy:
@@ -13,6 +13,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Zip files
+      run: zip -r project.zip ./
+
     - name: FTP Deploy
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
       with:
@@ -20,5 +23,10 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         port: ${{ secrets.FTP_PORT }}
-        local-dir: ./  # Path to your local directory in the repo
-        server-dir: /public_html/  # Path on your FTP server
+        local-dir: ./project.zip
+        server-dir: /public_html/
+
+    - name: Unzip on server
+      run: |
+        sshpass -p ${{ secrets.FTP_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }} 'unzip -o /public_html/project.zip -d /public_html/'
+        sshpass -p ${{ secrets.FTP_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }} 'rm /public_html/project.zip'
