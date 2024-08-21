@@ -1,9 +1,9 @@
-name: Deploy to cPanel
+name: Deploy to cPanel via SCP
 
 on:
   push:
     branches:
-      - uat
+      - uat  # Trigger the workflow only on the uat branch
 
 jobs:
   deploy:
@@ -13,20 +13,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Zip files
-      run: zip -r project.zip ./
-
-    - name: FTP Deploy
-      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.7.0
       with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        port: ${{ secrets.FTP_PORT }}
-        local-dir: ./project.zip
-        server-dir: /public_html/
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Unzip on server
+    - name: Upload files via SCP
       run: |
-        sshpass -p ${{ secrets.FTP_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }} 'unzip -o /public_html/project.zip -d /public_html/'
-        sshpass -p ${{ secrets.FTP_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }} 'rm /public_html/project.zip'
+        tar -czvf project.tar.gz ./*
+        scp -o StrictHostKeyChecking=no project.tar.gz git@drapefittest.com:/home/username/public_html/
+
+    - name: Extract files on the server
+      run: |
+        ssh -o StrictHostKeyChecking=no git@drapefittest.com 'tar -xzvf /home/username/public_html/project.tar.gz -C /home/username/public_html/'
+        ssh -o StrictHostKeyChecking=no git@drapefittest.com 'rm /home/username/public_html/project.tar.gz'
