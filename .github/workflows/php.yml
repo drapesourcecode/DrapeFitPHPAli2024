@@ -23,7 +23,4 @@ jobs:
         tar -czvf project.tar.gz ./*
         scp -o StrictHostKeyChecking=no project.tar.gz git@drapefittest.com:/home/drapefittest/public_html/
 
-    - name: Extract files on the server
-      run: |
-        ssh -o StrictHostKeyChecking=no git@drapefittest.com 'tar -xzvf /home/drapefittest/public_html/project.tar.gz -C /home/drapefittest/public_html/'
-        ssh -o StrictHostKeyChecking=no git@drapefittest.com 'rm /home/drapefittest/public_html/project.tar.gz'
+ 
