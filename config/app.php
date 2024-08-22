@@ -303,7 +303,7 @@
            'className' => 'Cake\Database\Connection',
            'driver' => 'Cake\Database\Driver\Mysql',
            'persistent' => false,
-             'host' =>  ($domain == "142.93.58.236")?'167.71.244.74': '104.131.0.179',
+             'host' =>  ($domain == "142.93.58.236")?'167.71.244.74': '104.131.0.179': '198.211.97.225',
          //   'host' => '108.167.139.168',
            /**
             * CakePHP will use the default DB port based on the driver selected
