@@ -15,8 +15,8 @@
                 </div>
                 <script>
                     $(document).ready(function(){   
-                        // alert('dfdf');                     
-                        getSeasonWiseProduct(<?=$payment_id;?>,"Summer","Sleeveless to","look_1_summer_sleeveless_top");
+                        //alert('dfdf');                     
+                        getSeasonWiseProduct(<?=$payment_id;?>,"Summer","Sleeveless top","look_1_summer_sleeveless_top");
                     });
                     
                 </script>
@@ -600,6 +600,7 @@
                 payment_id: payment_id,
                 season : season,
                 product_type : product_type,
+                where_to_show : where_to_show
             },
             dataType: 'html',
             success: function(result) {

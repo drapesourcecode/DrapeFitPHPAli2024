@@ -28,7 +28,10 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                 if (!empty($in_rack)) {
                                                     foreach ($in_rack as $rk) {
                                                         ?>
-                                                        <option  value="<?php echo $rk->id; ?>"  <?php echo (!empty($editproduct) && ($editproduct->rack == $rk->id)) ? "selected" : ""; ?> ><?php echo $rk->rack_name; ?></option>
+                                                        <option  value="<?php echo $rk->id; ?>"  
+                                                        <?php echo (!empty($editproduct) && ($editproduct->rack == $rk->id)) ? "selected" : ""; ?>
+                                                        <?php echo (!empty($_GET['sub_ctg']) && ($_GET['sub_ctg'] == $rk->id)) ? "selected" : ""; ?>
+                                                         ><?php echo $rk->rack_name; ?></option>
                                                         <?php
                                                     }
                                                 }
@@ -253,10 +256,10 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
   
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-12  var_qty">
                                             <div class="form-group">
                                                 <label for="exampleInputPassword1">Quantity ? <sup style="color:red;">*</sup></label>
-                                                <input name='variant_data[${color_value}][${value}][quantity]'  value = '' type = 'text' class = "form-control"  placeholder = 'Please enter quantity' required min = "0" steps='1'> 
+                                                <input name='variant_data[${color_value}][${value}][quantity]'  value = '' type = 'text' class = "form-control"  placeholder = 'Please enter quantity' <?= !empty($this->request->session()->read('new_variant_po_data'))?"":'required';?> min = "0" steps='1'> 
        
                                             </div>
                                         </div>    

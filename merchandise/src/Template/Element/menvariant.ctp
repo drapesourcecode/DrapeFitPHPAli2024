@@ -234,10 +234,10 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
   
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-12  var_qty">
                                             <div class="form-group">
                                                 <label for="exampleInputPassword1">Quantity ? <sup style="color:red;">*</sup></label>
-                                                <input name='variant_data[${color_value}][${value}][quantity]'  value = '' type = 'text' class = "form-control"  placeholder = 'Please enter quantity' required min = "0" steps='1'> 
+                                                <input name='variant_data[${color_value}][${value}][quantity]'  value = '' type = 'text' class = "form-control"  placeholder = 'Please enter quantity' <?= !empty($this->request->session()->read('new_variant_po_data'))?"":'required';?> min = "0" steps='1'> 
        
                                             </div>
                                         </div>    
@@ -1262,9 +1262,20 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                         </div>
                                     </div>
                                 </div>
+                                <?php
+                                if ($editproduct->is_deleted == 1) {
+                                    echo "<h1 style='color:red;'>Deleted</h1>";
+                                } else {
+                                    ?>
+                                    <div class="form-group">
+                                        <div class="col-sm-10">
+        <?= $this->Form->submit('Save', ['type' => 'submit', 'class' => 'btn btn-success', 'style' => 'margin-left:15px;']) ?>
+                                        </div>
+                                    </div>
+                            <?php } ?>
 <?php } ?>
     
-  
+
 
     <script>
         $(document).ready(function () {

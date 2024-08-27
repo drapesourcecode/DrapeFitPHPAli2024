@@ -1550,17 +1550,25 @@ class AppadminsController extends AppController {
         $this->loadModel('PurchaseOrderProducts');
         $this->loadModel('PurchaseOrders');
         $this->loadModel('InProducts');
-        $this->PurchaseOrderProducts->belongsTo('brand', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
+        $this->loadModel('InSizes');
+        $this->loadModel('InColors');
+        $this->loadModel('InProductVariantList');
+        $this->loadModel('InProductVariants');
 
-        $tab1_brand_list = $this->PurchaseOrderProducts->find('all')->where(['PurchaseOrderProducts.status' => 1, 'PurchaseOrderProducts.is_new_brand' => 1])->group(['PurchaseOrderProducts.brand_id'])->contain(['brand']);
+        $all_sizes = $this->InSizes->find('all')->where(['is_active' => 1]);
+        $all_colors = $this->InColors->find('all')->where(['is_active' => 1]);
 
-        $this->PurchaseOrderProducts->hasMany('prd_detl', ['className' => 'InProducts', 'foreignKey' => 'prod_id', 'bindingKey' => 'product_id']);
-        $tab1_data_list = $this->PurchaseOrderProducts->find('all')->contain(['prd_detl', 'brand']);
+        $this->InProductVariantList->belongsTo('brand', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
+
+        $tab1_brand_list = $this->InProductVariantList->find('all')->where(['InProductVariantList.po_status' => 1])->group(['InProductVariantList.brand_id'])->contain(['brand']);
+
+        $this->InProductVariantList->belongsTo('prd_detl', ['className' => 'InProductVariants',  'foreignKey' => 'in_product_variants_id']);
+        $tab1_data_list = $this->InProductVariantList->find('all')->contain(['prd_detl', 'brand']);
 
         if (empty($tab) || ($tab == 'tab1')) {
-            $tab1_data_list = $tab1_data_list->where(['PurchaseOrderProducts.status' => 1, 'is_new_brand' => 1]);
+            $tab1_data_list = $tab1_data_list->where(['InProductVariantList.po_status' => 1]);
             if (!empty($_GET) && !empty($_GET['brand_id'])) {
-                $tab1_data_list = $tab1_data_list->where(['PurchaseOrderProducts.brand_id' => $_GET['brand_id']]);
+                $tab1_data_list = $tab1_data_list->where(['InProductVariantList.brand_id' => $_GET['brand_id']]);
             }
         }
 
@@ -1640,7 +1648,7 @@ class AppadminsController extends AppController {
             $product_sub_ctg_nme = $in_rack_name_get->rack_number;
         }
 
-        $this->set(compact('utype', 'in_rack', 'productType', 'id', 'editproduct', 'profile', 'brandsListings', 'product_ctg_nme', 'product_sub_ctg_nme', 'tab', 'option', 'id', 'tab1_brand_list', 'tab1_data_list'));
+        $this->set(compact('utype', 'in_rack', 'productType', 'id', 'editproduct', 'profile', 'brandsListings', 'product_ctg_nme', 'product_sub_ctg_nme', 'tab', 'option', 'id', 'tab1_brand_list', 'tab1_data_list', 'all_sizes', 'all_colors'));
     }
 
     public function addPoProduct() {
@@ -4113,7 +4121,7 @@ class AppadminsController extends AppController {
         return $this->response;
     }
 
-    public function addVariantProduct($tab = null, $option = null, $id = null) {
+    public function addVariantProduct($tab = null, $option = null, $id = null) {        
         $this->loadModel('PurchaseOrderProducts');
         $this->loadModel('PurchaseOrders');
         $this->loadModel('InProducts');
@@ -4218,11 +4226,13 @@ class AppadminsController extends AppController {
 
         if ($this->request->is('post')) {
             $postData = $this->request->data;
-//            echo "<pre>";
-//            print_r($postData);
-//            echo "</pre>";
-//            exit;
-            
+        //    echo "<pre>";
+        //    print_r($postData);
+        //    echo "</pre>";
+        //    exit;
+            $is_po = !empty($postData['for_po'])?$postData['for_po']:0;
+            unset($postData['for_po']);
+
             $variant_data = $postData['variant_data'];
 //            var_dump(!empty($postData['product_image']['name']));
             $postData['user_id'] = $this->request->session()->read('Auth.User.id');
@@ -4275,11 +4285,34 @@ class AppadminsController extends AppController {
                     $var_prd_rw = [];
                     $var_prd_rw['color'] = $key;
                     $var_prd_rw['size'] = $keyx;
-                    $var_prd_rw['in_product_variants_id'] = $newRow->id;
+                    $var_prd_rw['in_product_variants_id'] = $newRow->id;                    
+                    $var_prd_rw['brand_id'] = $postData['brand_id'] ;                    
                     $var_prd_rw += $variant_list_list;
+
+                    if(!empty( $this->request->session()->read('new_variant_po_data'))){
+                        $var_prd_rw['quantity'] = 0;                        
+                        $var_prd_rw['po_quantity'] = 1;
+                        $var_prd_rw['is_po'] = 1;
+                        $var_prd_rw['po_status'] = 1;
+                        $var_prd_rw['po_date'] = date('Y-m-d');
+                        $var_prd_rw['allocate_user_id'] = $new_variant_po_data['pay_user_id'];
+                        $var_prd_rw['allocate_kid_id'] = $new_variant_po_data['pay_kid_id'];
+                        $this->request->session()->write('new_variant_po_data','');
+                        $this->request->session()->delete('new_variant_po_data');
+                    }
+                    if(!empty($is_po) && ($is_po == 1)){                        
+                        $var_prd_rw['quantity'] = 0;
+                        $var_prd_rw['po_quantity'] = $variant_list_list['quantity'];
+                        $var_prd_rw['is_po'] = 1;
+                        $var_prd_rw['po_status'] = 1;
+                        $var_prd_rw['po_date'] = date('Y-m-d');                        
+                    }
+
                     $nwRw = $this->InProductVariantList->newEntity();
                     $nwRw = $this->InProductVariantList->patchEntity($nwRw, $var_prd_rw);
                     $nwRw = $this->InProductVariantList->save($nwRw);
+                    $last_variant_id = $nwRw->id;
+                    
                 }
             }
 
@@ -4288,6 +4321,9 @@ class AppadminsController extends AppController {
 //            print_r($postData);
 //            echo "</pre>";
 //            exit;
+
+            
+
             return $this->redirect($this->referer());
         }
 
@@ -4452,11 +4488,12 @@ class AppadminsController extends AppController {
         $this->set(compact('variant_details', 'variant_products_details', 'varient_id','variant_color_images'));
     }
 
-    public function generateProduct($product_variant_list_id) {
+    public function generateProduct($product_variant_list_id,$req_frm=null) {
         $this->loadModel('InProductVariants');
         $this->loadModel('InProductVariantList');
         $this->loadModel('InProducts');
         $this->loadModel('InColors');
+        $this->loadModel('PurchaseOrderProducts');
 
         $variant_products_details = $this->InProductVariantList->find('all')->where(['id' => $product_variant_list_id])->first();
         $variant_details = $this->InProductVariants->find('all')->where(['id' => $variant_products_details->in_product_variants_id])->first();
@@ -4517,7 +4554,7 @@ class AppadminsController extends AppController {
                 $newRw['purchase_price'] = $variant_products_details->purchase_price;
                 $newRw['sale_price'] = $variant_products_details->sale_price;
                 $newRw['clearance_price'] = $variant_products_details->clearance_price;
-                $newRw['quantity'] = 1;
+                $newRw['quantity'] =  1;
                 $newRw['is_active'] = 1;
                 $newRw['created'] = date('Y-m-d H:i:s');
 
@@ -4542,6 +4579,7 @@ class AppadminsController extends AppController {
                 $newRwInsert = $this->InProducts->newEntity();
                 $newRwInsert = $this->InProducts->patchEntity($newRwInsert, $newRw);
                 $newRwInsert = $this->InProducts->save($newRwInsert);
+                // print_r($newRwInsert);
                 $last_insert_id = $newRwInsert->id;
                 $last_id = 'DF' . $newRwInsert->id;
                 $style_number = $dtls . '-' . $last_id . '-' . $i;
@@ -4562,17 +4600,19 @@ class AppadminsController extends AppController {
 
                 $this->InProducts->updateAll(['bar_code_img' => $br_name, 'style_number' => $style_number, 'dtls' => $barcode_value], ['id' => $last_insert_id]);
 
-                print_r($newRw);
+               
+
+                // print_r($newRw);
             }
         }
 //exit;
-        print_r($variant_products_details);
-        echo "Variant details";
-        print_r($variant_details);
+        // print_r($variant_products_details);
+        // echo "Variant details";
+        // print_r($variant_details);
 
-        echo $product_variant_list_id;
-        echo "Check previously product created Or not as per quantity<br>";
-        echo "If not created then need to create<br>";
+        // echo $product_variant_list_id;
+        // echo "Check previously product created Or not as per quantity<br>";
+        // echo "If not created then need to create<br>";
         $this->Flash->success(__("Product Generated successfully"));
         return $this->redirect($this->referer());
 
@@ -4681,11 +4721,13 @@ class AppadminsController extends AppController {
         $this->loadModel('WomenInformation');
         $this->loadModel('KidsDetails');
         $this->loadModel('UserDetails');
+        $this->loadModel('SizeChart');
         $this->viewBuilder()->layout('');if ($this->request->is('post')) {
             $postData = $this->request->data;
             $payment_id = $postData['payment_id'];
             $season_name = $postData['season'];
             $product_type = $postData['product_type'];
+            $where_to_show = $postData['where_to_show'];
             $getPaymentGatewayDetails = $this->PaymentGetways->find('all')->where(['id' => $payment_id])->first();
             if($getPaymentGatewayDetails->kid_id != 0){
                 $userDetails = $this->KidsDetails->find('all')->where(['id' => $getPaymentGatewayDetails->kid_id])->first();
@@ -4706,9 +4748,12 @@ class AppadminsController extends AppController {
                 $women_age = $this->Custom->ageCal(date('Y-m-d', strtotime($women_style_data->birthday)), date('Y-m-d'));
                 $stats = $this->PersonalizedFix->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
                 $womenInformationsData = $this->WomenInformation->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
+                $sizeChart = $this->SizeChart->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
+                $user_size = $sizeChart->shirt_blouse;
+                $user_size_col = 'shirt_blouse';
 
                 $getMatchingProducts = $this->InProducts->find('all')
-                ->where(['InProducts.profile_type' => 2, 
+                ->where(['InProducts.id IN' => [1792,1794],'InProducts.profile_type' => 2, 
                 // 'InProducts.age1 >=' => $women_age, 'InProducts.age2 <=' => $women_age, 
                 // 'InProducts.tall_feet >=' => $stats->tell_in_feet, 'InProducts.tall_feet2 <=' => $stats->tell_in_feet,
                 // 'InProducts.best_fit_for_weight >=' => $stats->weight_lbs, 'InProducts.best_fit_for_weight2 <=' => $stats->weight_lbs,
@@ -4720,13 +4765,237 @@ class AppadminsController extends AppController {
                 // ])
                 //     ->bind(':start', date('Y-m-01'), 'date')
                 //     ->bind(':end', $end_date, 'date')
-                ->limit(5)
+                // ->limit(2)
                 ->group('prod_id');
             }
 
-            $this->set(compact('season_name', 'payment_id', 'gender','getPaymentGatewayDetails','getMatchingProducts'));
+            $this->set(compact('season_name', 'payment_id', 'gender', 'getPaymentGatewayDetails', 'getMatchingProducts', 'where_to_show', 'user_size', 'user_size_col'));
         }
 
+    }
+
+    public function getMerchandiseMatchingComment() {
+        $this->loadModel('MatchingProductComments');
+        $this->viewBuilder()->layout('');
+
+        if ($this->request->is('post')) {
+            $postData = $this->request->getData();
+            $product_id = $postData['product_id'];
+            $payment_id = $postData['payment_id'];
+            $this->MatchingProductComments->belongsTo('Users', ['className' => 'Users', 'foreignKey' => 'user_id']);
+            $all_cmts = $this->MatchingProductComments->find('all')->where(['MatchingProductComments.payment_id' => $payment_id, 'product_id' => $product_id])->contain(['Users'])->order(['MatchingProductComments.id' => 'DESC']);
+            $currentUserId = $this->Auth->user('id');
+            $this->set(compact('all_cmts', 'currentUserId','product_id'));
+        }
+    }
+
+    public function postMerchandiseMatchingComment($id = null) {
+        $this->loadModel('MatchingProductComments');
+        $this->viewBuilder()->layout('');
+
+        if ($this->request->is('post')) {
+            $postData = $this->request->data;
+            $postArr = [];
+            $postArr['payment_id'] = $postData['payment_id'];
+            $postArr['user_id'] = $this->request->session()->read('Auth.User.id');
+            $postArr['comment'] = $postData['comment'];
+            $postArr['product_id'] = $postData['product_id'];
+
+            if ($id) {
+                $comment = $this->MatchingProductComments->get($id);
+                $comment = $this->MatchingProductComments->patchEntity($comment, $postArr);
+            } else {
+                $comment = $this->MatchingProductComments->newEntity($postArr);
+            }
+
+            if ($this->MatchingProductComments->save($comment)) {
+                echo json_encode('success');
+            } else {
+                echo json_encode('error');
+            }
+        }
+        exit;
+    }
+
+    public function deleteMerchandiseMatchingComment($id = null) {
+        $this->loadModel('MatchingProductComments');
+        $this->viewBuilder()->layout('');
+
+        if ($this->request->is('post')) {
+            $comment = $this->MatchingProductComments->get($id);
+            if ($this->MatchingProductComments->delete($comment)) {
+                echo json_encode('success');
+            } else {
+                echo json_encode('error');
+            }
+        }
+        exit;
+    }
+
+    public function editMerchandiseMatchingComment() {
+        $this->loadModel('MatchingProductComments');
+        if ($this->request->is('post')) {
+            $commentId = $this->request->getData('commentId');
+            $comment = $this->MatchingProductComments->find('all')->where(['id' => $commentId])->first();
+            if ($comment) {
+                $this->response = $this->response->withType('application/json')->withStringBody(json_encode($comment));
+            } else {
+                $this->response = $this->response->withType('application/json')->withStringBody(json_encode(['error' => 'Comment not found']));
+            }
+        } else {
+            $this->response = $this->response->withType('application/json')->withStringBody(json_encode(['error' => 'Invalid request']));
+        }
+        return $this->response;
+    }
+    
+    public function getMerchandiseSuggComment() {
+        $this->loadModel('MatchingProductSuggestionComments');
+        $this->viewBuilder()->layout('');
+
+        if ($this->request->is('post')) {
+            $postData = $this->request->getData();
+            $pay_user_id = $postData['pay_user_id'];
+            $pay_kid_id = $postData['pay_kid_id'];
+            $user_size = $postData['user_size'];
+            $user_size_col = $postData['user_size_col'];
+            $payment_id = $postData['payment_id'];
+            $this->MatchingProductSuggestionComments->belongsTo('Users', ['className' => 'Users', 'foreignKey' => 'user_id']);
+            $all_cmts = $this->MatchingProductSuggestionComments->find('all')->where(['MatchingProductSuggestionComments.payment_id' => $payment_id, 'MatchingProductSuggestionComments.pay_user_id' => $pay_user_id,'MatchingProductSuggestionComments.pay_kid_id' => $pay_kid_id,'MatchingProductSuggestionComments.user_size' => $user_size, 'MatchingProductSuggestionComments.user_size_col' => $user_size_col ])->contain(['Users'])->order(['MatchingProductSuggestionComments.id' => 'DESC']);
+            $currentUserId = $this->Auth->user('id');
+            $this->set(compact('all_cmts', 'currentUserId','payment_id'));
+        }
+    }
+
+    public function postMerchandiseSuggComment($id = null) {
+        $this->loadModel('MatchingProductSuggestionComments');
+        $this->viewBuilder()->layout('');
+
+        if ($this->request->is('post')) {
+            $postData = $this->request->data;
+            $postArr = [];
+            $postArr['payment_id'] = $postData['payment_id'];
+            $postArr['user_id'] = $this->request->session()->read('Auth.User.id');
+            $postArr['comment'] = $postData['comment'];
+            $postArr['product_id'] = $postData['product_id'];
+            $postArr['look_type'] = $postData['look_type'];
+            $postArr['user_size_col'] = $postData['user_size_col'];
+            $postArr['user_size'] = $postData['user_size'];
+            $postArr['pay_user_id'] = $postData['pay_user_id'];
+            $postArr['pay_kid_id'] = $postData['pay_kid_id'];
+            if ($id) {
+                $comment = $this->MatchingProductSuggestionComments->get($id);
+                $comment = $this->MatchingProductSuggestionComments->patchEntity($comment, $postArr);
+            } else {
+                $comment = $this->MatchingProductSuggestionComments->newEntity($postArr);
+            }
+
+            if ($this->MatchingProductSuggestionComments->save($comment)) {
+                echo json_encode('success');
+            } else {
+                echo json_encode('error');
+            }
+        }
+        exit;
+    }
+
+    public function deleteMerchandiseSuggComment($id = null) {
+        $this->loadModel('MatchingProductSuggestionComments');
+        $this->viewBuilder()->layout('');
+
+        if ($this->request->is('post')) {
+            $comment = $this->MatchingProductSuggestionComments->get($id);
+            if ($this->MatchingProductSuggestionComments->delete($comment)) {
+                echo json_encode('success');
+            } else {
+                echo json_encode('error');
+            }
+        }
+        exit;
+    }
+
+    public function editMerchandiseSuggComment() {
+        $this->loadModel('MatchingProductSuggestionComments');
+        if ($this->request->is('post')) {
+            $commentId = $this->request->getData('commentId');
+            $comment = $this->MatchingProductSuggestionComments->find('all')->where(['id' => $commentId])->first();
+            if ($comment) {
+                $this->response = $this->response->withType('application/json')->withStringBody(json_encode($comment));
+            } else {
+                $this->response = $this->response->withType('application/json')->withStringBody(json_encode(['error' => 'Comment not found']));
+            }
+        } else {
+            $this->response = $this->response->withType('application/json')->withStringBody(json_encode(['error' => 'Invalid request']));
+        }
+        return $this->response;
+    }
+
+    public function addVariantForPoRequest(){
+        if ($this->request->is('post')) {
+            $post_data = $this->request->getData();
+            $this->request->session()->write('new_variant_po_data', json_encode($post_data));           
+            if($post_data['look_type'] == "look_1_summer_sleeveless_top"){
+                return $this->redirect(HTTP_ROOT.'appadmins/add_variant_product/tab1/Women?ctg=3&sub_ctg=194');                    
+            }
+        }
+        exit;
+    }
+
+    public function poProductFileUpload(){
+        $this->loadModel('PoAttachments');
+        if ($this->request->is('post')) {
+            $post_data = $this->request->getData();            
+            if (!empty($post_data['doc_file'])) {
+                $imagePath = "files/product_img/";
+                $filePaths = [];
+
+                foreach ($post_data['doc_file'] as $file) {
+                    if(!empty($file['tmp_name'])){
+                        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                        $filename = $file['tmp_name'];
+                        $original_name = $file['name'];
+                        $custom_name = time() . '_' . uniqid() . '.' . $ext;
+                        move_uploaded_file($filename, $imagePath . $custom_name);
+                        $filePaths = $imagePath . $custom_name;
+                        
+                        $newData['purchase_order_products_id'] = $post_data['po_product_id'];
+                        $newData['file'] = $filePaths;
+                        $newRw = $this->PoAttachments->newEntity();
+                        $newRw = $this->PoAttachments->patchEntity($newRw, $newData);
+                        $this->PoAttachments->save($newRw);
+                    }
+                } 
+                echo json_encode(true);             
+            }
+        }
+        exit;
+    }
+
+    public function getPoProductFile(){
+        $this->loadModel('PoAttachments');
+        if ($this->request->is('post')) {
+            $post_data = $this->request->getData(); 
+            $html = '';
+            $all_data = $this->PoAttachments->find('all')->where(['purchase_order_products_id'=>$post_data['po_product_id']]);
+            if(!empty($all_data->count())){
+                foreach($all_data as $ky => $dat){
+                    $html .= '<div id="file_'.$dat->id.'"><a href="'.HTTP_ROOT.$dat->file.'" >Attachment'.($ky+1).'</a>  <button onclick="deleteFile('.$dat->id.')">Delete</button></div>';
+                }                
+            }
+            echo $html;
+        }
+        exit;
+    }
+
+    public function deletePoProductFile(){
+        $this->loadModel('PoAttachments');
+        if ($this->request->is('post')) {
+            $post_data = $this->request->getData(); 
+            $file_data = $this->PoAttachments->find('all')->where(['id'=>$post_data['id']])->first();
+            @unlink($file_data->file);
+            $this->PoAttachments->deleteAll(['id'=>$post_data['id']]);            
+            echo json_encode(true);  
+        }
+        exit;
     }
     
 }

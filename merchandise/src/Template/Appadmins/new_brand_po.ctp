@@ -1,6 +1,6 @@
 <div class="content-wrapper">
     <section class="content-header">
-        <h1> New Brand Po</h1>
+        <h1> New Customer Po</h1>
         <ol class="breadcrumb">
             <li><a href="<?php echo HTTP_ROOT . 'appadmins' ?>"><i class="fa fa-dashboard"></i> Home</a></li>
             <li class="active"><a class="active-color" href="#">   <i class="fa  fa-user-plus"></i> New Brand Po </a></li>
@@ -51,7 +51,7 @@ $color_arr = $this->Custom->inColor();
         <h1><?= !empty($id) ? 'Edit' : 'Add'; ?> Product For <?php echo @$profile; ?></h1>        
     </section>
     <section class="content">
-        <div class="row">
+    <div class="row">
             <div class="col-xs-12">
                 <div class="box box-primary">
                     <div class="box-body">
@@ -67,9 +67,10 @@ $color_arr = $this->Custom->inColor();
                             
                         } else {
                             ?>
-                            <?= $this->Form->create(@$user, array('id' => 'profile_data', 'type' => 'file','url'=>['action'=>'addPoProduct'])) ?>
+                            <?= $this->Form->create(@$user, array('id' => 'profile_data', 'type' => 'file','url'=>['action'=>'addVariantProduct'])) ?>
                         <?php } ?>
-<?= $this->Form->input('id', ['value' => @$id, 'type' => 'hidden', 'label' => false]); ?>
+                        <?= $this->Form->input('id', ['value' => @$id, 'type' => 'hidden', 'label' => false]); ?>
+                        <?= $this->Form->input('for_po', ['value' => 1, 'type' => 'hidden', 'label' => false]); ?>
 
                         <div class="nav-tabs-custom">
                             <select id="profile_type" class="form-control" onchange="return getChanges(this.value)">
@@ -85,31 +86,31 @@ $color_arr = $this->Custom->inColor();
                             }
                             ?>
 
-<?php if (@$profile == 'Men' || @$profile == '') { ?>
+                            <?php if (@$profile == 'Men' || @$profile == '') { ?>
 
-                                <?=  $this->element('men', compact('color_arr','editproduct','product_ctg_nme','product_sub_ctg_nme')); ?>
+                                <?=  $this->element('menvariant', compact('color_arr','editproduct','product_ctg_nme','product_sub_ctg_nme','all_colors','all_sizes')); ?>
                                 
                                 <?php
                                 if ($editproduct->is_deleted == 1) {
                                     echo "<h1 style='color:red;'>Deleted</h1>";
                                 } else {
                                     ?>
-                                    <div class="form-group">
+                                    <!-- <div class="form-group">
                                         <div class="col-sm-10">
-        <?= $this->Form->submit('Save', ['type' => 'submit', 'class' => 'btn btn-success', 'style' => 'margin-left:15px;']) ?>
+                            <?= $this->Form->submit('Save', ['type' => 'submit', 'class' => 'btn btn-success', 'style' => 'margin-left:15px;']) ?>
                                         </div>
-                                    </div>
-    <?php } ?>
+                                    </div> -->
+                        <?php } ?>
                             </div>
 
-    <?php if (empty($id)) { ?>
+                        <?php if (empty($id)) { ?>
                                 <script>
                                     $(document).ready(function () {
                                         $("input[name^=better_body_shape]").prop("checked", false);
                                     })
                                 </script>
                             <?php } ?>
-    <?php if (($editproduct->better_body_shape == NULL) || empty(count(json_decode($editproduct->better_body_shape, true)))) { ?>
+                    <?php if (($editproduct->better_body_shape == NULL) || empty(count(json_decode($editproduct->better_body_shape, true)))) { ?>
                                 <script>
                                     $(document).ready(function () {
                                         $("input[name^=better_body_shape]").prop("checked", false);
@@ -119,7 +120,7 @@ $color_arr = $this->Custom->inColor();
                         <?php } ?>
                             <?php if (@$profile == 'Women') { ?>
                             
-                                <?=  $this->element('women', compact('color_arr','editproduct','product_ctg_nme','product_sub_ctg_nme')); ?>
+                                <?=  $this->element('womenvariant', compact('color_arr','editproduct','product_ctg_nme','product_sub_ctg_nme','all_colors','all_sizes')); ?>
                                 
     <?php if (empty($id)) { ?>
                                 <script>
@@ -138,12 +139,12 @@ $color_arr = $this->Custom->inColor();
                         <?php } ?>
                             <?php if (@$profile == 'BoyKids') { ?>
                                 
-                                <?=  $this->element('boykids', compact('color_arr','editproduct','product_ctg_nme','product_sub_ctg_nme')); ?>
+                                <?=  $this->element('boykidsvariant', compact('color_arr','editproduct','product_ctg_nme','product_sub_ctg_nme','all_colors','all_sizes')); ?>
                             
                         <?php } ?>
                             <?php if (@$profile == 'GirlKids') { ?>
                                 
-                                <?=  $this->element('girlkids', compact('color_arr','editproduct','product_ctg_nme','product_sub_ctg_nme')); ?>
+                                <?=  $this->element('girlkidsvariant', compact('color_arr','editproduct','product_ctg_nme','product_sub_ctg_nme','all_colors','all_sizes')); ?>
                             
                     <?php } ?>
                     </div>
@@ -156,6 +157,7 @@ $color_arr = $this->Custom->inColor();
                 </div>
             </div>
         </div>
+    
         
 </div>
 </section>
@@ -184,6 +186,9 @@ $color_arr = $this->Custom->inColor();
             success: function (res) {
                 let htmll = "<option value='' selected disabled>--</option>";
                 $('select[name=rack]').html(htmll+res);
+                setTimeout(function (){
+                    $("[name=rack]").val('<?=!empty($_GET['sub_ctg'])?$_GET['sub_ctg']:'';?>');
+                },1000);
             },
             error: function (err) {
                 $('select[name=rack]').html('<option value="" selected disabled>No data found</option>');
@@ -199,7 +204,7 @@ $color_arr = $this->Custom->inColor();
     $(document).ready(function(){
         setTimeout(function (){
             $("[name=rack]").val('<?=$_GET['sub_ctg'];?>');
-        },1000);
+        },5000);
     });
 </script>    
 <?php } ?>
@@ -331,10 +336,10 @@ $color_arr = $this->Custom->inColor();
         display: inline-block;
     }
     .women-select1 {
-    width: 21.9%;
-    display: inline-block;
-    vertical-align: top;
-}
+        width: 21.9%;
+        display: inline-block;
+        vertical-align: top;
+    }
     .women-select1 label {
         display: inline-block;
         width: auto;
@@ -352,8 +357,8 @@ $color_arr = $this->Custom->inColor();
         color: #ce2f2f !important;
     }
     span.error {
-    color:red;
-}
+        color:red;
+    }
     .type-box ul li {
         display: inline-block;
         width: 17%;
@@ -363,12 +368,12 @@ $color_arr = $this->Custom->inColor();
         vertical-align: top;
         position: relative;
     }
-.type-box ul li span.error {
-    position: absolute;
-    bottom: -27px;
-    left: 0;
-    line-height: 16px;
-}
+    .type-box ul li span.error {
+        position: absolute;
+        bottom: -27px;
+        left: 0;
+        line-height: 16px;
+    }
     .type-box ul {
         float: left;
         width: 100%;
@@ -421,10 +426,10 @@ $color_arr = $this->Custom->inColor();
         position:relative;
     }
     .skin ul li span.error {
-    position: absolute;
-    width: 151px;
-    bottom: -6px;
-}
+        position: absolute;
+        width: 151px;
+        bottom: -6px;
+    }
     .skin ul li label{
         width: 50px;
         height: 50px;
@@ -435,21 +440,21 @@ $color_arr = $this->Custom->inColor();
         border:4px solid #fff;
     }
     .women-select-boxes {
-    vertical-align: top;
-    display: inline-flex;
-}
-.women-select-boxes span {
-    margin: 9px 4px;
-}
-.list-inline>li{
-    position: relative;
-}
-.list-inline>li span.error {
-    position: absolute;
-    bottom: -11px;
-    left: 0;
-    width: 162px;
-}
+        vertical-align: top;
+        display: inline-flex;
+    }
+    .women-select-boxes span {
+        margin: 9px 4px;
+    }
+    .list-inline>li{
+        position: relative;
+    }
+    .list-inline>li span.error {
+        position: absolute;
+        bottom: -11px;
+        left: 0;
+        width: 162px;
+    }
     .skin ul li input{
         /*display: none;*/
     }
@@ -488,63 +493,63 @@ $color_arr = $this->Custom->inColor();
         border:4px solid #ff6c00;
     }
     
-.skin ul li {
-    display: inline-flex;
-    align-items: center;
-    margin-right: 22px;
-    position: relative;
-}
-.note-label ul li {
-    position: relative;
-}
-.note-label ul li span.error{
-        position: absolute;
-    width: 150px;
-    bottom: -14px;
-    left: 0;
-}
-.women-select1 {
-    display: inline-flex;
-}
-span.error {
-    display: none !important;
-}
-.error {
-    border: 1px solid red !important;
-}
-.skin ul li input.error {
-    outline: 1px solid red;
-    height: 13px;
-    border: none !important;
-    margin-right: 3px;
-}
+    .skin ul li {
+        display: inline-flex;
+        align-items: center;
+        margin-right: 22px;
+        position: relative;
+    }
+    .note-label ul li {
+        position: relative;
+    }
+    .note-label ul li span.error{
+            position: absolute;
+        width: 150px;
+        bottom: -14px;
+        left: 0;
+    }
+    .women-select1 {
+        display: inline-flex;
+    }
+    span.error {
+        display: none !important;
+    }
+    .error {
+        border: 1px solid red !important;
+    }
+    .skin ul li input.error {
+        outline: 1px solid red;
+        height: 13px;
+        border: none !important;
+        margin-right: 3px;
+    }
 
-.list-inline>li input.error {
-    outline: 1px solid red;
-    height: 13px;
-    border: none !important;
-    margin-right: 3px;
-}
+    .list-inline>li input.error {
+        outline: 1px solid red;
+        height: 13px;
+        border: none !important;
+        margin-right: 3px;
+    }
 
-.note-label ul li input.error {
-    outline: 1px solid red;
-    height: 13px;
-    border: none !important;
-    margin-right: 3px;
-}
-.list-inline>li {
-    position: relative;
-    display: inline-flex;
-    vertical-align: top;
-    align-items: center;
-}
+    .note-label ul li input.error {
+        outline: 1px solid red;
+        height: 13px;
+        border: none !important;
+        margin-right: 3px;
+    }
+    .list-inline>li {
+        position: relative;
+        display: inline-flex;
+        vertical-align: top;
+        align-items: center;
+    }
 
-sub, sup {
-    position: relative;
-    font-size: 100%;
-    line-height: 0;
-    vertical-align: baseline;
-}
+    sub, sup {
+        position: relative;
+        font-size: 100%;
+        line-height: 0;
+        vertical-align: baseline;
+    }
 
 </style>                           
                                 </div>
@@ -594,10 +599,10 @@ sub, sup {
                                             <tr  class="message_box">
                                                 <td><?= $ky + 1 ?></td>
                                                 <td><?= h($dat_li->brand->brand_name) ?></td>
-                                                <td><?php echo $dat_li->prd_detl[0]['product_name_one']; ?></td>
-                                                <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->prd_detl[0]['product_image']; ?>" style="width: 80px;"/></td>
+                                                <td><?php echo $dat_li->prd_detl->product_name_one; ?></td>
+                                                <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->prd_detl->feature_image; ?>" style="width: 80px;"/></td>
 
-                                                <td style="text-align: center;"><?php echo $dat_li->qty; ?></td>
+                                                <td style="text-align: center;"><?php echo $dat_li->po_quantity; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_date; ?></td>
                                                 <td style="text-align: center;">
 

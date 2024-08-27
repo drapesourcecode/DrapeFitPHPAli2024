@@ -1330,7 +1330,19 @@
                                         </div>
                                     </div>
                                 </div>
+                                <?php
+                                if ($editproduct->is_deleted == 1) {
+                                    echo "<h1 style='color:red;'>Deleted</h1>";
+                                } else {
+                                    ?>
+                                    <div class="form-group">
+                                        <div class="col-sm-10">
+        <?= $this->Form->submit('Save', ['type' => 'submit', 'class' => 'btn btn-success', 'style' => 'margin-left:15px;']) ?>
+                                        </div>
+                                    </div>
+                            <?php } ?>
 <?php } ?>
+
     
     <script>
         $(document).ready(function () {

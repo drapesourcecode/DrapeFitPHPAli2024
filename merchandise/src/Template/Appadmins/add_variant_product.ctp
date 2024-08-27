@@ -1,3 +1,18 @@
+<?php
+if(!empty( $this->request->session()->read('new_variant_po_data'))){
+    $new_variant_po_data = json_decode($this->request->session()->read('new_variant_po_data'),true);
+    print_r($new_variant_po_data );
+    ?>
+    <script>
+        $(document).ready(function(){
+            addVariants();
+        });
+    </script>
+    <style>.var_qty{ display:none; }</style>
+    <?php
+}
+?>
+
 <div class="content-wrapper">
     <section class="content-header">
         <h1> Add variant products</h1>
@@ -11,10 +26,7 @@
             <div class="col-xs-12">
                 <div class="box">
 
-                    <div class="box-body">
-
-                        
-
+                    <div class="box-body"> 
                         <div >
                             <div>
                                 <div id="add_product">
@@ -61,7 +73,7 @@ $color_arr = $this->Custom->inColor();
                             ?>
                             <?= $this->Form->create(@$user, array('id' => 'profile_data', 'type' => 'file'/*,'url'=>['action'=>'addPoProduct']*/)) ?>
                         <?php } ?>
-<?= $this->Form->input('id', ['value' => @$id, 'type' => 'hidden', 'label' => false]); ?>
+                        <?= $this->Form->input('id', ['value' => @$id, 'type' => 'hidden', 'label' => false]); ?>
 
                         <div class="nav-tabs-custom">
                             <select id="profile_type" class="form-control" onchange="return getChanges(this.value)">
@@ -77,7 +89,7 @@ $color_arr = $this->Custom->inColor();
                             }
                             ?>
 
-<?php if (@$profile == 'Men' || @$profile == '') { ?>
+                            <?php if (@$profile == 'Men' || @$profile == '') { ?>
 
                                 <?=  $this->element('menvariant', compact('color_arr','editproduct','product_ctg_nme','product_sub_ctg_nme','all_colors','all_sizes')); ?>
                                 
@@ -86,22 +98,22 @@ $color_arr = $this->Custom->inColor();
                                     echo "<h1 style='color:red;'>Deleted</h1>";
                                 } else {
                                     ?>
-                                    <div class="form-group">
+                                    <!-- <div class="form-group">
                                         <div class="col-sm-10">
-        <?= $this->Form->submit('Save', ['type' => 'submit', 'class' => 'btn btn-success', 'style' => 'margin-left:15px;']) ?>
+                            <?= $this->Form->submit('Save', ['type' => 'submit', 'class' => 'btn btn-success', 'style' => 'margin-left:15px;']) ?>
                                         </div>
-                                    </div>
-    <?php } ?>
+                                    </div> -->
+                        <?php } ?>
                             </div>
 
-    <?php if (empty($id)) { ?>
+                        <?php if (empty($id)) { ?>
                                 <script>
                                     $(document).ready(function () {
                                         $("input[name^=better_body_shape]").prop("checked", false);
                                     })
                                 </script>
                             <?php } ?>
-    <?php if (($editproduct->better_body_shape == NULL) || empty(count(json_decode($editproduct->better_body_shape, true)))) { ?>
+                    <?php if (($editproduct->better_body_shape == NULL) || empty(count(json_decode($editproduct->better_body_shape, true)))) { ?>
                                 <script>
                                     $(document).ready(function () {
                                         $("input[name^=better_body_shape]").prop("checked", false);
@@ -148,6 +160,7 @@ $color_arr = $this->Custom->inColor();
                 </div>
             </div>
         </div>
+    
         
 </div>
 </section>
@@ -176,6 +189,9 @@ $color_arr = $this->Custom->inColor();
             success: function (res) {
                 let htmll = "<option value='' selected disabled>--</option>";
                 $('select[name=rack]').html(htmll+res);
+                setTimeout(function (){
+                    $("[name=rack]").val('<?=!empty($_GET['sub_ctg'])?$_GET['sub_ctg']:'';?>');
+                },1000);
             },
             error: function (err) {
                 $('select[name=rack]').html('<option value="" selected disabled>No data found</option>');
@@ -191,7 +207,7 @@ $color_arr = $this->Custom->inColor();
     $(document).ready(function(){
         setTimeout(function (){
             $("[name=rack]").val('<?=$_GET['sub_ctg'];?>');
-        },1000);
+        },5000);
     });
 </script>    
 <?php } ?>
