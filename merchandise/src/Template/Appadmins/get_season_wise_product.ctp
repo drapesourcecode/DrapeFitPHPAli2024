@@ -67,7 +67,7 @@
                                 <button type="button" id="btnshowPo<?=$get_match_prd->id;?>" onclick="$('#showPo<?= $get_match_prd->id;?>').toggle();$('#btnshowPo<?= $get_match_prd->id;?>').toggle()" class="btn btn-sm btn-primary">Add to PO</button>
                                 <div id="showPo<?=$get_match_prd->id;?>" style="display:none;">
                                     <?= $this->Form->create('',['type'=>'post', 'url'=>['action'=>'addPoRequest']]);?>
-                                    <input type="number" step="1" name="qty" min="1" placeholder="Quantity" style="width:100px;" required>
+                                    <input type="text" step="1" name="qty" min="1" placeholder="Quantity" style="width:100px;" value="1" readonly required>
                                     <input type="hidden"  name="product_id" value="<?=$prod_idd;?>">
                                     <input type="hidden"  name="brand_id" value="<?=$get_match_prd->brand_id;?>">
                                     <input type="hidden"  name="user_id" value="<?=$getPaymentGatewayDetails->user_id;?>">

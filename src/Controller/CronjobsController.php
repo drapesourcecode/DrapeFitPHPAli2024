@@ -108,7 +108,7 @@ class CronjobsController extends AppController {
 
     public function beforeFilter(Event $event) {
 
-        $this->Auth->allow(['processInvateryProdcut', 'boxUpdatex', 'allstatusUpdate', 'autoMentionskid', 'giftMailDelivary', 'authorizeCreditCard', 'autoMentions', 'boxUpdate', 'autocheckoutmail', 'notCompleteProfile', 'notPaidOnce', 'addressNotComplete', 'autocheckoutmail', 'kidAutocheckoutmail', 'kidProfileNotComplete', 'activeSubscription', 'stripeApiPay', 'birthdayMail', 'checkStripPay', 'webhook', 'autocheckoutmailByEmail', 'productBatchAutoCheckout', 'productAutoCheckout','productWeeklyAutoCheckout', 'cronMailSent', 'mailLogEntry','productWeeklyAutoCheckoutTest']);
+        $this->Auth->allow(['processInvateryProdcut', 'boxUpdatex', 'allstatusUpdate', 'autoMentionskid', 'giftMailDelivary', 'authorizeCreditCard', 'autoMentions', 'boxUpdate', 'autocheckoutmail', 'notCompleteProfile', 'notPaidOnce', 'addressNotComplete', 'autocheckoutmail', 'kidAutocheckoutmail', 'kidProfileNotComplete', 'activeSubscription', 'stripeApiPay', 'birthdayMail', 'checkStripPay', 'webhook', 'autocheckoutmailByEmail', 'productBatchAutoCheckout', 'productAutoCheckout','productWeeklyAutoCheckout', 'cronMailSent', 'mailLogEntry','productWeeklyAutoCheckoutProcess']);
     }
 
     public function allstatusUpdate() {
@@ -6613,11 +6613,10 @@ class CronjobsController extends AppController {
         exit;
     }
     
-    public function productWeeklyAutoCheckout()
-    {        
-        $this->loadModel('CronjobWeeklyCheckout');        
+    public function productWeeklyAutoCheckout() {
+        $this->loadModel('CronjobWeeklyCheckout');
         date_default_timezone_set('America/Chicago');
-        $this->CronjobWeeklyCheckout->deleteAll(['insert_date < '=>date('Y-m-d')]);
+        $this->CronjobWeeklyCheckout->deleteAll(['insert_date < ' => date('Y-m-d', strtotime(date('Y-m-d') . ' -30 days'))]);
         echo date_default_timezone_get();
         $date = date('Y-m-d'); //date('Y-m-d', strtotime(date('Y-m-d') . ' - 2 days'));
         echo "<br>" . $date;
@@ -6627,776 +6626,45 @@ class CronjobsController extends AppController {
 
         //        exit;
         //   if (in_array($day_name, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])) {
-            if (in_array($day_name, ['Monday', 'Friday', 'Saturday', 'Sunday'])) {
+        if (in_array($day_name, ['Monday', 'Friday', 'Saturday', 'Sunday'])) {
 
             $payment_list = $this->Products->find('all')->where(['auto_checkout_date <=' => $now_date, /* 'is_complete_by_admin' => 0 */ 'is_payment_fail' => 1])->group(['payment_id', 'auto_checkout_date'])->order(['payment_id' => 'DESC']);
 
-                    // echo "<pre>";
-                    // print_r($payment_list);
-                    // echo "</pre>";
-                    // exit;
+            // echo "<pre>";
+            // print_r($payment_list);
+            // echo "</pre>";
+            // exit;
 
             $all_payment_ids = (!empty($payment_list->count())) ? Hash::extract($payment_list->toArray(), '{n}.payment_id') : [];
 
-                        // echo "<pre>";
-                        // print_r($all_payment_ids);
-                        // echo "</pre>";
-                        // exit;
+            // echo "<pre>";
+            // print_r($all_payment_ids);
+            // echo "</pre>";
+            // exit;
 
             if (!empty($all_payment_ids)) {
                 $payment_details = $this->PaymentGetways->find('all')->where(['id IN' => $all_payment_ids, 'status' => 1, 'payment_type' => 1, 'work_status' => 1])->order(['id' => 'DESC']);
 
-                                $all_ff_payment_ids = (!empty($payment_details->count())) ? Hash::extract($payment_details->toArray(), '{n}.id') : [];
-                
-                                echo "<pre>";
-                                print_r($all_ff_payment_ids);
-                                echo "</pre>";
-//                                 exit;
-                                 
+                $all_ff_payment_ids = (!empty($payment_details->count())) ? Hash::extract($payment_details->toArray(), '{n}.id') : [];
+
+                //                                echo "<pre>";
+                //                                print_r($all_ff_payment_ids);
+                //                                echo "</pre>";
+                //                                 exit;
+
                 $current_date = date('Y-m-d');
                 foreach ($payment_details as $kyx => $pay_li) {
                     $newArrx = [];
-                    $newArrx['payment_id']=$pay_li->id;
-                    $newArrx['insert_date']=$current_date;                    
-                    $check_exit_or_not = $this->CronjobWeeklyCheckout->find('all')->where(['payment_id'=>$pay_li->id,'insert_date'=>$current_date])->count();
-                    if($check_exit_or_not == 0){
+                    $newArrx['payment_id'] = $pay_li->id;
+                    $newArrx['insert_date'] = $current_date;
+                    $check_exit_or_not = $this->CronjobWeeklyCheckout->find('all')->where(['payment_id' => $pay_li->id, 'insert_date' => $current_date])->count();
+                    if ($check_exit_or_not == 0) {
                         $newDtRow = $this->CronjobWeeklyCheckout->newEntity();
                         $newDtRow = $this->CronjobWeeklyCheckout->patchEntity($newDtRow, $newArrx);
                         $this->CronjobWeeklyCheckout->save($newDtRow);
                     }
                 }
                 // exit;
-                
-                $check_payments = $this->CronjobWeeklyCheckout->find('all')->where(['insert_date'=>$current_date, 'status'=>0]);                           
-                
-                if($check_payments->count() > 0){
-                    foreach ($check_payments as $kyx => $pay_li_data) {
-                        $pay_li = $this->PaymentGetways->find('all')->where(['id' => $pay_li_data->payment_id])->first();
-                        if (1/*$pay_li->id == 1772*/) {
-                            echo "<pre>";
-                            print_r(++$kyx . ' : ' . $pay_li->id);
-                            echo "</pre>";
-                            //                     continue;
-                            $payment_details = $pay_li;
-                            $payment_id = $pay_li->id;
-                            $user_id = $pay_li->user_id;
-                            $kid_id = $pay_li->kid_id;
-                            $products = $this->Products->find('all')->where(['auto_checkout_date  <=' => $now_date, 'payment_id' => $payment_id, /* 'is_complete_by_admin' => 0 */ 'is_payment_fail' => 1]);
-
-                            // echo "<pre>";
-                            // print_r(++$kyx.' : '.$pay_li->id);
-                            // echo "<br>".$products->count();
-                            // echo "</pre>";
-                            // exit;
-
-                            $current_amount = $total_amount = 0;
-                            if ($products->count() > 0) {
-                                foreach ($products as $kyr => $prd_li) {
-                                    //                    echo "<pre>";
-                                    // print_r(++$kyr.' : '.$prd_li->id);
-                                    //                    echo "</pre>";
-                                    //                    exit;
-                                    //var_dump(($prd_li->keep_status == 1) && ($prd_li->checkedout != 'Y' || $prd_li->is_complete_by_admin != 1));
-                                    if (($prd_li->keep_status == 0) || ($prd_li->keep_status == 99)) {
-                                        $this->Products->updateAll(['keep_status' => 3], ['id' => $prd_li->id]);
-                                    }
-                                    if ((($prd_li->keep_status == 3) || ($prd_li->keep_status == 0) || ($prd_li->keep_status == 99)) && ($prd_li->checkedout != 'Y')) {
-                                        $current_amount += $prd_li->sell_price;
-                                    }
-
-                                    if (($prd_li->keep_status == 2) && ($prd_li->checkedout != 'Y' || $prd_li->is_complete_by_admin != 1)) {
-
-                                        if (empty($prd_li->product_exchange_date) || ($prd_li->product_exchange_date == '0000-00-00')) {
-                                            $current_amount += $prd_li->sell_price;
-
-                                            $this->Products->updateAll(['keep_status' => 3], ['id' => $prd_li->id]);
-                                        }
-                                    }
-
-                                    if (($prd_li->keep_status == 1) && ($prd_li->checkedout != 'Y' || $prd_li->is_complete_by_admin != 1)) {
-
-                                        if ($prd_li->store_return_status != 'Y') {
-
-                                            $current_amount += $prd_li->sell_price;
-
-                                            $this->Products->updateAll(['keep_status' => 3], ['id' => $prd_li->id]);
-                                        }
-                                    }
-                                }
-
-                                //                exit;
-
-                                $total_amount = $current_amount;
-
-                                $current_usr_dtl_strip = $this->Users->find('all')->where(['id' => $user_id])->first();
-
-
-                                $payment_data = $this->PaymentCardDetails->find('all')->where(['PaymentCardDetails.user_id' => $user_id, 'PaymentCardDetails.use_card' => 1])->first();
-
-                                if (empty($payment_data)) {
-
-                                    $payment_data = $this->PaymentCardDetails->find('all')->where(['PaymentCardDetails.user_id' => $user_id])->first();
-                                }
-
-
-
-                                $lastPymentg = $this->PaymentGetways->newEntity();
-
-                                $table1['user_id'] = $user_id;
-
-                                $table1['kid_id'] = $kid_id;
-
-                                $table1['emp_id'] = $payment_details->emp_id;
-
-                                $table1['inv_id'] = $payment_details->inv_id;
-
-                                $table1['qa_id'] = $payment_details->qa_id;
-
-                                $table1['support_id'] = $payment_details->support_id;
-
-                                $table1['status'] = 0;
-
-                                // $table1['price'] = $paymentGetwayAmount;
-
-                                $table1['price'] = $total_amount;
-
-                                $table1['profile_type'] = $payment_details->profile_type;
-
-                                $table1['payment_type'] = 2;
-
-                                $table1['created_dt'] = date('Y-m-d H:i:s');
-
-                                $table1['parent_id'] = $payment_id;
-
-                                $table1['work_status'] = 1;
-
-                                $table1['count'] = $payment_details->count;
-
-                                $table1['payment_card_details_id'] = $payment_data->id;
-
-                                $table1['shipping_address_id'] = $payment_details->shipping_address_id;
-
-                                $lastPymentg = $this->PaymentGetways->patchEntity($lastPymentg, $table1);
-
-                                $lastPymentg = $this->PaymentGetways->save($lastPymentg);
-
-                                if ($payment_details->kid_id != 0) {
-
-                                    $getUsersDetails = $this->KidsDetails->find('all')->where(['id' => $payment_details->kid_id])->first();
-
-                                    $cname = $getUsersDetails->kids_first_name;
-                                } else {
-
-                                    $this->Users->hasOne('UserDetails', ['className' => 'UserDetails', 'foreignKey' => 'user_id']);
-
-                                    $getUsersDetails = $this->Users->find('all')->contain(['UserDetails'])->where(['Users.id' => $user_id])->first();
-
-                                    $cname = $getUsersDetails->name;
-                                }
-
-
-
-                                if (!empty($payment_details->shipping_address_id)) {
-
-                                    $shipping_address_data = $this->ShippingAddress->find('all')->where(['id' => $payment_details->shipping_address_id])->first();
-                                } else {
-                                    $shipping_address_data = $this->ShippingAddress->find('all')->where(['user_id' => $user_id])->first();
-                                }
-
-                                $billingAddress = $this->ShippingAddress->find('all')->where(['ShippingAddress.user_id' => $user_id, 'is_billing' => 1])->first();
-
-                                if (empty($billingAddress)) {
-                                    $billingAddress = $this->ShippingAddress->find('all')->where(['ShippingAddress.user_id' => $user_id])->first();
-                                }
-
-                                $productCCount = $this->Products->find('all')->where(['payment_id' => $payment_id, 'is_altnative_product' => 0])->Count();
-
-                                $exCCountKeeps = $this->Products->find('all')->where(['Products.payment_id' => $payment_id, 'keep_status' => 3])->Count();
-
-                                if ($exCCountKeeps != 0) {
-                                    if ($productCCount == $exCCountKeeps) {
-                                        $allKeepsProducts = 1;
-                                        $percentage = 25;
-                                    } else {
-                                        $allKeepsProducts = 2;
-                                        $percentage = 0;
-                                    }
-                                    $discount = 0;
-                                    $subTotal = 0;
-                                    $stylist_picks_subtotal = $total_amount;
-                                    if ($allKeepsProducts == 1) {
-                                        if ($total_amount > 0) {
-
-                                            $percentage = 25;
-
-                                            $discount = ($percentage / 100) * $total_amount;
-
-                                            $discount = sprintf('%.2f', $discount);
-
-                                            $subTotal = $total_amount - $discount;
-
-                                            $total_amount = $subTotal;
-                                        }
-                                    }
-                                    $all_sales_tax = $this->SalesNotApplicableState->find('all');
-                                    $sales_tx_required = "NO";
-                                    $sales_tx_rt = 0;
-                                    $sales_tx = 0;
-                                    foreach ($all_sales_tax as $sl_tx) {
-
-                                        if (($shipping_address_data->zipcode >= $sl_tx->zip_min) && ($shipping_address_data->zipcode <= $sl_tx->zip_max)) {
-
-                                            $sales_tx_required = "YES";
-
-                                            $sales_tx_rt = $sl_tx->tax_rate / 100;
-                                        }
-                                    }
-
-                                    if ($sales_tx_required == "YES") {
-
-                                        if ($total_amount > 0) {
-
-                                            $sales_tx = sprintf('%.2f', $total_amount * $sales_tx_rt);
-
-                                            $total_amount += $sales_tx;
-                                        }
-                                    }
-
-                                    if (!empty($total_amount)) {
-
-                                        $total_amount = number_format(sprintf('%.2f', $total_amount), 2, '.', '');
-                                    }
-
-                                    $arr_user_info = [
-                                        'stripe_customer_key' => $current_usr_dtl_strip->stripe_customer_key,
-                                        'stripe_payment_method' => $payment_data->stripe_payment_key,
-                                        'product' => $billingAddress->full_name . ' Weekly check out order',
-                                        'first_name' => $billingAddress->full_name,
-                                        'last_name' => $billingAddress->full_name,
-                                        'address' => $billingAddress->address,
-                                        'city' => $billingAddress->city,
-                                        'state' => $billingAddress->state,
-                                        'zip' => $billingAddress->zipcode,
-                                        'country' => 'USA',
-                                        'email' => $current_usr_dtl_strip->email,
-                                        //'amount' => $paymentGetwayAmount,
-                                        'amount' => $total_amount,
-                                        'invice' => $lastPymentg->id,
-                                        'refId' => 32,
-                                        'companyName' => 'Drapefit',
-                                    ];
-
-                                    if ($total_amount > 0) {
-
-                                        $message = $this->stripeApiPay($arr_user_info);
-                                    } else {
-
-                                        $message = [];
-
-                                        $message['status'] = '1';
-                                    }
-
-
-
-                                    if (@$message['status'] == '1') {
-
-
-
-                                        $this->loadModel('SmsSettings');
-                                        $get_sms_temp = $this->SmsSettings->find('all')->where(['name' => 'CHECKOUT_RECEIPT_SMS'])->first();
-                                        $billingAddress = $this->ShippingAddress->find('all')->where(['ShippingAddress.user_id' => $user_id, 'is_billing' => 1])->first();
-                                        if (empty($billingAddress)) {
-                                            $billingAddress = $this->ShippingAddress->find('all')->where(['ShippingAddress.user_id' => $user_id])->first();
-                                        }
-                                        if (!empty($get_sms_temp)) {
-                                            $txt_msg = str_replace("[CUSTOMER_ORDER_PAGE]", HTTP_ROOT . 'order', $get_sms_temp->value);
-                                            $phone = $billingAddress->country_code . $billingAddress->phone;
-                                            $url = HTTP_ROOT . 'api/sendSmsPost';
-                                            $curl = curl_init();
-
-                                            curl_setopt_array($curl, array(
-                                                CURLOPT_URL => $url,
-                                                CURLOPT_RETURNTRANSFER => true,
-                                                CURLOPT_ENCODING => '',
-                                                CURLOPT_MAXREDIRS => 10,
-                                                CURLOPT_TIMEOUT => 0,
-                                                CURLOPT_FOLLOWLOCATION => true,
-                                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                                CURLOPT_CUSTOMREQUEST => 'POST',
-                                                CURLOPT_POSTFIELDS => array('phone' => $phone, 'msg' => $txt_msg, 'suj' => 'CHECKOUT_RECEIPT_SMS'),
-                                            ));
-
-                                            $response = curl_exec($curl);
-
-                                            curl_close($curl);
-                                        }
-
-                                        $this->PaymentGetways->updateAll(['status' => 1, 'price' => $total_amount], ['id' => $lastPymentg->id]);
-
-                                        $payment_check = $this->Payments->find('all')->where(['payment_id' => $lastPymentg->id])->order(['id' => 'DESC'])->first();
-
-                                        $payment = $this->Payments->newEntity();
-
-                                        if (!empty($payment_check)) {
-
-                                            $table['id'] = $payment_check->id;
-                                        }
-
-                                        $table['user_id'] = $user_id;
-
-                                        $table['payment_id'] = $lastPymentg->id;
-
-                                        $table['sub_toal'] = $total_amount - $sales_tx;
-
-                                        $table['sales_tax'] = $sales_tx;
-
-                                        $table['stylist_picks_subtotal'] = $stylist_picks_subtotal;
-
-                                        $table['keep_all_discount'] = $discount;
-
-                                        $table['tax'] = 0.00;
-
-                                        $table['tax_price'] = 0;
-
-                                        //                $table['total_price'] = $price;
-
-                                        $table['total_price'] = $total_amount;
-
-                                        $table['paid_status'] = 1;
-
-                                        $table['created_dt'] = date('Y-m-d H:i:s');
-
-                                        //                $table['product_ids'] = @implode(',', @$product_ids);
-
-                                        $table['wallet_balance'] = 0;
-
-                                        $table['promo_balance'] = 0;
-
-                                        $payment = $this->Payments->patchEntity($payment, $table);
-
-                                        $lastPyment = $this->Payments->save($payment);
-
-                                        if ($payment_details->kid_id != 0) {
-
-                                            $profileType = 3;
-
-                                            $this->Products->belongsTo('KidsDetails', ['className' => 'KidsDetails', 'foreignKey' => 'kid_id']);
-
-                                            $prData = $this->Products->find('all')->contain(['KidsDetails'])->where(['Products.kid_id' => $kid_id, 'Products.payment_id' => $payment_id, 'Products.keep_status' => 3, 'Products.auto_checkout_date <=' => $now_date]);
-
-                                            $kidcount = $prData->count();
-                                        } else {
-
-                                            $profileType = $payment_details->profile_type;
-
-                                            $this->Products->belongsTo('Users', ['className' => 'Users', 'foreignKey' => 'user_id']);
-
-                                            $prData = $this->Products->find('all')->contain(['Users'])->where(['Products.user_id' => $user_id, 'Products.kid_id =' => 0, 'Products.payment_id' => $payment_id, 'Products.keep_status' => 3, 'Products.auto_checkout_date <=' => $now_date]);
-                                        }
-
-
-
-                                        $productData = '';
-
-                                        $i = 1;
-
-                                        foreach ($prData as $dataMail) {
-
-                                            if ($dataMail->keep_status == 3) {
-
-                                                $priceMail = $dataMail->sell_price;
-                                            } else {
-
-                                                $priceMail = 0;
-                                            }
-
-                                            if ($dataMail->keep_status == 3) {
-
-                                                $keep = 'Keeps';
-
-                                                if (!empty($dataMail->inv_product_id)) {
-                                                    $newLogArr = [];
-                                                    $newLogArr['product_id'] = $dataMail->inv_product_id;
-                                                    $newLogArr['user_id'] = $this->request->session()->read('Auth.User.id');
-                                                    $newLogArr['action'] = 'customer_keep';
-                                                    $newLogArr['created_on'] = date('Y-m-d H:i:s');
-                                                    $newDtRow = $this->InProductLogs->newEntity();
-                                                    $newDtRow = $this->InProductLogs->patchEntity($newDtRow, $newLogArr);
-                                                    $this->InProductLogs->save($newDtRow);
-                                                    echo "<pre>";
-                                                    print_r($newDtRow);
-                                                    echo "</pre>";
-                                                    $this->InProducts->updateAll(['updated_by' => $this->request->session()->read('Auth.User.id'), 'updated_date' => date('Y-m-d H:i:s'), 'action' => 'Customer Keep'], ['id' => $dataMail->inv_product_id]);
-                                                }
-                                            }
-
-                                            $img_dd = "";
-
-                                            $img_dd = strstr($dataMail->product_image, PRODUCT_IMAGES) ? $dataMail->product_image : PRODUCT_IMAGES . $dataMail->product_image;
-
-                                            //                    if ($dataMail->is_complete != 1) {
-
-                                            $productData .= "<tr>
-                            <td style='padding: 10px 10px;font-size: 13px;border-bottom: 1px solid #ccc;'>
-                                   # " . $i . "
-                                </td>
-                                <td style='padding: 10px 10px;font-size: 13px;border-bottom: 1px solid #ccc;'>
-                                  <img src='" . HTTP_ROOT . $img_dd . "' width='85'/>
-                                </td>
-                                <td style='padding: 10px 10px;font-size: 13px;border-bottom: 1px solid #ccc;'>
-                                   " . $dataMail->product_name_one . "
-                                </td>
-                                <td style='padding: 10px 10px;font-size: 13px;border-bottom: 1px solid #ccc;'>
-                                   " . $dataMail->product_name_two . "
-                                </td>
-                                <td style='padding: 10px 10px;font-size: 13px;border-bottom: 1px solid #ccc;'>
-                                    " . $keep . "
-                                </td>
-                                <td style='padding: 10px 10px;font-size: 13px;border-bottom: 1px solid #ccc;'>
-                                   " . $dataMail->size . "
-                                </td>
-                                <td style='padding: 10px 10px;font-size: 13px;border-bottom: 1px solid #ccc;'>
-                                   $" . number_format($priceMail, 2) . "
-                                </td>
-                            </tr>";
-                                            //                    }
-
-                                            if ($dataMail->keep_status == 3) {
-
-                                                $priceMail = $dataMail->sell_price;
-
-                                                //                        $this->Products->updateAll(['is_complete' => '1'], ['id' => $dataMail->id]);
-                                            } else {
-
-                                                $priceMail = 0;
-                                            }
-
-                                            if ($dataMail->keep_status == 3) {
-
-                                                //                        $this->Products->updateAll(['is_complete' => '1', 'is_exchange_pending' => 0], ['id' => $dataMail->id]);
-
-                                                $this->Products->updateAll(['is_exchange_pending' => 0], ['id' => $dataMail->id]);
-
-                                                $keep = 'Keeps';
-
-                                                $this->Products->updateAll(['checkedout' => 'Y', 'is_complete_by_admin' => 1, 'is_complete' => 1], ['id' => $dataMail->id]);
-                                            }
-
-                                            echo "updated ...";
-
-                                            $this->Products->updateAll(['is_payment_fail' => 0, 'auto_checkout_date' => NULL], ['id' => $dataMail->id]);
-
-                                            $i++;
-                                        }
-
-                                        //                echo "<pre>";
-                                        //                print_r($prData->count());
-                                        //                print_r($prData);
-                                        //                print_r($productData);
-                                        //                echo "</pre>";
-                                        //                exit;
-
-                                        $getParentDetails = $this->Users->find('all')->where(['Users.id' => $user_id])->first();
-
-                                        $offerData = '';
-
-                                        $gtotal = $total_amount - $sales_tx;
-
-                                        $sitename = HTTP_ROOT;
-
-                                        $name = $getParentDetails->name;
-
-                                        $to = $current_usr_dtl_strip->email; //$getUsersDetails->email;
-
-                                        $fromMail = $this->Settings->find('all')->where(['Settings.name' => 'FROM_EMAIL'])->first();
-
-                                        $from = $fromMail->value;
-
-                                        $emailMessage1 = $this->Settings->find('all')->where(['Settings.name' => 'ORDER_PAYMENT'])->first();
-
-                                        //                $subject = $emailMessage1->display . ' #DFPYMID' . $payment_id;
-
-                                        $subject = 'Auto checkout processed on ' . $day_name . ' #DFPYMID' . $payment_id;
-
-                                        $email_message = $this->Custom->order($emailMessage1->value, $name, $sitename, $productData, $stylist_picks_subtotal, $total_amount, $payment_details->count, $discount, $refundamount = '', $gtotal, $offerData, $sales_tx, '#DFPYMID' . $payment_id);
-
-                                        $this->mailLogEntry('productAutoCheckoutWeekly', $from, $subject, $to, $email_message);
-                                        // $this->Custom->sendEmail($to, $from, $subject, $email_message);
-
-                                        //                                $this->Custom->sendEmail('debmicrofinet@gmail.com', $from, $subject, $email_message);
-
-                                        $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
-
-                                        $this->mailLogEntry('productAutoCheckoutWeekly', $from, $subject, $toSupport, $email_message);
-                                        // $this->Custom->sendEmail($toSupport, $from, $subject, $email_message);
-
-                                        //                echo $productData;
-                                        //                exit;
-
-
-
-                                        if (!empty($payment_id)) {
-
-                                            $all_prd_cnt = $this->Products->find('all')->where(['payment_id' => $payment_id])->count();
-
-                                            $chked_prd_cnt = $this->Products->find('all')->where(['payment_id' => $payment_id, 'checkedout' => 'Y'])->count();
-
-                                            $chk_exng_prd_cnt = $this->Products->find('all')->where(['payment_id' => $payment_id, 'keep_status' => 2]);
-
-                                            $is_exchange_pesent = 0;
-
-                                            foreach ($chk_exng_prd_cnt as $exg_prd_li) {
-
-                                                $get_alter_prd = $this->Products->find('all')->where(['payment_id' => $payment_id, 'exchange_product_id' => $exg_prd_li->id])->count();
-
-                                                if ($get_alter_prd == 0) {
-
-                                                    $is_exchange_pesent = 1;
-                                                }
-                                            }
-
-                                            if ($is_exchange_pesent == 1) {
-
-                                                if (!empty($kid_id)) {
-
-                                                    $this->KidsDetails->updateAll(['is_redirect' => 2], ['id' => $kid_id]);
-                                                } else {
-
-                                                    $this->Users->updateAll(['is_redirect' => 2], ['id' => $user_id]);
-                                                }
-                                            } else {
-
-                                                if ($all_prd_cnt == $chked_prd_cnt) {
-                                                    $this->PaymentGetways->updateAll(['work_flow_status' => Configure::read('Previous_Worklist_queue')], ['id' => $payment_id]);
-                                                    $this->PaymentGetways->updateAll(['status' => 1, 'work_status' => 2], ['id' => $payment_id]);
-
-                                                    if (!empty($kid_id)) {
-
-                                                        $this->Notifications->updateAll(['is_read' => 1], ['kid_id' => $kid_id]);
-
-                                                        $this->KidsDetails->updateAll(['is_redirect' => 5], ['id' => $kid_id]);
-                                                    } else {
-
-                                                        $this->Users->updateAll(['is_redirect' => 5], ['id' => $user_id]);
-
-                                                        $this->Notifications->updateAll(['is_read' => 1], ['user_id' => $user_id, 'kid_id' => 0]);
-                                                    }
-                                                }
-                                            }
-                                        }
-
-
-
-                                        if ($total_amount > 0) {
-                                            $this->Products->updateAll(['auto_checkout_date' => ''], ['payment_id' => $payment_id, 'auto_checkout_date <= ' => $now_date]);
-
-                                            echo ("<br> " . 'Payment completed. ' . $payment_id);
-                                        }
-                                    } else {
-                                        $this->PaymentGetways->updateAll(['work_flow_status' => Configure::read('Support_Tab_Recovery_queue')], ['id' => $payment_id]);
-                                        $products = $this->Products->find('all')->where(['auto_checkout_date <= ' => $now_date, 'payment_id' => $payment_id, /* 'is_complete_by_admin' => 0 */ 'is_payment_fail' => 1]);
-                                        // echo "<br> Decli : " . $products->count() . "<br>";exit;
-
-                                        $this->loadModel('SmsSettings');
-                                        $get_sms_temp = $this->SmsSettings->find('all')->where(['name' => 'AUTO_CHECKOU_DECLINED'])->first();
-                                        if (!empty($get_sms_temp)) {
-                                             $txt_msg = str_replace("[ORDER_NUMBER]", "DFPYMID" . $payment_id, $get_sms_temp->value);
-                                    $txt_msg = str_replace("[CUSTOMER_PAYMENT_PAGE]", HTTP_ROOT . "order_review/", $txt_msg);
-                                            $phone = $billingAddress->country_code . $billingAddress->phone;
-                                            $url = HTTP_ROOT . 'api/sendSmsPost';
-                                            $curl = curl_init();
-
-                                            curl_setopt_array($curl, array(
-                                                CURLOPT_URL => $url,
-                                                CURLOPT_RETURNTRANSFER => true,
-                                                CURLOPT_ENCODING => '',
-                                                CURLOPT_MAXREDIRS => 10,
-                                                CURLOPT_TIMEOUT => 0,
-                                                CURLOPT_FOLLOWLOCATION => true,
-                                                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                                CURLOPT_CUSTOMREQUEST => 'POST',
-                                                CURLOPT_POSTFIELDS => array('phone' => $phone, 'msg' => $txt_msg, 'suj' => 'AUTO_CHECKOUT_DECLINED'),
-                                            ));
-
-                                            $response = curl_exec($curl);
-
-                                            curl_close($curl);
-                                        }
-
-                                        foreach ($products as $dataMail) {
-
-                                            if (($dataMail->keep_status == 3) /* && ($dataMail->is_stylist != 1) */) {
-                                                if ($dataMail->is_complete != 1) {
-                                                    $this->Products->updateAll(['keep_status' => 99, 'is_payment_fail' => 1], ['id' => $dataMail->id]);
-                                                    //                                echo $dataMail->id . " - " . $payment_id . "<br>";
-                                                    //                                echo "<br> sts : " . $dataMail->keep_status . "<br>";
-                                                    //                                $this->PaymentGetways->updateAll(['payment_type' => 1, 'mail_status' => 1, 'work_status' => '1'], ['id' => $payment_id]);
-                                                }
-                                                $keep = 'Keeps';
-                                            } elseif ($dataMail->keep_status == 2) {
-                                                $keep = 'Exchange';
-
-                                                //                            $this->PaymentGetways->updateAll(['payment_type' => 1, 'mail_status' => 1, 'work_status' => '1'], ['id' => $payment_id]);
-
-                                                $this->Products->updateAll(['keep_status' => 99, 'is_payment_fail' => 1], ['id' => $dataMail->id]);
-                                                //                            echo $dataMail->id . " - " . $payment_id . "<br>";
-                                            } elseif ($dataMail->keep_status == 1) {
-                                                $keep = 'Return';
-
-                                                //                            $this->PaymentGetways->updateAll(['payment_type' => 1, 'mail_status' => 1, 'work_status' => '1'], ['id' => $payment_id]);
-
-                                                $this->Products->updateAll(['keep_status' => 99, 'is_payment_fail' => 1], ['id' => $dataMail->id]);
-                                                //                            echo $dataMail->id . " - " . $payment_id . "<br>";
-                                            }
-                                        }
-
-                                        //                    exit;
-
-                                        if ($payment_details->kid_id != 0) {
-
-                                            $profileType = 3;
-
-                                            $this->Products->belongsTo('KidsDetails', ['className' => 'KidsDetails', 'foreignKey' => 'kid_id']);
-
-                                            $prData = $this->Products->find('all')->contain(['KidsDetails'])->where(['Products.kid_id' => $kid_id, 'Products.payment_id' => $payment_id, 'Products.keep_status' => 99, 'Products.auto_checkout_date <= ' => $now_date]);
-
-                                            $kidcount = $prData->count();
-                                        } else {
-                                            $profileType = $payment_details->profile_type;
-
-                                            $this->Products->belongsTo('Users', ['className' => 'Users', 'foreignKey' => 'user_id']);
-
-                                            $prData = $this->Products->find('all')->contain(['Users'])->where(['Products.user_id' => $user_id, 'Products.kid_id =' => 0, 'Products.payment_id' => $payment_id, 'Products.keep_status' => 99, 'Products.auto_checkout_date <= ' => $now_date]);
-                                        }
-                                        $productData = '';
-                                        $i = 1;
-                                        $current_amount = 0;
-                                        foreach ($prData as $dataMail) {
-                                            $priceMail = $dataMail->sell_price;
-                                            $current_amount += $dataMail->sell_price;
-                                            $keep = 'Keeps';
-                                            $img_dd = "";
-                                            $img_dd = strstr($dataMail->product_image, PRODUCT_IMAGES) ? $dataMail->product_image : PRODUCT_IMAGES . $dataMail->product_image;
-
-                                            //                    if ($dataMail->is_complete != 1) {
-
-                                            $productData .= "<tr>
-                            <td style='padding: 10px 10px;font-size: 13px;border-bottom: 1px solid #ccc;'>
-                                   # " . $i . "
-                                </td>
-                                <td style='padding: 10px 10px;font-size: 13px;border-bottom: 1px solid #ccc;'>
-                                  <img src='" . HTTP_ROOT . $img_dd . "' width='85'/>
-                                </td>
-                                <td style='padding: 10px 10px;font-size: 13px;border-bottom: 1px solid #ccc;'>
-                                   " . $dataMail->product_name_one . "
-                                </td>
-                                <td style='padding: 10px 10px;font-size: 13px;border-bottom: 1px solid #ccc;'>
-                                   " . $dataMail->product_name_two . "
-                                </td>
-                                <td style='padding: 10px 10px;font-size: 13px;border-bottom: 1px solid #ccc;'>
-                                    " . $keep . "
-                                </td>
-                                <td style='padding: 10px 10px;font-size: 13px;border-bottom: 1px solid #ccc;'>
-                                   " . $dataMail->size . "
-                                </td>
-                                <td style='padding: 10px 10px;font-size: 13px;border-bottom: 1px solid #ccc;'>
-                                   $" . number_format($priceMail, 2) . "
-                                </td>
-                            </tr>";
-                                            //                    }
-                                            $i++;
-                                        }
-
-                                        //                 echo "<pre>";
-                                        //                 print_r($prData->count());
-                                        //                 echo "<br>";
-                                        // //                print_r($prData);
-                                        //                 print_r($payment_id);
-                                        //                 echo "<br>";
-                                        //                 print_r($productData);
-                                        //                 echo "</pre>";
-                                        //                 exit;
-                                        $getParentDetails = $this->Users->find('all')->where(['Users.id' => $user_id])->first();
-
-                                        $stylist_picks_subtotal = $current_amount;
-
-                                        if ($allKeepsProducts == 1) {
-
-                                            if ($stylist_picks_subtotal > 0) {
-
-                                                $percentage = 25;
-
-                                                $discount = ($percentage / 100) * $stylist_picks_subtotal;
-
-                                                $discount = sprintf('%.2f', $discount);
-                                                $current_amount -= $discount;
-                                            }
-                                        }
-
-                                        if ($sales_tx_required == "YES") {
-
-                                            if ($current_amount > 0) {
-
-                                                $sales_tx = sprintf('%.2f', $current_amount * $sales_tx_rt);
-
-                                                $current_amount += $sales_tx;
-                                            }
-                                        }
-
-
-                                        $offerData = '';
-                                        $total_amount = $current_amount;
-
-                                        $gtotal = $total_amount - $sales_tx;
-
-                                        $sitename = HTTP_ROOT;
-
-                                        $name = $getParentDetails->name;
-
-                                        $to = $current_usr_dtl_strip->email; //$getUsersDetails->email;
-
-                                        $fromMail = $this->Settings->find('all')->where(['Settings.name' => 'FROM_EMAIL'])->first();
-
-                                        $from = $fromMail->value;
-
-                                        $emailMessage1 = $this->Settings->find('all')->where(['Settings.name' => 'ORDER_PAYMENT'])->first();
-
-                                        //                $subject = $emailMessage1->display . ' #DFPYMID' . $payment_id;
-
-                                        $subject = 'Auto checkout payment failed on ' . $day_name . ' #DFPYMID' . $payment_id;
-
-                                        $email_message = $this->Custom->order($emailMessage1->value, $name, $sitename, $productData, $stylist_picks_subtotal, $total_amount, $payment_details->count, $discount, $refundamount = '', $gtotal, $offerData, $sales_tx, '#DFPYMID' . $payment_id);
-
-                                        // $this->Custom->sendEmail($to, $from, $subject, $email_message);
-
-
-
-                                        $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
-
-                                        $this->mailLogEntry('productAutoCheckoutWeekly', $from, $subject, $toSupport, $email_message);
-                                        // $this->Custom->sendEmail($toSupport, $from, $subject, $email_message);
-
-                                        $chked_declin_cnt = $this->Products->find('all')->where(['payment_id' => $payment_id, 'keep_status' => 99])->count();
-
-                                        if (!empty($chked_declin_cnt)) {
-
-                                            if (!empty($kid_id)) {
-
-                                                $this->KidsDetails->updateAll(['is_redirect' => '4'], ['id' => $kid_id]);
-                                            } else {
-
-                                                $this->Users->updateAll(['is_redirect' => 4], ['id' => $user_id]);
-                                            }
-                                        }
-
-                                        echo ("<br> " . 'Product sent to declined list. ' . $payment_id);
-                                    }
-                                    $this->CronjobWeeklyCheckout->updateAll(['status'=>1],['payment_id' => $pay_li_data->payment_id]);
-                                }
-                            }
-                        }
-                    }
-                }
             } else {
 
                 echo "<br> " . "No product to process for " . $date;
@@ -7407,7 +6675,7 @@ class CronjobsController extends AppController {
 
         exit;
     }
-    
+
     public function mailLogEntry($batch_name, $frm, $subject, $to_email, $msg)
     {
         $this->loadModel('EmailLogs');
@@ -7419,9 +6687,15 @@ class CronjobsController extends AppController {
         $newLogArr['subject'] = $subject;
         $newLogArr['to_email'] = $to_email;
         $newLogArr['msg'] = $msg;
+        if($batch_name='autocheckoutmail'){
+            $newDtRow = $this->EmailLogs->newEntity();
+            $newDtRow = $this->EmailLogs->patchEntity($newDtRow, $newLogArr);
+            $this->EmailLogs->save($newDtRow);
+            return true;
+        }
 
         $chk = $this->EmailLogs->find('all')->where(['subject'=>$subject,'to_email'=>$to_email, 'created_on LIKE'=>'%'.date('Y-m-d').'%'])->count();
-        if($chk<1){
+        if(($chk<1)){
             $newDtRow = $this->EmailLogs->newEntity();
             $newDtRow = $this->EmailLogs->patchEntity($newDtRow, $newLogArr);
             $this->EmailLogs->save($newDtRow);
@@ -7444,70 +6718,28 @@ class CronjobsController extends AppController {
         exit;
     }
     
-    public function productWeeklyAutoCheckoutTest()
+    public function productWeeklyAutoCheckoutProcess()
     {        
         $this->loadModel('CronjobWeeklyCheckout');        
         date_default_timezone_set('America/Chicago');
-        $this->CronjobWeeklyCheckout->deleteAll(['insert_date < '=>date('Y-m-d')]);
+        
         echo date_default_timezone_get();
         $date = date('Y-m-d'); //date('Y-m-d', strtotime(date('Y-m-d') . ' - 2 days'));
         echo "<br>" . $date;
         $now_date = $date;
         $day_name = date('l', strtotime($date));
         echo " - " . $day_name;
-
-        //        exit;
-        //   if (in_array($day_name, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])) {
-            if (in_array($day_name, ['Monday', 'Friday', 'Saturday', 'Sunday'])) {
-
-            $payment_list = $this->Products->find('all')->where(['auto_checkout_date <=' => $now_date, /* 'is_complete_by_admin' => 0 */ 'is_payment_fail' => 1])->group(['payment_id', 'auto_checkout_date'])->order(['payment_id' => 'DESC']);
-
-                    // echo "<pre>";
-                    // print_r($payment_list);
-                    // echo "</pre>";
-                    // exit;
-
-            $all_payment_ids = (!empty($payment_list->count())) ? Hash::extract($payment_list->toArray(), '{n}.payment_id') : [];
-
-                        // echo "<pre>";
-                        // print_r($all_payment_ids);
-                        // echo "</pre>";
-                        // exit;
-
-            if (!empty($all_payment_ids)) {
-                $payment_details = $this->PaymentGetways->find('all')->where(['id IN' => $all_payment_ids, 'status' => 1, 'payment_type' => 1, 'work_status' => 1])->order(['id' => 'DESC']);
-
-                                $all_ff_payment_ids = (!empty($payment_details->count())) ? Hash::extract($payment_details->toArray(), '{n}.id') : [];
-                
-                                echo "<pre>";
-                                print_r($all_ff_payment_ids);
-                                echo "</pre>";
-//                                 exit;
-                                 
-                $current_date = date('Y-m-d');
-                foreach ($payment_details as $kyx => $pay_li) {
-                    $newArrx = [];
-                    $newArrx['payment_id']=$pay_li->id;
-                    $newArrx['insert_date']=$current_date;                    
-                    $check_exit_or_not = $this->CronjobWeeklyCheckout->find('all')->where(['payment_id'=>$pay_li->id,'insert_date'=>$current_date])->count();
-                    if($check_exit_or_not == 0){
-                        $newDtRow = $this->CronjobWeeklyCheckout->newEntity();
-                        $newDtRow = $this->CronjobWeeklyCheckout->patchEntity($newDtRow, $newArrx);
-                        $this->CronjobWeeklyCheckout->save($newDtRow);
-                    }
-                }
-                exit;
-                
-                $check_payments = $this->CronjobWeeklyCheckout->find('all')->where(['insert_date'=>$current_date, 'status'=>0]);                           
-                
+        
+        $check_payments = $this->CronjobWeeklyCheckout->find('all')->where(['status'=>0])->limit(15);                 
                 if($check_payments->count() > 0){
                     foreach ($check_payments as $kyx => $pay_li_data) {
                         $pay_li = $this->PaymentGetways->find('all')->where(['id' => $pay_li_data->payment_id])->first();
-                        if (1/*$pay_li->id == 1772*/) {
+                        $check_pmt = $this->CronjobWeeklyCheckout->find('all')->where(['insert_date'=>$current_date, 'payment_id'=> $pay_li_data->payment_id])->first();   
+                        if ($check_pmt->status == 0) {
                             echo "<pre>";
                             print_r(++$kyx . ' : ' . $pay_li->id);
                             echo "</pre>";
-                            //                     continue;
+                            
                             $payment_details = $pay_li;
                             $payment_id = $pay_li->id;
                             $user_id = $pay_li->user_id;
@@ -7516,10 +6748,10 @@ class CronjobsController extends AppController {
 
                             // echo "<pre>";
                             // print_r(++$kyx.' : '.$pay_li->id);
-                            // echo "<br>".$products->count();
+                             echo "<br>prd cnt : ".$products->count().'<br>';
                             // echo "</pre>";
                             // exit;
-
+                            // continue;
                             $current_amount = $total_amount = 0;
                             if ($products->count() > 0) {
                                 foreach ($products as $kyr => $prd_li) {
@@ -7572,70 +6804,39 @@ class CronjobsController extends AppController {
 
 
                                 $lastPymentg = $this->PaymentGetways->newEntity();
-
                                 $table1['user_id'] = $user_id;
-
                                 $table1['kid_id'] = $kid_id;
-
                                 $table1['emp_id'] = $payment_details->emp_id;
-
                                 $table1['inv_id'] = $payment_details->inv_id;
-
                                 $table1['qa_id'] = $payment_details->qa_id;
-
                                 $table1['support_id'] = $payment_details->support_id;
-
                                 $table1['status'] = 0;
-
                                 // $table1['price'] = $paymentGetwayAmount;
-
                                 $table1['price'] = $total_amount;
-
                                 $table1['profile_type'] = $payment_details->profile_type;
-
                                 $table1['payment_type'] = 2;
-
                                 $table1['created_dt'] = date('Y-m-d H:i:s');
-
                                 $table1['parent_id'] = $payment_id;
-
                                 $table1['work_status'] = 1;
-
                                 $table1['count'] = $payment_details->count;
-
                                 $table1['payment_card_details_id'] = $payment_data->id;
-
                                 $table1['shipping_address_id'] = $payment_details->shipping_address_id;
-
                                 $lastPymentg = $this->PaymentGetways->patchEntity($lastPymentg, $table1);
-
                                 $lastPymentg = $this->PaymentGetways->save($lastPymentg);
-
                                 if ($payment_details->kid_id != 0) {
-
                                     $getUsersDetails = $this->KidsDetails->find('all')->where(['id' => $payment_details->kid_id])->first();
-
                                     $cname = $getUsersDetails->kids_first_name;
                                 } else {
-
                                     $this->Users->hasOne('UserDetails', ['className' => 'UserDetails', 'foreignKey' => 'user_id']);
-
                                     $getUsersDetails = $this->Users->find('all')->contain(['UserDetails'])->where(['Users.id' => $user_id])->first();
-
                                     $cname = $getUsersDetails->name;
                                 }
-
-
-
                                 if (!empty($payment_details->shipping_address_id)) {
-
                                     $shipping_address_data = $this->ShippingAddress->find('all')->where(['id' => $payment_details->shipping_address_id])->first();
                                 } else {
                                     $shipping_address_data = $this->ShippingAddress->find('all')->where(['user_id' => $user_id])->first();
                                 }
-
                                 $billingAddress = $this->ShippingAddress->find('all')->where(['ShippingAddress.user_id' => $user_id, 'is_billing' => 1])->first();
-
                                 if (empty($billingAddress)) {
                                     $billingAddress = $this->ShippingAddress->find('all')->where(['ShippingAddress.user_id' => $user_id])->first();
                                 }
@@ -7761,6 +6962,8 @@ class CronjobsController extends AppController {
 
                                             curl_close($curl);
                                         }
+                                        
+                                         $this->CronjobWeeklyCheckout->updateAll(['status'=>($check_pmt->status + 1)],['payment_id' => $pay_li_data->payment_id]);
 
                                         $this->PaymentGetways->updateAll(['status' => 1, 'price' => $total_amount], ['id' => $lastPymentg->id]);
 
@@ -7774,54 +6977,30 @@ class CronjobsController extends AppController {
                                         }
 
                                         $table['user_id'] = $user_id;
-
                                         $table['payment_id'] = $lastPymentg->id;
-
                                         $table['sub_toal'] = $total_amount - $sales_tx;
-
                                         $table['sales_tax'] = $sales_tx;
-
                                         $table['stylist_picks_subtotal'] = $stylist_picks_subtotal;
-
                                         $table['keep_all_discount'] = $discount;
-
                                         $table['tax'] = 0.00;
-
                                         $table['tax_price'] = 0;
-
                                         //                $table['total_price'] = $price;
-
                                         $table['total_price'] = $total_amount;
-
                                         $table['paid_status'] = 1;
-
                                         $table['created_dt'] = date('Y-m-d H:i:s');
-
                                         //                $table['product_ids'] = @implode(',', @$product_ids);
-
                                         $table['wallet_balance'] = 0;
-
                                         $table['promo_balance'] = 0;
-
                                         $payment = $this->Payments->patchEntity($payment, $table);
-
                                         $lastPyment = $this->Payments->save($payment);
-
                                         if ($payment_details->kid_id != 0) {
-
                                             $profileType = 3;
-
                                             $this->Products->belongsTo('KidsDetails', ['className' => 'KidsDetails', 'foreignKey' => 'kid_id']);
-
                                             $prData = $this->Products->find('all')->contain(['KidsDetails'])->where(['Products.kid_id' => $kid_id, 'Products.payment_id' => $payment_id, 'Products.keep_status' => 3, 'Products.auto_checkout_date <=' => $now_date]);
-
                                             $kidcount = $prData->count();
                                         } else {
-
                                             $profileType = $payment_details->profile_type;
-
                                             $this->Products->belongsTo('Users', ['className' => 'Users', 'foreignKey' => 'user_id']);
-
                                             $prData = $this->Products->find('all')->contain(['Users'])->where(['Products.user_id' => $user_id, 'Products.kid_id =' => 0, 'Products.payment_id' => $payment_id, 'Products.keep_status' => 3, 'Products.auto_checkout_date <=' => $now_date]);
                                         }
 
@@ -7832,19 +7011,13 @@ class CronjobsController extends AppController {
                                         $i = 1;
 
                                         foreach ($prData as $dataMail) {
-
                                             if ($dataMail->keep_status == 3) {
-
                                                 $priceMail = $dataMail->sell_price;
                                             } else {
-
                                                 $priceMail = 0;
                                             }
-
                                             if ($dataMail->keep_status == 3) {
-
                                                 $keep = 'Keeps';
-
                                                 if (!empty($dataMail->inv_product_id)) {
                                                     $newLogArr = [];
                                                     $newLogArr['product_id'] = $dataMail->inv_product_id;
@@ -7862,11 +7035,8 @@ class CronjobsController extends AppController {
                                             }
 
                                             $img_dd = "";
-
                                             $img_dd = strstr($dataMail->product_image, PRODUCT_IMAGES) ? $dataMail->product_image : PRODUCT_IMAGES . $dataMail->product_image;
-
                                             //                    if ($dataMail->is_complete != 1) {
-
                                             $productData .= "<tr>
                             <td style='padding: 10px 10px;font-size: 13px;border-bottom: 1px solid #ccc;'>
                                    # " . $i . "
@@ -7928,29 +7098,17 @@ class CronjobsController extends AppController {
                                         //                exit;
 
                                         $getParentDetails = $this->Users->find('all')->where(['Users.id' => $user_id])->first();
-
                                         $offerData = '';
-
                                         $gtotal = $total_amount - $sales_tx;
-
                                         $sitename = HTTP_ROOT;
-
                                         $name = $getParentDetails->name;
-
                                         $to = $current_usr_dtl_strip->email; //$getUsersDetails->email;
-
                                         $fromMail = $this->Settings->find('all')->where(['Settings.name' => 'FROM_EMAIL'])->first();
-
                                         $from = $fromMail->value;
-
                                         $emailMessage1 = $this->Settings->find('all')->where(['Settings.name' => 'ORDER_PAYMENT'])->first();
-
                                         //                $subject = $emailMessage1->display . ' #DFPYMID' . $payment_id;
-
                                         $subject = 'Auto checkout processed on ' . $day_name . ' #DFPYMID' . $payment_id;
-
                                         $email_message = $this->Custom->order($emailMessage1->value, $name, $sitename, $productData, $stylist_picks_subtotal, $total_amount, $payment_details->count, $discount, $refundamount = '', $gtotal, $offerData, $sales_tx, '#DFPYMID' . $payment_id);
-
                                         $this->mailLogEntry('productAutoCheckoutWeekly', $from, $subject, $to, $email_message);
                                         // $this->Custom->sendEmail($to, $from, $subject, $email_message);
 
@@ -8027,6 +7185,7 @@ class CronjobsController extends AppController {
                                         $this->PaymentGetways->updateAll(['work_flow_status' => Configure::read('Support_Tab_Recovery_queue')], ['id' => $payment_id]);
                                         $products = $this->Products->find('all')->where(['auto_checkout_date <= ' => $now_date, 'payment_id' => $payment_id, /* 'is_complete_by_admin' => 0 */ 'is_payment_fail' => 1]);
                                         // echo "<br> Decli : " . $products->count() . "<br>";exit;
+                                         $this->CronjobWeeklyCheckout->updateAll(['status'=>($check_pmt->status + 1)],['payment_id' => $pay_li_data->payment_id]);
 
                                         $this->loadModel('SmsSettings');
                                         $get_sms_temp = $this->SmsSettings->find('all')->where(['name' => 'AUTO_CHECKOU_DECLINED'])->first();
@@ -8222,20 +7381,14 @@ class CronjobsController extends AppController {
 
                                         echo ("<br> " . 'Product sent to declined list. ' . $payment_id);
                                     }
-                                    $this->CronjobWeeklyCheckout->updateAll(['status'=>1],['payment_id' => $pay_li_data->payment_id]);
+                                   
                                 }
                             }
                         }
                     }
                 }
-            } else {
-
-                echo "<br> " . "No product to process for " . $date;
-            }
-        } else {
-            echo '<br>Only run on ' . implode(', ', ['Monday', 'Friday', 'Saturday']);
-        }
-
+        
+       
         exit;
     }
 
