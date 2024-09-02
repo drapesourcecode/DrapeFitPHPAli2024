@@ -248,8 +248,8 @@
        'mailjet'=> [
                     'host' => 'ssl://smtp.gmail.com',
                     'port' =>465, 
-                    'username' =>'support@drapefit.com', // id
-                    'password' =>'ftwu upnp leky cirb',//'hsde gmcc miso aitu',//app password added 12-08-2023//'encqsnxyqufqnbca',//'Kolkata@8906', // password
+                    'username' =>'support@drapefittest.com', // id
+                    'password' =>'Kolkata@5',//'hsde gmcc miso aitu',//app password added 12-08-2023//'encqsnxyqufqnbca',//'Kolkata@8906', // password
                     'timeout' => 3000,
                     'secure' =>'ssl',
                     'tls' =>false,
@@ -304,6 +304,9 @@
            'driver' => 'Cake\Database\Driver\Mysql',
            'persistent' => false,
          //   'host' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'104.131.0.179',
+            // 'username' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'drapefit_test12 ',
+            // 'password' => 'g_G-=EVqW^TO',
+            // 'database' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'drapefit_test12 ',
            'host' => '108.167.139.168',
            /**
             * CakePHP will use the default DB port based on the driver selected
@@ -315,9 +318,9 @@
         //     'username' => 'drapefit_invuser',
         //   'password' => 'lJ?I04elWC#M',
         //   'database' => 'drapefit_invateroy',
-           'username' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'drapefit_test12',
-           'password' => 'g_G-=EVqW^TO',
-           'database' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'drapefit_test12',
+           'username' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'drapefittest_test12',
+           'password' => 'Houston@Aug2024',
+           'database' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'drapefittest_new',
            'encoding' => 'utf8',
            'timezone' => 'UTC',
            'flags' => [],

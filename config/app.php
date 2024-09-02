@@ -316,9 +316,9 @@
         //   'password' => 'lJ?I04elWC#M',
         //   'database' => 'drapefit_invateroy',
 
-           'username' => ($domain == "142.93.58.236")?'drapefit':'drapefit_test12',
-           'password' => 'g_G-=EVqW^TO',
-           'database' => ($domain == "142.93.58.236")?'drapefit_latest_db1':'drapefit_test12',
+           'username' => ($domain == "142.93.58.236")?'drapefit':'drapefittest_test12',
+           'password' => 'Houston@Aug2024',
+           'database' => ($domain == "142.93.58.236")?'drapefit_latest_db1':'drapefittest_new',
            'encoding' => 'utf8',
            'timezone' => 'UTC',
            'flags' => [],
