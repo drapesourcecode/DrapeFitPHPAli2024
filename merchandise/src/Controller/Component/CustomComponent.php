@@ -3926,7 +3926,7 @@ class CustomComponent extends Component {
 
         $result = json_decode($response, true);
         $temp = $result["days"][6]["temp"];
-
+        // echo $temp;
         $all_datas = $weather_info->find('all')->where(['min_temp <=' => $temp, 'max_temp >=' => $temp]);
         $related_seasons = !empty($all_datas) ? Hash::extract($all_datas->toArray(), '{n}.name') : [];
 
@@ -3951,7 +3951,7 @@ class CustomComponent extends Component {
     }
 
     function ageCal($start_date, $end_date = null) {
-        $date1 = date('Y-m-d', strtotime($end_date));
+        $date1 = date('Y-m-d', strtotime($start_date));
         $date2 = !empty($end_date) ? date('Y-m-d', strtotime($end_date)) : date('Y-m-d');
 
         $diff = abs(strtotime($date2) - strtotime($date1));
