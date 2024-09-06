@@ -451,9 +451,11 @@ class AppadminsController extends AppController {
     public function predictionMatching($id)
     {
         $this->loadModel('ShippingAddress');
+        $this->loadModel('MatchingCase');
 
 
         $getData = $this->PaymentGetways->find('all')->where(['id' => $id])->first();
+        $this->MatchingCase->deleteAll(['payment_id' => $id]);
 
         if (!empty($getData->shipping_address_id)) {
             $shipping_address = $this->ShippingAddress->find('all')->where(['id' => $getData->shipping_address_id])->first();
@@ -490,7 +492,7 @@ class AppadminsController extends AppController {
             $final_season_name = "Summer";
         }
         // print_r($seasons_arry);exit;
-        // print_r($final_season);exit;
+        // print_r($final_season_name);exit;
      
         $this->set(compact('final_season_name', 'id', 'getData'));
     }
@@ -1456,7 +1458,7 @@ class AppadminsController extends AppController {
             // setting output to I, D, F, S
             $this->Mpdf->setOutput('F');
             // you can call any mPDF method via component, for example:
-            $this->Mpdf->SetWatermarkText("Draft");
+            $this->Mpdf->SetWatermarkText("Drapefit");
         }
     }
 
@@ -3636,6 +3638,62 @@ class AppadminsController extends AppController {
         $this->set(compact('editData', 'all_data'));
     }
 
+    public function inSize($id = null, $option = null) {
+        
+        $this->loadModel('InSizes');
+        $all_data = $this->InSizes->find('all');
+
+        $editData = [];
+
+        if (!empty($id)) {
+
+            $editData = $this->InSizes->find('all')->where(['id' => $id])->first();
+        }
+
+        if (!empty($option) && ($option == "delete")) {
+
+            $editData = $this->InSizes->deleteAll(['id' => $id]);
+
+            $this->Flash->success(__('Size has been deleted successfully.'));
+
+            $this->redirect(HTTP_ROOT . 'appadmins/in_size');
+        }
+
+        if ($this->request->is('post')) {
+
+            $data = $this->request->data;
+
+            if (!empty($id)) {
+
+                $data['id'] = $id;
+            }
+
+
+
+            $dataEntity = $this->InSizes->newEntity();
+
+            $dataEntity = $this->InSizes->patchEntity($dataEntity, $data);
+
+            $this->InSizes->save($dataEntity);
+
+            if (!empty($id)) {
+
+                $this->Flash->success(__('Size has been updated successfully.'));
+
+                $this->redirect(HTTP_ROOT . 'appadmins/in_size/' . $id . '/edit');
+            } else {
+
+                $this->Flash->success(__('Size has been added successfully.'));
+
+                $this->redirect(HTTP_ROOT . 'appadmins/in_size');
+            }
+        }
+
+
+
+        $this->set(compact('editData', 'all_data'));
+    }
+
     public function missingFields() {
 
         $inv_user = $this->Users->find('all')->where(['type' => 7]);
@@ -4579,6 +4637,8 @@ class AppadminsController extends AppController {
                 $newRw['budget_value'] = $variant_details->budget_value;
                 $newRw['primary_size'] = $variant_details->primary_size;
                 $newRw['picked_size'] = $variant_details->primary_size;
+                $newRw['allocate_to_user_id'] = $variant_products_details->allocate_user_id;
+                $newRw['allocate_to_kid_id'] = $variant_products_details->allocate_kid_id;
 
                 if (!empty($variant_details->primary_size)) {
                     $newRw[$variant_details->primary_size] = $variant_products_details->size;
@@ -4775,12 +4835,15 @@ class AppadminsController extends AppController {
     }
 
     public function getSeasonWiseProduct(){
+        $this->loadModel('MatchingCase');
         $this->loadModel('WomenStyle');
         $this->loadModel('PersonalizedFix');
         $this->loadModel('WomenInformation');
         $this->loadModel('KidsDetails');
         $this->loadModel('UserDetails');
         $this->loadModel('SizeChart');
+        $this->loadModel('MatchingLookCtg');
+        $this->loadModel('InRack');
         $this->viewBuilder()->layout('');if ($this->request->is('post')) {
             $postData = $this->request->data;
             $payment_id = $postData['payment_id'];
@@ -4800,23 +4863,48 @@ class AppadminsController extends AppController {
                 $userDetails = $this->UserDetails->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
                 $gender = $getPaymentGatewayDetails->profile_type;
             }
+
+            $get_rack_ids = $this->MatchingLookCtg->find('all')->where(['product_type_name LIKE'=>$product_type])->first();
             
             $getMatchingProducts = [];
+                       
             if($gender == 2){
                 $women_style_data = $this->WomenStyle->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
-                $women_age = $this->Custom->ageCal(date('Y-m-d', strtotime($women_style_data->birthday)), date('Y-m-d'));
-                $stats = $this->PersonalizedFix->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
                 $womenInformationsData = $this->WomenInformation->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
+                $women_age = $this->Custom->ageCal(date('Y-m-d', strtotime($womenInformationsData->birthday)), date('Y-m-d'));
+                $stats = $this->PersonalizedFix->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
                 $sizeChart = $this->SizeChart->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
-                $user_size = $sizeChart->shirt_blouse;
-                $user_size_col = 'shirt_blouse';
+               
+                $user_size = '';
+                $user_size_col = '';
+                $or_cnd = [];
+
+                $rack_number_list = !empty($get_rack_ids)? explode(",",$get_rack_ids->linked_rack):[];
+                if(!empty($rack_number_list)){
+                    $rak_id_data = $this->InRack->find('all')->where(['rack_number IN'=>$rack_number_list]);
+                    $rak_id_list = !empty($rak_id_data) ? Hash::extract($rak_id_data->toArray(), '{n}.id') : [];
+                    if(!empty($get_rack_ids)){
+                        $mtc_sz = explode(',',$get_rack_ids->matching_size);
+                        $mtc_sz_nm = $mtc_sz[0];
+                        $user_size = $sizeChart->$mtc_sz_nm;
+                        $user_size_col = $mtc_sz_nm;
+                        foreach($mtc_sz as $clnm_nm){
+                            if(!empty($sizeChart->$clnm_nm)){
+                                $or_cnd[$clnm_nm]=$sizeChart->$clnm_nm;
+                            }
+                        }
+                    }
+                }
+                // echo "<pre>";
+                // print_r($or_cnd);exit;
+                // print_r($stats->weight_lbs);exit;
 
                 $getMatchingProducts = $this->InProducts->find('all')
-                ->where(['InProducts.id IN' => [1792,1794],'InProducts.profile_type' => 2, 
-                // 'InProducts.age1 >=' => $women_age, 'InProducts.age2 <=' => $women_age, 
-                // 'InProducts.tall_feet >=' => $stats->tell_in_feet, 'InProducts.tall_feet2 <=' => $stats->tell_in_feet,
-                // 'InProducts.best_fit_for_weight >=' => $stats->weight_lbs, 'InProducts.best_fit_for_weight2 <=' => $stats->weight_lbs,
-                // 'InProducts.better_body_shape LIKE' => '%"' . $womenInformationsData->body_type . '"%',
+                ->where([/*'InProducts.id IN' => [1792,1794],*/'InProducts.profile_type' => 2, 
+                'InProducts.age1 <=' => $women_age, 'InProducts.age2 >=' => $women_age, 
+                'InProducts.tall_feet <=' => $stats->tell_in_feet, 'InProducts.tall_feet2 >=' => $stats->tell_in_feet,
+                'InProducts.best_fit_for_weight <=' => $stats->weight_lbs, 'InProducts.best_fit_for_weight2 >=' => $stats->weight_lbs,
+                'InProducts.better_body_shape LIKE' => '%"' . $womenInformationsData->body_type . '"%',
                 // 'available_status' => 1, 'match_status' => 2
                 ])
                 // ->where([
@@ -4824,9 +4912,40 @@ class AppadminsController extends AppController {
                 // ])
                 //     ->bind(':start', date('Y-m-01'), 'date')
                 //     ->bind(':end', $end_date, 'date')
-                // ->limit(2)
-                ->group('prod_id');
+               ;
+
+                if(!empty($rack_number_list) && !empty($rak_id_list)){
+                    $getMatchingProducts = $getMatchingProducts->where(['rack IN'=>$rak_id_list]);
+                }
+                if(!empty($or_cnd)){
+                    $getMatchingProducts = $getMatchingProducts->where(['OR'=>$or_cnd]);
+                }
+
+                $get_other_match_prd = $this->MatchingCase->find('all')->where(["payment_id" => $payment_id,'created_on LIKE'=>"%".date('Y-m-d')."%"]);
+                if(!empty($get_other_match_prd)){
+                    $prv_match_prd = !empty($get_other_match_prd) ? Hash::extract($get_other_match_prd->toArray(), '{n}.product_id') : [];
+                    if(!empty($prv_match_prd)){
+                        $get_prd_id = $this->InProducts->find('all')->where(['id IN'=>$prv_match_prd]);
+                        $get_prc_prod_id_list = !empty($get_prd_id) ? Hash::extract($get_prd_id->toArray(), '{n}.prod_id') : [];
+                        if(!empty($get_prc_prod_id_list)){
+                            $getMatchingProducts = $getMatchingProducts->where(['InProducts.prod_id NOT IN'=>$get_prc_prod_id_list]);
+                        }
+                    }
+                }
+                
+                $getMatchingProducts = $getMatchingProducts->group('InProducts.prod_id')->limit(5);
+
+                foreach($getMatchingProducts as $mat_prd){
+                    $new_rw = $this->MatchingCase->newEntity();
+                    $new_rw->payment_id = $payment_id;
+                    $new_rw->product_id = $mat_prd->id;
+                    $new_rw->count = 0;
+                    $this->MatchingCase->save($new_rw);
+                    //MatchingCase                    
+                }
+                
             }
+            // print_r($getMatchingProducts);exit;
 
             $this->set(compact('season_name', 'payment_id', 'gender', 'getPaymentGatewayDetails', 'getMatchingProducts', 'where_to_show', 'user_size', 'user_size_col'));
         }

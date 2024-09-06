@@ -1,3 +1,9 @@
+<?php 
+    echo $this->Html->script('jquery.min.js'); 
+?>
+<link rel="stylesheet" href="<?php echo HTTP_ROOT; ?>bootstrap/css/bootstrap.min.css">
+<!-- <script src="<?php echo HTTP_ROOT; ?>plugins/jQuery/jQuery-2.1.4.min.js"></script> -->
+<script src="<?php echo HTTP_ROOT; ?>bootstrap/js/bootstrap.min.js"></script>
 <div class="content-wrapper">
     <section class="content-header">
         <?php if ($getData->kid_id != '') { ?>
@@ -111,10 +117,10 @@
                                 }
                             });
 
-                            function getLookData(look_count){
+                            async function getLookData(look_count){
                                 let season_nm = '<?=$final_season_name;?>';
                                 let payment_id= <?=$id;?>;
-                                $.ajax({
+                                await  $.ajax({
                                     type: "POST",
                                     url: "<?= HTTP_ROOT; ?>appadmins/getLookData",
                                     data: {
@@ -313,4 +319,338 @@
 }
 </style>
 
+<?= $this->Form->create('',['type'=>'post', 'id'=>'po_variant_add', 'url'=>['action'=>'addVariantForPoRequest']]);?>
+    <input type="hidden" name="look_type" >
+    <input type="hidden"  name="user_size_col">                                    
+    <input type="hidden"  name="user_size">                                    
+    <input type="hidden"  name="pay_user_id">                                    
+    <input type="hidden"  name="pay_kid_id">                                    
+    <input type="hidden"  name="payment_id">                                    
+    <button type="submit" style="display: none;"></button>
+<?= $this->Form->end(); ?>
+<script>
+    function openCmt(product_id, payment_id) {
+        $('#comment_list').html('');
+        $.ajax({
+            type: "POST",
+            url: "<?= HTTP_ROOT; ?>appadmins/getMerchandiseMatchingComment",
+            data: {
+                product_id: product_id,
+                payment_id: payment_id,
+            },
+            dataType: 'html',
+            success: function(result) {
+                $('#cmt_product_id').val(product_id);
+                $('#cmt_payment_id').val(payment_id);
+                $('#comment_list').html(result);
+            }
+        });
+        $('#comment_modal').modal('show');
+    }
+
+    function getAllCmt(product_id, payment_id) {
+        $('#comment_list').html('');
+        $.ajax({
+            type: "POST",
+            url: "<?= HTTP_ROOT; ?>appadmins/getMerchandiseMatchingComment",
+            data: {
+                product_id: product_id,
+                payment_id: payment_id,
+            },
+            dataType: 'html',
+            success: function(result) {
+                $('#cmt_product_id').val(product_id);
+                $('#cmt_payment_id').val(payment_id);
+                $('#comment_list').html(result);
+            }
+        });
+    }
+
+    function postCmt() {
+        let cmt = $('#cmt_detail').val();
+        let product_id = $('#cmt_product_id').val();
+        let payment_id = $('#cmt_payment_id').val();
+        
+        let id = $('#id').val();
+        let url = "<?= HTTP_ROOT; ?>appadmins/postMerchandiseMatchingComment";
+        let data = {
+            product_id: product_id,
+            payment_id: payment_id,
+            comment: cmt,
+        };
+
+        if (id) {
+
+            url += "/" + id;
+            data['comment_id'] = id;
+        }
+
+        if (cmt.length < 3) {
+            $('#cmt_detail').focus();
+        } else {
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: data,
+                dataType: 'JSON',
+                success: function(result) {
+                    $('#cmt_product_id').val('');
+                    $('#cmt_payment_id').val('');
+                    $('#cmt_detail').text('');
+                    $('#cmt_detail').val('');
+                    $('#cmt_detail').val('');
+                    $('#id').val('');
+                    getAllCmt(product_id, payment_id);
+
+                }
+            });
+        }
+    }
+    
+    function editComment(commentId) {
+        console.log('commentId:',commentId);
+        $.ajax({
+            type: "POST",
+            url: "<?=HTTP_ROOT;?>appadmins/editMerchandiseMatchingComment",
+            data: {commentId: commentId},
+            dataType:'JSON',
+            success: function (result) {
+                $('#id').val(commentId); 
+                $('#cmt_product_id').val(result.product_id);
+                $('#cmt_payment_id').val(result.payment_id);
+                $('#cmt_detail').val(result.comment); 
+                $('#comment_modal').modal('show'); 
+            }
+        });
+    }
+
+    function deleteComment(commentId) {
+        if (confirm("Are you sure you want to delete this comment?")) {
+            $.ajax({
+                type: "POST",
+                url: "<?= HTTP_ROOT; ?>appadmins/deleteMerchandiseMatchingComment/" + commentId,
+                dataType: 'JSON',
+                success: function(result) {
+                    if (result === 'success') {
+                        getAllCmt($('#cmt_product_id').val(), $('#cmt_payment_id').val());
+                    } else {
+                        alert("Failed to delete comment.");
+                    }
+                }
+            });
+        }
+    }
+
+    function openSuggCmt(look_type, user_size_col, user_size, pay_user_id, pay_kid_id, payment_id){
+        $('#comment_sugg_list').html('');
+        $.ajax({
+            type: "POST",
+            url: "<?= HTTP_ROOT; ?>appadmins/getMerchandiseSuggComment",
+            data: {
+                look_type: look_type,
+                user_size_col: user_size_col,
+                user_size: user_size,
+                pay_user_id: pay_user_id,
+                pay_kid_id: pay_kid_id,
+                payment_id: payment_id,
+            },
+            dataType: 'html',
+            success: function(result) {
+                $('#cmt_sugg_look_type').val(look_type);
+                $('#cmt_sugg_user_size_col').val(user_size_col);
+                $('#cmt_sugg_user_size').val(user_size);
+                $('#cmt_sugg_user_id').val(pay_user_id);
+                $('#cmt_sugg_kid_id').val(pay_kid_id);
+                $('#cmt_sugg_payment_id').val(payment_id);
+                $('#comment_sugg_list').html(result);
+            }
+        });
+        $('#comment_sugg_modal').modal('show');
+    }
+
+    function getAllSuggCmt(look_type, user_size_col, user_size, pay_user_id, pay_kid_id, payment_id) {
+        $('#comment_sugg_list').html('');
+        $.ajax({
+            type: "POST",
+            url: "<?= HTTP_ROOT; ?>appadmins/getMerchandiseSuggComment",
+            data: {
+                look_type: look_type,
+                user_size_col: user_size_col,
+                user_size: user_size,
+                pay_user_id: pay_user_id,
+                pay_kid_id: pay_kid_id,
+                payment_id: payment_id,
+            },
+            dataType: 'html',
+            success: function(result) {
+                $('#cmt_sugg_look_type').val(look_type);
+                $('#cmt_sugg_user_size_col').val(user_size_col);
+                $('#cmt_sugg_user_size').val(user_size);
+                $('#cmt_sugg_user_id').val(pay_user_id);
+                $('#cmt_sugg_kid_id').val(pay_kid_id);
+                $('#cmt_sugg_payment_id').val(payment_id);
+                $('#comment_sugg_list').html(result);
+            }
+        });
+    }
+    
+    function postSuggCmt() {
+        let cmt = $('#cmt_sugg_detail').val();
+        let payment_id = $('#cmt_sugg_payment_id').val();
+        let look_type = $('#cmt_sugg_look_type').val();
+        let user_size_col = $('#cmt_sugg_user_size_col').val();
+        let user_size = $('#cmt_sugg_user_size').val();
+        let pay_user_id = $('#cmt_sugg_user_id').val();
+        let pay_kid_id = $('#cmt_sugg_kid_id').val();
+        let id = $('#sugg_id').val();
+        let url = "<?= HTTP_ROOT; ?>appadmins/postMerchandiseSuggComment";
+        let data = {
+            look_type: look_type,
+            user_size_col: user_size_col,
+            user_size: user_size,
+            pay_user_id: pay_user_id,
+            pay_kid_id: pay_kid_id,
+            payment_id: payment_id,
+            comment: cmt,
+        };
+
+        if (id) {
+
+            url += "/" + id;
+            data['comment_id'] = id;
+        }
+
+        if (cmt.length < 3) {
+            $('#cmt_sugg_detail').focus();
+        } else {
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: data,
+                dataType: 'JSON',
+                success: function(result) {
+                    $('#cmt_sugg_payment_id').val('');
+                    $('#cmt_sugg_payment_id').val('');
+                    $('#cmt_sugg_detail').text('');
+                    $('#cmt_sugg_detail').val('');
+                    $('#cmt_sugg_detail').val('');
+                    $('#id').val('');
+                    getAllSuggCmt(look_type, user_size_col, user_size, pay_user_id, pay_kid_id, payment_id);
+
+                }
+            });
+        }
+    }
+
+    function editSuggComment(commentId) {
+        console.log('commentId:',commentId);
+        $.ajax({
+            type: "POST",
+            url: "<?=HTTP_ROOT;?>appadmins/editMerchandiseSuggComment",
+            data: {commentId: commentId},
+            dataType:'JSON',
+            success: function (result) {
+                $('#sugg_id').val(commentId); 
+                $('#cmt_sugg_look_type').val(result.look_type);
+                $('#cmt_sugg_user_size_col').val(result.user_size_col);
+                $('#cmt_sugg_user_size').val(result.user_size);
+                $('#cmt_sugg_user_id').val(result.pay_user_id);
+                $('#cmt_sugg_kid_id').val(result.pay_kid_id);
+                $('#cmt_sugg_payment_id').val(result.payment_id);
+                $('#cmt_sugg_detail').val(result.comment); 
+                $('#comment_sugg_modal').modal('show'); 
+            }
+        });
+    }
+
+    function deleteSuggComment(commentId) {
+        if (confirm("Are you sure you want to delete this comment?")) {
+            $.ajax({
+                type: "POST",
+                url: "<?= HTTP_ROOT; ?>appadmins/deleteMerchandiseSuggComment/" + commentId,
+                dataType: 'JSON',
+                success: function(result) {
+                    if (result === 'success') {
+                        getAllSuggCmt( $('#cmt_sugg_look_type').val(), $('#cmt_sugg_user_size_col').val(), $('#cmt_sugg_user_size').val(), $('#cmt_sugg_user_id').val(), $('#cmt_sugg_kid_id').val(), $('#cmt_sugg_payment_id').val() );
+                    } else {
+                        alert("Failed to delete comment.");
+                    }
+                }
+            });
+        }
+    }
+
+    function addVariantForPoRequest(look_type, user_size_col, user_size, pay_user_id, pay_kid_id, payment_id){
+            $('#po_variant_add input[name=look_type]').val(look_type);
+            $('#po_variant_add input[name=user_size_col]').val(user_size_col);
+            $('#po_variant_add input[name=user_size]').val(user_size);
+            $('#po_variant_add input[name=pay_user_id]').val(pay_user_id);
+            $('#po_variant_add input[name=pay_kid_id]').val(pay_kid_id);
+            $('#po_variant_add input[name=payment_id]').val(payment_id);
+            $('#po_variant_add').submit();
+    }
+    
+    $('.modal-footer .btn-default').click(function() {
+        closeCmtModal();
+    });
+</script>
+
+
+<div id="comment_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg" style="width: 100%;">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Comments</h4>
+            </div>
+            <div class="modal-body">
+                <div class="cmt-frm">
+                    <input type="hidden" id="cmt_product_id" />
+                    <input type="hidden" id="cmt_payment_id" />
+                    <input type="hidden" id="id" value="" />
+                    <textarea class="form-control" rows="2" id="cmt_detail"></textarea>
+                    <button type="button" class="btn btn-success" onclick="postCmt()">Submit</button>
+                </div>
+                <div id="comment_list"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="comment_sugg_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg" style="width: 100%;">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Comments</h4>
+            </div>
+            <div class="modal-body">
+                <div class="cmt-frm">
+                    <input type="hidden" id="cmt_sugg_look_type" />
+                    <input type="hidden" id="cmt_sugg_user_size_col" />
+                    <input type="hidden" id="cmt_sugg_user_size" />
+                    <input type="hidden" id="cmt_sugg_user_id" />
+                    <input type="hidden" id="cmt_sugg_kid_id" />
+                    <input type="hidden" id="cmt_sugg_payment_id" />
+                    <input type="hidden" id="sugg_id" value="" />
+                    <textarea class="form-control" rows="2" id="cmt_sugg_detail"></textarea>
+                    <button type="button" class="btn btn-success" onclick="postSuggCmt()">Submit</button>
+                </div>
+                <div id="comment_sugg_list"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
