@@ -702,6 +702,7 @@ $color_arr = $this->Custom->inColor();
                                                 </td>
                                                 <td style="text-align: center;">
                                                     <a href="<?=HTTP_ROOT;?>appadmins/new_po_edit/<?php echo $dat_li->id.'/'.$dat_li->po_number; ?>" class="btn btn-primary">Edit</a>
+                                                    <a href="<?=HTTP_ROOT;?>appadmins/new_po_cancel/<?php echo $dat_li->id; ?>" class="btn btn-success">Cancel</a>
                                                       
                                                     <?php 
                                                     if(!empty($dat_li->po_number)){

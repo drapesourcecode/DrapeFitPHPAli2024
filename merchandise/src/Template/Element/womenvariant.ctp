@@ -69,355 +69,80 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                         </div>
                                     </div>
                                 </div>
-
+                                <?php if(!empty($get_prv_inv_data)){ ?> 
                                 <div class="row">
-                                    
-                                    <div class="col-md-12">
-                                            <label for="exampleInputPassword1">Variants </label>
-                                            <div id="variant_main_div">
-                                               
-                                            </div>
-                                            <div style="margin-top: 10px;margin-button: 10px;">
-                                               <button type="button" class="btn btn-info" onclick="addVariants()">Add Variant</button>
-                                            </div>
-                                            
-                                            
-                                            <script>
-                                                function addVariants(){
-                                                    let inx_numx = Math.floor(Math.random() * 899999 + 100000);
-                                                    // let rowCount = $('#payment_table tr').length;
-                                                    
-                                                    let new_variant_html = `<div class="row" id="variant${inx_numx}">
-                                                    <div class="col-md-12">
-                                                        <label style="width: 100%;">Color <span style="float: right" onclick="variantDelete('variant${inx_numx}')">Delete</span></label>
-                                                        <select name="color[]" id="color${inx_numx}" onchange="showSizeBox(${inx_numx});" class="form-control" required>
-                                                            <option value="" selected disabled>----</option>
-                                                            <?php foreach($all_colors as $clr){ ?>
-                                                                <option value="<?=$clr->name;?>"><?=$clr->name;?></option>
-                                                            <?php } ?>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div id="color_wise_size_variant_main_div${inx_numx}" style="display:none;">
-                                                
-                                                        </div>  
-                                                        <button type="button" onclick="showSizeBox(${inx_numx})" class="add_more_btn${inx_numx}" style="display:none;">Add more size</button>
-                                                       
-                                                    </div>
-                                                </div>`;
-                                                    
-                                                    $('#variant_main_div').append(new_variant_html);
-                                                }
-                                                function showSizeBox(id){
-                                                    let value = $('#color'+id).val();
-                                                    
-                                                    $('#color_wise_size_variant_main_div'+id).show();
-                                                    $('.add_more_btn'+id).hide();//Show add more size button
-                                                    let inx_numx = Math.floor(Math.random() * 899999 + 100000);
-                                                    let new_size_html =`<div class="row"  id="color_size_div${inx_numx}">
-                                                            <div class="col-md-6">
-                                                                <label style="width: 100%;">Size <span style="float: right" onclick="variantDelete('color_size_div${inx_numx}')">Delete</span></label>
-                                                                <select name="size[${value}][]" id="var_sizes${inx_numx}" onchange="showDetailsBox(${inx_numx},${id});$('.add_more_btn${id}').show();" class="form-control" required>
-                                                            <option value="" selected disabled>----</option>
-                                                            <?php foreach($all_sizes as $sz){ ?>
-                                                                <option value="<?=$sz->size;?>"><?=$sz->size;?></option>
-                                                            <?php } ?>
-                                                        </select>
-                                                            </div>
-                                                            <div class="col-md-6" id="showSizeDetails${inx_numx}" style="display:none;">
-                                                                
-                                                            </div>
-                                                            
-                                                            
-                                                        </div>`;
-                                                     $('#color_wise_size_variant_main_div'+id).append(new_size_html);
-                                                    
-                                                }
-                                                function showDetailsBox(id,parent_id){
-                                                    let value =  $('#var_sizes'+id).val();
-                                                    let color_value =  $('#color'+parent_id).val();
-                                                    let inx_numx = Math.floor(Math.random() * 899999 + 100000);
-                                                    $('#showSizeDetails'+id).show();
-                                                    let new_size_details_html =`<div class="row">
-                                                                    <div class="col-md-12">
-                                                                        <div class="form-group">
-                                                                            <label for="exampleInputPassword1">Height range <sup style="color:red;">*</sup></label>
-                                                                            <div class="women-select-boxes">
-                                                                                <div class="women-select1">
-                                                                                    <select name="variant_data[${color_value}][${value}][tall_feet1]" id="tall_feet" class="form-control" required>
-                                                                                        <option value="" disabled>--</option>
-                                                                                        <option value="4">4</option>
-                                                                                        <option value="5">5</option>
-                                                                                        <option value="6">6</option>
-                                                                                    </select>
-                                                                                    <label>ft.</label>
-                                                                                </div>
-                                                                                <div class="women-select1">
-                                                                                    <select name="variant_data[${color_value}][${value}][tall_inch1]" id="tall_inch" class="form-control">
-                                                                                        <option  value="" disabled>--</option>
-                                                                                        <option  value="0">0</option>
-                                                                                        <option  value="1">1</option>
-                                                                                        <option  value="2">2</option>
-                                                                                        <option  value="3">3</option>
-                                                                                        <option  value="4">4</option>
-                                                                                        <option  value="5">5</option>
-                                                                                        <option  value="6">6</option>
-                                                                                        <option  value="7">7</option>
-                                                                                        <option  value="8">8</option>
-                                                                                        <option  value="9">9</option>
-                                                                                        <option  value="10">10</option>
-                                                                                        <option  value="11">11</option>
-                                                                                    </select>
+                                    <div class="col-sm-12">
+                                    <table id="exampleXX" class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Brand Name</th>
+                                                <th>Product Name 1</th>
+                                                <th>Product Image</th>
+                                                <th>Color : Size</th>  
+                                                <th style="text-align: center;">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach($get_prv_inv_data as $get_pr_vari_list){
+                                                    foreach($get_pr_vari_list->vari_prd_li as $pdetails){
+           
+                                            ?>
+                                            <tr id="<?php echo $pdetails->id; ?>" class="message_box">
 
-                               
-                                                                                </div>
-                                                                                <span>to</span>
-                                                                                <div class="women-select1">
+                                                <td><?php echo $this->Custom->brandNamex(@$pdetails->brand_id); ?> </td>
 
-                                                                                    <select name="variant_data[${color_value}][${value}][tall_feet2]" id="tall_feet2" class="form-control" required>
-                                                                                        <option  value="" disabled>--</option>
-                                                                                        <option  value="4">4</option>
-                                                                                        <option  value="5">5</option>
-                                                                                        <option  value="6">6</option>
-                                                                                    </select>
-                                                                                    <label>ft.</label>
-                                                                                </div>
-                                                                                <div class="women-select1">
-                                                                                    <select name="variant_data[${color_value}][${value}][tall_inch2]" id="tall_inch2" class="form-control">
-                                                                                        <option  value="" disabled>--</option>
-                                                                                        <option  value="0">0</option>
-                                                                                        <option  value="1">1</option>
-                                                                                        <option  value="2">2</option>
-                                                                                        <option  value="3">3</option>
-                                                                                        <option  value="4">4</option>
-                                                                                        <option  value="5">5</option>
-                                                                                        <option  value="6">6</option>
-                                                                                        <option  value="7">7</option>
-                                                                                        <option  value="8">8</option>
-                                                                                        <option  value="9">9</option>
-                                                                                        <option  value="10">10</option>
-                                                                                        <option  value="11">11</option>
-                                                                                    </select>
-
-                               
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="help-block with-errors"></div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-12">
-                                                                        <div class="form-group">
-                                                                            <label for="exampleInputPassword1">Weight range <sup style="color:red;">*</sup></label>
-                                                                            <div class="women-select-boxes">
-                                                                                <div class="women-select2">
-                                <input name='variant_data[${color_value}][${value}][best_fit_for_weight1]' value  = '' type = 'text' class = "form-control" placeholder ='Please enter your weight' required>                                                            
-                                                                                </div>
-                                                                                <span>to</span>
-                                                                                <div class="women-select2">
-                                <input name='variant_data[${color_value}][${value}][best_fit_for_weight2]'  value = '' type = 'text' class = "form-control" placeholder = 'Please enter your weight' required >
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-12">
-                                                                        <div class="form-group">
-                                                                            <label for="exampleInputPassword1">Age range <sup style="color:red;">*</sup></label>
-                                                                            <div class="women-select-boxes">
-                                                                                <div class="women-select2">
-                               <input name='variant_data[${color_value}][${value}][age1]'  value = '' type = 'text' class = "form-control" placeholder = 'Please enter your age' required >                                                           
-                                                                                </div>
-                                                                                <span>to</span>
-                                                                                <div class="women-select2">
-                               <input name='variant_data[${color_value}][${value}][age2]'  value = '' type = 'text' class = "form-control" placeholder = 'Please enter your age' required > 
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                   <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Purchase price ? <sup style="color:red;">*</sup></label>
-                                   <input name='variant_data[${color_value}][${value}][purchase_price]'  value = '' type = 'text' class = "form-control" placeholder = 'Please enter purchase price' required > 
-                            
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">sale_price ? <sup style="color:red;">*</sup></label>
-                                       <input name='variant_data[${color_value}][${value}][sale_price]'  value = '' type = 'text' class = "form-control" placeholder = 'Please enter sale price' required > 
-                              
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Clearance price</label>
-                                           <input name='variant_data[${color_value}][${value}][clearance_price]'  value = '' type = 'text' class = "form-control" placeholder = 'Please enter sale price' > 
-  
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12  var_qty">
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Quantity ? <sup style="color:red;">*</sup></label>
-                                                <input name='variant_data[${color_value}][${value}][quantity]'  value = '' type = 'text' class = "form-control"  placeholder = 'Please enter quantity' <?= !empty($this->request->session()->read('new_variant_po_data'))?"":'required';?> min = "0" steps='1'> 
-       
-                                            </div>
-                                        </div>    
-                                                                </div>`;
-                                                    $('#showSizeDetails'+id).html(new_size_details_html);
+                                                <!-- <td><?php echo $pdetails->user_id ?></td> -->
+                                                <td><?php echo $get_pr_vari_list->product_name_one; ?></td>
+                                                <td>                                                
+                                                    <img src="<?php echo HTTP_ROOT_BASE . PRODUCT_IMAGES; ?><?php echo $get_pr_vari_list->feature_image; ?>" style="width: 50px;"/>                                               
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                        echo $pdetails->color.' : '.$pdetails->size;
+                                                    ?>
+                                                </td>
+                                                <td style="text-align: center;">
+                                                <?php if($pdetails->is_po == 0){ ?>
+                                                <button type="button" id="btnshowPo<?=$pdetails->id;?>" onclick="$('#showPo<?= $pdetails->id;?>').toggle();$('#btnshowPo<?= $pdetails->id;?>').toggle()" class="btn btn-sm btn-primary">Add to PO</button>
+                                                <a href="<?=HTTP_ROOT;?>appadmins/addVariantNewData/<?=$get_pr_vari_list->id;?>" class="btn btn-sm btn-primary">Add New Variant</a>
+                                                <div id="showPo<?=$pdetails->id;?>" style="display:none;">
+                                                    <?= $this->Form->create('',['type'=>'post','id'=>'updateVarPoFrom'.$pdetails->id ,'url'=>['action'=>'addVariantPoRequest']]);?>
+                                                    <input type="text" step="1" name="qty" min="1" placeholder="Quantity" style="width:100px;" value="1"  required>
+                                                    <input type="hidden"  name="id" value="<?=$pdetails->id;?>">
+                                                    <input type="hidden"  name="user_id" value="<?=$getPaymentGatewayDetails->user_id;?>">
+                                                    <input type="hidden"  name="kid_id" value="<?=$getPaymentGatewayDetails->kid_id;?>">
+                                                    <button type="button" class="btn btn-sm btn-primary" onClick="updateVarPox(<?=$pdetails->id;?>)">Submit</button>
+                                                    <?= $this->Form->end(); ?>
+                                                </div>
+                                                <?php }else{ echo "Already in po"; } ?>
+                                                </td>
+                                            </tr>                                            
+                                            <?php } 
+                                            } ?>
+                                        </tbody>
+                                    </table>
+                                    <script>
+                                        function updateVarPox(id){
+                                            $.ajax({
+                                                type: "POST",
+                                                url: "<?= HTTP_ROOT; ?>appadmins/updateVarPoFrom",
+                                                data: $("#updateVarPoFrom"+id).serialize(),
+                                                dataType: 'html',
+                                                success: function(result) {                                                    
+                                                    $('#btnshowPo'+id).hide();
+                                                    $('#showPo'+id).hide();
+                                                    alert('Added to PO');
                                                 }
-                                                function variantDelete(id){
-                                                    $('#'+id).remove();
-                                                }
-                                            </script>
-                                        </div> 
-                                  
-                                    
-
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Profession</label>
-                                            <div>
-                                                <button type="button" onclick="professionSelectAll()">Select All</button>
-                                                <button type="button" onclick="professionDeselectAll()">Deselect All</button>
-                                            </div>
-                                            <script>
-                                                function professionSelectAll() {
-                                                    $("#profession > option").prop("selected", true);
-                                                    $("#profession").trigger("change");
-                                                }
-
-                                                function professionDeselectAll() {
-                                                    $("#profession > option").prop("selected", false);
-                                                    $("#profession").trigger("change");
-                                                }
-                                            </script>
-                                            <select name="profession[]" id="profession" class="form-control select2_select" aria-invalid="false" multiple>
-                                                <!--<option value="" <?php // if (!empty($editproduct->profession) && in_array('NULL', json_decode($editproduct->profession, true))) { ?> selected <?php //} ?> >--</option>-->
-                                                <option value="1" <?php if (!empty($editproduct->profession) && in_array(1, json_decode($editproduct->profession, true))) { ?> selected <?php } ?> >Architecture / Engineering</option>
-                                                <option value="2" <?php if (!empty($editproduct->profession) && in_array(2, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Art / Design</option>
-                                                <option value="3" <?php if (!empty($editproduct->profession) && in_array(3, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Building / Maintenance</option>
-                                                <option value="4" <?php if (!empty($editproduct->profession) && in_array(4, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Business / Client Service</option>
-                                                <option value="5" <?php if (!empty($editproduct->profession) && in_array(5, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Community / Social Service</option>
-                                                <option value="6" <?php if (!empty($editproduct->profession) && in_array(6, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Computer / IT</option>
-                                                <option value="7" <?php if (!empty($editproduct->profession) && in_array(7, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Education</option>
-                                                <option value="8" <?php if (!empty($editproduct->profession) && in_array(8, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Entertainer / Performer</option>
-                                                <option value="9" <?php if (!empty($editproduct->profession) && in_array(9, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Farming / Fishing / Forestry</option>
-                                                <option value="10" <?php if (!empty($editproduct->profession) && in_array(10, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Financial Services</option>
-                                                <option value="11" <?php if (!empty($editproduct->profession) && in_array(11, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Health Practitioner / Technician</option>
-                                                <option value="12" <?php if (!empty($editproduct->profession) && in_array(12, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Hospitality / Food Service</option>
-                                                <option value="13" <?php if (!empty($editproduct->profession) && in_array(13, json_decode($editproduct->profession, true))) { ?> selected <?php } ?> >Management</option>
-                                                <option value="14" <?php if (!empty($editproduct->profession) && in_array(14, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Media / Communications</option>
-                                                <option value="15" <?php if (!empty($editproduct->profession) && in_array(15, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Military / Protective Service</option>
-                                                <option value="16" <?php if (!empty($editproduct->profession) && in_array(16, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Legal</option>
-                                                <option value="17" <?php if (!empty($editproduct->profession) && in_array(17, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Office / Administration</option>
-                                                <option value="18" <?php if (!empty($editproduct->profession) && in_array(18, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Average</option>
-                                                <option value="19" <?php if (!empty($editproduct->profession) && in_array(19, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Personal Care & Service</option>
-                                                <option value="20" <?php if (!empty($editproduct->profession) && in_array(20, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Production / Manufacturing</option>
-                                                <option value="21" <?php if (!empty($editproduct->profession) && in_array(21, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Retail</option>
-                                                <option value="22" <?php if (!empty($editproduct->profession) && in_array(22, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Sales</option>
-                                                <option value="23" <?php if (!empty($editproduct->profession) && in_array(23, json_decode($editproduct->profession, true))) { ?> selected <?php } ?> >Science</option>
-                                                <option value="24" <?php if (!empty($editproduct->profession) && in_array(24, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Technology</option>
-                                                <option value="25" <?php if (!empty($editproduct->profession) && in_array(25, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Transportation</option>
-                                                <option value="26" <?php if (!empty($editproduct->profession) && in_array(26, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Self-Employed</option>
-                                                <option value="27" <?php if (!empty($editproduct->profession) && in_array(27, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Stay-At-Home Parent</option>
-                                                <option value="28" <?php if (!empty($editproduct->profession) && in_array(28, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Student</option>
-                                                <option value="29" <?php if (!empty($editproduct->profession) && in_array(29, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Retired</option>
-                                                <option value="30" <?php if (!empty($editproduct->profession) && in_array(30, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Not Employed</option>
-                                                <option value="31" <?php if (!empty($editproduct->profession) && in_array(31, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Other</option>
-                                            </select>
-                                        </div>
+                                            });
+                                        }
+                                    </script>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Occasions</label>
-                                            <select name="occasional_dress[]" id="occasional_dress"  class="form-control select2_select" aria-invalid="false" multiple>
-                                                <option value="" <?php if (!empty($editproduct->occasional_dress) && in_array('NULL', json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>--</option>
-                                                <option value="1"  <?php if (!empty($editproduct->occasional_dress) && in_array(1, json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>Business Casual / Work</option>
-                                                <option value="2"  <?php if (!empty($editproduct->occasional_dress) && in_array(2, json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>Cocktail / Wedding / Special</option>
-                                                <?php /* ?>
-                                                  <option value="3"  <?php if(!empty($editproduct->occasional_dress) && in_array(3, json_decode($editproduct->occasional_dress,true))){ ?> selected <?php } ?>>Building / Maintenance</option>
-                                                  <?php */ ?>
-                                                <option value="4"  <?php if (!empty($editproduct->occasional_dress) && in_array(4, json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>Most of the time</option>
-                                                <option value="5"  <?php if (!empty($editproduct->occasional_dress) && in_array(5, json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>Around once or twice a month</option>
-                                                <option value="6"  <?php if (!empty($editproduct->occasional_dress) && in_array(6, json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>Date Night / Night Out</option>
-                                                <option value="7"  <?php if (!empty($editproduct->occasional_dress) && in_array(7, json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>Laid Back Casual</option>
-                                                <option value="8"  <?php if (!empty($editproduct->occasional_dress) && in_array(8, json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>Rarely</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6"></div>
                                 </div>
+                                <?php } ?>
+
                                 <div class="row">
-                                    <div class="col-sm-12 col-lg-12 col-md-12 type-box women-type-box body-women">
-                                        <h3>What's your body type?</h3>
-                                        <ul>
-                                            <li>
-                                                <h4 style="margin-top: 0;">Inverted Triangle</h4>
-                                                <input class="radio-box" id="radio2" name="better_body_shape[]" value="2" type="checkbox" <?php if (!empty($editproduct->better_body_shape) && in_array(2, json_decode($editproduct->better_body_shape, true))) { ?> checked <?php } ?>>
-                                                <label for="radio2">
-                                                    <img src="<?= HTTP_ROOT_BASE; ?>images/inverted-triangle.jpg" alt="">
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <h4 style="margin-top: 0;">Triangle</h4>
-                                                <input class="radio-box" id="radio3" type="checkbox" name="better_body_shape[]" value="3" <?php if (!empty($editproduct->better_body_shape) && in_array(3, json_decode($editproduct->better_body_shape, true))) { ?> checked <?php } ?>>
-                                                <label for="radio3">
-                                                    <img src="<?= HTTP_ROOT_BASE; ?>images/triangle.jpg" alt="">
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <h4 style="margin-top: 0;">rectangle</h4>
-                                                <input class="radio-box" name="better_body_shape[]" value="1" id="radio1" type="checkbox"  <?php if (!empty($editproduct->better_body_shape) && in_array(1, json_decode($editproduct->better_body_shape, true))) { ?> checked <?php } ?>>
-                                                <label for="radio1">
-                                                    <img src="<?= HTTP_ROOT_BASE; ?>images/rectangle.jpg" alt="">
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <h4 style="margin-top: 0;">hourglass</h4>
-                                                <input class="radio-box" id="radio4" type="checkbox" name="better_body_shape[]" value="4"  <?php if (!empty($editproduct->better_body_shape) && in_array(4, json_decode($editproduct->better_body_shape, true))) { ?> checked <?php } ?>>
-                                                <label for="radio4">
-                                                    <img src="<?= HTTP_ROOT_BASE; ?>images/hourglass.jpg" alt="">
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <h4 style="margin-top: 0;">Apple</h4>
-                                                <input class="radio-box" id="radio4z" type="checkbox" name="better_body_shape[]" value="5"  <?php if (!empty($editproduct->better_body_shape) && in_array(5, json_decode($editproduct->better_body_shape, true))) { ?> checked <?php } ?>>
-                                                <label for="radio4z">
-                                                    <img src="<?= HTTP_ROOT_BASE; ?>images/apple.jpg" alt="">
-                                                </label>
-                                            </li>
-                                        </ul>
-                                    </div>
 
-
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Brand Name <sup style="color:red;">*</sup></label>
-                                            <select name="brand_id" id="brand_id" class="form-control" required>
-                                                <option value="" selected disabled>--</option>
-                                                <?php
-                                                foreach ($brandsListings as $brandnm) {
-                                                    if (empty(@$editproduct) && ($brandnm->is_active != 0)) {
-                                                        ?>
-
-                                                        <option <?php if ($brandnm->id == @$editproduct->brand_id) { ?> selected=""<?php } ?> value="<?php echo $brandnm->id; ?>"><?php echo $brandnm->brand_name; ?></option>
-                                                        <?php
-                                                    }
-                                                    if (!empty(@$editproduct)) {
-                                                        ?>
-
-                                                        <option <?php if ($brandnm->id == @$editproduct->brand_id) { ?> selected=""<?php } ?> value="<?php echo $brandnm->id; ?>"><?php echo $brandnm->brand_name; ?></option>
-                                                        <?php
-                                                    }
-                                                }
-                                                ?>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    
-                                    <?php if(in_array($product_ctg_nme,["A14"]) && in_array($product_sub_ctg_nme, ["A141", "A142", "A143", "A144", "A145", "A146", "A147", "A148", "A149", "A1410", "A1412", "A1413"])){ ?>
+                                <?php if(in_array($product_ctg_nme,["A14"]) && in_array($product_sub_ctg_nme, ["A141", "A142", "A143", "A144", "A145", "A146", "A147", "A148", "A149", "A1410", "A1412", "A1413"])){ ?>
                                     <div class="col-md-6 "    >
                                         <div class="form-group" style="margin-top: 35px;">
 
@@ -577,12 +302,13 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                         <?php } ?>
                                                         <script>
                                                             function prdsztyp(data){
+                                                                $('#variant_main_div').html('');
                                                                 let selectSizeAcc = ``;
                                                                 if(data == 'jeans' ){
                                                                     selectSizeAcc = `<div>
                                                             <label>JEANS SIZE  <sup style="color:red;">*</sup></label>
                                                             <div class="col-md-1">
-                                                                <input type="radio" name="primary_size" value="jeans"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'jeans')) ? 'checked' : 'checked'; ?> required/>
+                                                                <input type="radio" name="primary_size" value="jeans"  checked required/>
                                                             </div>
                                                            
                                                         </div>`;
@@ -590,193 +316,206 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                                 
                                                                 if(data == 'shoe_size' ){
                                                                     selectSizeAcc = `<div class="row"  <?=(!empty($editproduct))?'style="pointer-events: none;" readonly':'' ;?>>
-                                                <div class="col-md-1">
-                                                    <label for="shoe_size"> &nbsp;&nbsp;&nbsp; </label>
-                                                    <input type="radio" name="primary_size" value="shoe_size" <?= (!empty($editproduct) && ($editproduct->primary_size == 'shoe_size')) ? 'checked' : ''; ?> />
-                                                </div>
-                                                
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <label for="exampleInputPassword1">Which heel height do you prefer? <sup style="color:red;">*</sup></label>
-                                                        <select name="variant_size_related[womenHeelHightPrefer]" id="womenHeelHightPrefer" aria-required="true" class="form-control" aria-invalid="false" required>
-                                                            <option <?php if (@$editproduct->womenHeelHightPrefer == '') { ?> selected="" <?php } ?> value="" selected disabled>--</option>
-                                                            <option <?php if (@$editproduct->womenHeelHightPrefer == 'Flat(Under 1")') { ?> selected="" <?php } ?> value='Flat(Under 1")'>Flat(Under 1")</option>
-                                                            <option <?php if (@$editproduct->womenHeelHightPrefer == 'Mid(2"-3")') { ?> selected="" <?php } ?> value='Mid(2"-3")'>Mid(2"-3")</option>
-                                                            <option <?php if (@$editproduct->womenHeelHightPrefer == 'High(3"-4")') { ?> selected="" <?php } ?> value='High(3"-4")'>High(3"-4")</option>
-                                                            <option <?php if (@$editproduct->womenHeelHightPrefer == 'Low(1"-2")') { ?> selected="" <?php } ?> value='Low(1"-2")'>Low(1"-2")</option>
-                                                            <option <?php if (@$editproduct->womenHeelHightPrefer == 'Ultra High(4.5"+)') { ?> selected="" <?php } ?> value='Ultra High(4.5"+)'>Ultra High(4.5"+)</option>
-                                                        </select>                                            
+                                                                    <div class="col-md-1">
+                                                                        
+                                                                        <input type="radio" name="primary_size" value="shoe_size" checked />
+                                                                    </div>
+                                                                    <div class="col-md-11 recom_div">    
+                                                                        <label>SHOE SIZE </label>
+                                                                        <div class="col-md-3">
+                                                                            <div class="form-group">
+                                                                                <label for="exampleInputPassword1">Which heel height do you prefer? <sup style="color:red;">*</sup></label>
+                                                                                <select name="[NAME][variant_size_related][womenHeelHightPrefer]" id="womenHeelHightPrefer" aria-required="true" class="form-control" aria-invalid="false" required>
+                                                                                    <option <?php if (@$editproduct->womenHeelHightPrefer == '') { ?> selected="" <?php } ?> value="" selected disabled>--</option>
+                                                                                    <option <?php if (@$editproduct->womenHeelHightPrefer == 'Flat(Under 1")') { ?> selected="" <?php } ?> value='Flat(Under 1")'>Flat(Under 1")</option>
+                                                                                    <option <?php if (@$editproduct->womenHeelHightPrefer == 'Mid(2"-3")') { ?> selected="" <?php } ?> value='Mid(2"-3")'>Mid(2"-3")</option>
+                                                                                    <option <?php if (@$editproduct->womenHeelHightPrefer == 'High(3"-4")') { ?> selected="" <?php } ?> value='High(3"-4")'>High(3"-4")</option>
+                                                                                    <option <?php if (@$editproduct->womenHeelHightPrefer == 'Low(1"-2")') { ?> selected="" <?php } ?> value='Low(1"-2")'>Low(1"-2")</option>
+                                                                                    <option <?php if (@$editproduct->womenHeelHightPrefer == 'Ultra High(4.5"+)') { ?> selected="" <?php } ?> value='Ultra High(4.5"+)'>Ultra High(4.5"+)</option>
+                                                                                </select>                                            
 
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-5">
-                                                    <label for="exampleInputPassword1"> Which style of shoes ? <sup style="color:red;">*</sup></label>
-                                                    <select name="variant_size_related[shoe_size_run]" class="form-control" aria-invalid="false" required>
-                                                        <option <?php if (@$editproduct->shoe_size_run == '') { ?> selected="" <?php } ?> value="" selected disabled>--</option>
-                                                        <option <?php if (@$editproduct->shoe_size_run == 'Pumps') { ?> selected="" <?php } ?> value="Pumps">Pumps</option>
-                                                        <option <?php if (@$editproduct->shoe_size_run == 'Sandals') { ?> selected="" <?php } ?> value="Sandals">Sandals</option>
-                                                        <option <?php if (@$editproduct->shoe_size_run == 'Loafers & Flats') { ?> selected="" <?php } ?> value="Loafers & Flats">Loafers & Flats</option>
-                                                        <option <?php if (@$editproduct->shoe_size_run == 'Wedges') { ?> selected="" <?php } ?> value="Wedges">Wedges</option>
-                                                        <option <?php if (@$editproduct->shoe_size_run == 'Clogs & Mules') { ?> selected="" <?php } ?> value="Clogs & Mules">Clogs & Mules</option>
-                                                        <option <?php if (@$editproduct->shoe_size_run == 'Sneakers') { ?> selected="" <?php } ?> value="Sneakers">Sneakers</option>
-                                                        <option <?php if (@$editproduct->shoe_size_run == 'Boots & Booties') { ?> selected="" <?php } ?> value="Boots & Booties">Boots & Booties</option>
-                                                        <option <?php if (@$editproduct->shoe_size_run == 'Platforms') { ?> selected="" <?php } ?> value="Platforms">Platforms</option>
-                                                    </select>
-                                                </div>
-                                            </div>`;
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-5">
+                                                                            <label for="exampleInputPassword1"> Which style of shoes ? <sup style="color:red;">*</sup></label>
+                                                                            <select name="[NAME][variant_size_related][shoe_size_run]" class="form-control" aria-invalid="false" required>
+                                                                                <option <?php if (@$editproduct->shoe_size_run == '') { ?> selected="" <?php } ?> value="" selected disabled>--</option>
+                                                                                <option <?php if (@$editproduct->shoe_size_run == 'Pumps') { ?> selected="" <?php } ?> value="Pumps">Pumps</option>
+                                                                                <option <?php if (@$editproduct->shoe_size_run == 'Sandals') { ?> selected="" <?php } ?> value="Sandals">Sandals</option>
+                                                                                <option <?php if (@$editproduct->shoe_size_run == 'Loafers & Flats') { ?> selected="" <?php } ?> value="Loafers & Flats">Loafers & Flats</option>
+                                                                                <option <?php if (@$editproduct->shoe_size_run == 'Wedges') { ?> selected="" <?php } ?> value="Wedges">Wedges</option>
+                                                                                <option <?php if (@$editproduct->shoe_size_run == 'Clogs & Mules') { ?> selected="" <?php } ?> value="Clogs & Mules">Clogs & Mules</option>
+                                                                                <option <?php if (@$editproduct->shoe_size_run == 'Sneakers') { ?> selected="" <?php } ?> value="Sneakers">Sneakers</option>
+                                                                                <option <?php if (@$editproduct->shoe_size_run == 'Boots & Booties') { ?> selected="" <?php } ?> value="Boots & Booties">Boots & Booties</option>
+                                                                                <option <?php if (@$editproduct->shoe_size_run == 'Platforms') { ?> selected="" <?php } ?> value="Platforms">Platforms</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>`;
                                                                 }
                                                                 
                                                                 if(data == 'skirt' ){
                                                                     selectSizeAcc = `<div><label>SKIRT SIZE  <sup style="color:red;">*</sup></label><div class="col-md-1"  <?=(!empty($editproduct))?'style="pointer-events: none;" readonly':'' ;?> >
-                                                            <input type="radio" name="primary_size" value="skirt" <?= (!empty($editproduct) && ($editproduct->primary_size == 'skirt')) ? 'checked' : ''; ?> required />
-                                                        </div>
-                                                        
-                                                            
-                                                            <div>`;
+                                                                            <input type="radio" name="primary_size" value="skirt" checked required />
+                                                                            </div>
+                                                                            
+                                                                                
+                                                                                <div>`;
                                                                 }
                                                                 if(data == 'wo_bottom' ){
                                                                     selectSizeAcc = `<div>
-                                                            <label>BOTTOM SIZE  <sup style="color:red;">*</sup></label>
-                                                            <div class="col-md-1">
-                                                                <input type="radio" name="primary_size" value="wo_bottom"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'wo_bottom')) ? 'checked' : 'checked'; ?> required/>
-                                                            </div>
-                                                            
-                                                        </div>`;
+                                                                        <label>BOTTOM SIZE</label>
+                                                                        <div class="col-md-1">
+                                                                            <input type="radio" name="primary_size" value="wo_bottom"  checked required/>
+                                                                        </div>
+                                                                        
+                                                                    </div>`;
                                                                 }
                                                                 if(data == 'paints' ){
                                                                     selectSizeAcc = `<div>
-                                                            <label>PANTS  <sup style="color:red;">*</sup></label>
-   
-                                                                <input type="radio" name="primary_size" value="paints"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'paints')) ? 'checked' : 'checked'; ?> required />
-                                                           
-                                                            
-                                                        </div>`;
+                                                                    <label>PANTS  <sup style="color:red;">*</sup></label>
+        
+                                                                        <input type="radio" name="primary_size" value="paints"  checked required />
+                                                                
+                                                                    
+                                                                </div>`;
                                                                 }
                                                                 if(data == 'shirt_blouse' ){
-                                                                    selectSizeAcc = `<label>SHIRT & BLOUSE <sup style="color:red;">*</sup></label>
-                                                                <div class="row" >
-                                                                    <div class="col-md-1">
-                                                                <input type="radio" name="primary_size" value="shirt_blouse"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'shirt_blouse')) ? 'checked' : 'checked'; ?> required />
-                                                            </div>                                                       
-                                                        <div class="col-sm-6">
-                                                            <select name="variant_size_related[shirt_blouse_recomend]" id="shirt_blouse_recomend ">
-                                                                <option <?php if (@$editproduct->shirt_blouse_recomend == '') { ?> selected="" <?php } ?> value="">--</option>
-                                                                <optgroup label="Recommended for 2" style="display: block;">
-                                                                    <option <?php if (@$editproduct->shirt_blouse_recomend == 'S (2-4)') { ?> selected="" <?php } ?> value="S (2-4)">S (2-4)</option>
-                                                                </optgroup>
-                                                                <optgroup label="Women's Sizes">
-                                                                    <option <?php if (@$editproduct->shirt_blouse_recomend == 'S (2-4)') { ?> selected="" <?php } ?> value="S (2-4)">S (2-4)</option>
-                                                                </optgroup>
-                                                                <optgroup label="Women's Sizes">
-                                                                    <option <?php if (@$editproduct->shirt_blouse_recomend == 'XXS (00)') { ?> selected="" <?php } ?> value="XXS (00)">XXS (00)</option>
-                                                                    <option <?php if (@$editproduct->shirt_blouse_recomend == 'XS (0)') { ?> selected="" <?php } ?> value="XS (0)">XS (0)</option>
-                                                                    <option <?php if (@$editproduct->shirt_blouse_recomend == 'S (2-4)') { ?> selected="" <?php } ?> value="S (2-4)">S (2-4)</option>
-                                                                    <option <?php if (@$editproduct->shirt_blouse_recomend == 'M (6-8)') { ?> selected="" <?php } ?> value="M (6-8)">M (6-8)</option>
-                                                                    <option <?php if (@$editproduct->shirt_blouse_recomend == 'L (10-12)') { ?> selected="" <?php } ?> value="L (10-12)">L (10-12)</option>
-                                                                    <option <?php if (@$editproduct->shirt_blouse_recomend == 'XL (14)') { ?> selected="" <?php } ?> value="XL (14)">XL (14)</option>
-                                                                    <option <?php if (@$editproduct->shirt_blouse_recomend == 'XXL (16)') { ?> selected="" <?php } ?> value="XXL (16)">XXL (16)</option>
-                                                                </optgroup>
-                                                                <optgroup label="Women's Plus Sizes">
-                                                                    <option <?php if (@$editproduct->shirt_blouse_recomend == '1X (14W-16W)') { ?> selected="" <?php } ?> value="1X (14W-16W)">1X (14W-16W)</option>
-                                                                    <option <?php if (@$editproduct->shirt_blouse_recomend == '2X (18W-20W)') { ?> selected="" <?php } ?> value="2X (18W-20W)">2X (18W-20W)</option>
-                                                                    <option <?php if (@$editproduct->shirt_blouse_recomend == '3X (22W-24W)') { ?> selected="" <?php } ?> value="3X (22W-24W)">3X (22W-24W)</option>
-                                                                </optgroup>
-                                                            </select>
-                                                        </div>
-                                                    </div>`;
+                                                                    selectSizeAcc = `
+                                                                        <div class="row" >
+                                                                            <div class="col-md-1">
+                                                                            <input type="radio" name="primary_size" value="shirt_blouse"  checked required />
+                                                                        </div>  
+                                                                        <div class="col-md-11 recom_div">  
+                                                                            <label>SHIRT & BLOUSE <sup style="color:red;">*</sup></label>                                                    
+                                                                            <div class="col-sm-6">
+                                                                                <select name="[NAME][variant_size_related][shirt_blouse_recomend]" id="shirt_blouse_recomend ">
+                                                                                    <option <?php if (@$editproduct->shirt_blouse_recomend == '') { ?> selected="" <?php } ?> value="">--</option>
+                                                                                    <optgroup label="Recommended for 2" style="display: block;">
+                                                                                        <option <?php if (@$editproduct->shirt_blouse_recomend == 'S (2-4)') { ?> selected="" <?php } ?> value="S (2-4)">S (2-4)</option>
+                                                                                    </optgroup>
+                                                                                    <optgroup label="Women's Sizes">
+                                                                                        <option <?php if (@$editproduct->shirt_blouse_recomend == 'S (2-4)') { ?> selected="" <?php } ?> value="S (2-4)">S (2-4)</option>
+                                                                                    </optgroup>
+                                                                                    <optgroup label="Women's Sizes">
+                                                                                        <option <?php if (@$editproduct->shirt_blouse_recomend == 'XXS (00)') { ?> selected="" <?php } ?> value="XXS (00)">XXS (00)</option>
+                                                                                        <option <?php if (@$editproduct->shirt_blouse_recomend == 'XS (0)') { ?> selected="" <?php } ?> value="XS (0)">XS (0)</option>
+                                                                                        <option <?php if (@$editproduct->shirt_blouse_recomend == 'S (2-4)') { ?> selected="" <?php } ?> value="S (2-4)">S (2-4)</option>
+                                                                                        <option <?php if (@$editproduct->shirt_blouse_recomend == 'M (6-8)') { ?> selected="" <?php } ?> value="M (6-8)">M (6-8)</option>
+                                                                                        <option <?php if (@$editproduct->shirt_blouse_recomend == 'L (10-12)') { ?> selected="" <?php } ?> value="L (10-12)">L (10-12)</option>
+                                                                                        <option <?php if (@$editproduct->shirt_blouse_recomend == 'XL (14)') { ?> selected="" <?php } ?> value="XL (14)">XL (14)</option>
+                                                                                        <option <?php if (@$editproduct->shirt_blouse_recomend == 'XXL (16)') { ?> selected="" <?php } ?> value="XXL (16)">XXL (16)</option>
+                                                                                    </optgroup>
+                                                                                    <optgroup label="Women's Plus Sizes">
+                                                                                        <option <?php if (@$editproduct->shirt_blouse_recomend == '1X (14W-16W)') { ?> selected="" <?php } ?> value="1X (14W-16W)">1X (14W-16W)</option>
+                                                                                        <option <?php if (@$editproduct->shirt_blouse_recomend == '2X (18W-20W)') { ?> selected="" <?php } ?> value="2X (18W-20W)">2X (18W-20W)</option>
+                                                                                        <option <?php if (@$editproduct->shirt_blouse_recomend == '3X (22W-24W)') { ?> selected="" <?php } ?> value="3X (22W-24W)">3X (22W-24W)</option>
+                                                                                    </optgroup>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>`;
                                                                 }
                                                                 if(data == 'active_wr' ){
                                                                     selectSizeAcc = `<div>
-                                                            <label>ACTIVE WEAR SIZE  <sup style="color:red;">*</sup></label>
-                                                            <div class="col-md-1">
-                                                                <input type="radio" name="primary_size" value="active_wr"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'active_wr')) ? 'checked' : 'checked'; ?> required/>
-                                                            </div>
+                                                                    <label>ACTIVE WEAR SIZE  <sup style="color:red;">*</sup></label>
+                                                                    <div class="col-md-1">
+                                                                        <input type="radio" name="primary_size" value="active_wr"  checked required/>
+                                                                    </div>
                                                             
-                                                        </div>`;
+                                                                    </div>`;
                                                                 }
                                                                 if(data == 'dress' ){
-                                                                    selectSizeAcc = `<label>DRESS </label>
-                                                    <div class="row"  >
-                                                        <div class="col-md-1">
-                                                            <input type="radio" name="primary_size" value="dress" <?= (!empty($editproduct) && ($editproduct->primary_size == 'dress')) ? 'checked' : 'checked'; ?> required/>
-                                                        </div>
-                                                        
-                                                        <div class="col-sm-6">
-                                                            <select name="variant_size_related[dress_recomended]" id="dress_recomended"  <?=(!empty($editproduct))?'style="pointer-events: none;" readonly':'' ;?> >
-                                                                <option <?php if (@$editproduct->dress_recomended == '') { ?> selected="" <?php } ?> value="">--</option>
-                                                                <option <?php if (@$editproduct->dress_recomended == 'L (10-12)') { ?> selected="" <?php } ?> value="L (10-12)">L (10-12)</option>
-                                                                <optgroup label="Women's Sizes">
-                                                                    <option <?php if (@$editproduct->dress_recomended == 'XXS (00)') { ?> selected="" <?php } ?> value="XXS (00)">XXS (00)</option>
-                                                                    <option <?php if (@$editproduct->dress_recomended == 'XS (0)') { ?> selected="" <?php } ?> value="XS (0)">XS (0)</option>
-                                                                    <option <?php if (@$editproduct->dress_recomended == 'S (2-4)') { ?> selected="" <?php } ?> value="S (2-4)">S (2-4)</option>
-                                                                    <option <?php if (@$editproduct->dress_recomended == 'M (6-8)') { ?> selected="" <?php } ?> value="M (6-8)">M (6-8)</option>
-                                                                    <option <?php if (@$editproduct->dress_recomended == 'L (10-12)') { ?> selected="" <?php } ?> value="L (10-12)">L (10-12)</option>
-                                                                    <option <?php if (@$editproduct->dress_recomended == 'XL (14)') { ?> selected="" <?php } ?> value="XL (14)">XL (14)</option>
-                                                                    <option <?php if (@$editproduct->dress_recomended == 'XXL (16)') { ?> selected="" <?php } ?> value="XXL (16)">XXL (16)</option>
-                                                                </optgroup>
-                                                                <optgroup label="Women's Plus Sizes">
-                                                                    <option <?php if (@$editproduct->dress_recomended == '1X (14W-16W)') { ?> selected="" <?php } ?> value="1X (14W-16W)">1X (14W-16W)</option>
-                                                                    <option <?php if (@$editproduct->dress_recomended == '2X (18W-20W)') { ?> selected="" <?php } ?> value="2X (18W-20W)">2X (18W-20W)</option>
-                                                                    <option <?php if (@$editproduct->dress_recomended == '3X (22W-24W)') { ?> selected="" <?php } ?> value="3X (22W-24W)">3X (22W-24W)</option>
-                                                                </optgroup>
-                                                            </select>
-                                                        </div>
-                                                    </div>`;
+                                                                    selectSizeAcc = `
+                                                                        <div class="row"  >
+                                                                            <div class="col-md-1">
+                                                                                <input type="radio" name="primary_size" value="dress" checked required/>
+                                                                            </div>
+                                                                            <div class="col-md-11 recom_div"> 
+                                                                                <label>DRESS </label>
+                                                                                <div class="col-sm-6">
+                                                                                    <select name="[NAME][variant_size_related][dress_recomended]" id="dress_recomended"  <?=(!empty($editproduct))?'style="pointer-events: none;" readonly':'' ;?> >
+                                                                                        <option <?php if (@$editproduct->dress_recomended == '') { ?> selected="" <?php } ?> value="">--</option>
+                                                                                        <option <?php if (@$editproduct->dress_recomended == 'L (10-12)') { ?> selected="" <?php } ?> value="L (10-12)">L (10-12)</option>
+                                                                                        <optgroup label="Women's Sizes">
+                                                                                            <option <?php if (@$editproduct->dress_recomended == 'XXS (00)') { ?> selected="" <?php } ?> value="XXS (00)">XXS (00)</option>
+                                                                                            <option <?php if (@$editproduct->dress_recomended == 'XS (0)') { ?> selected="" <?php } ?> value="XS (0)">XS (0)</option>
+                                                                                            <option <?php if (@$editproduct->dress_recomended == 'S (2-4)') { ?> selected="" <?php } ?> value="S (2-4)">S (2-4)</option>
+                                                                                            <option <?php if (@$editproduct->dress_recomended == 'M (6-8)') { ?> selected="" <?php } ?> value="M (6-8)">M (6-8)</option>
+                                                                                            <option <?php if (@$editproduct->dress_recomended == 'L (10-12)') { ?> selected="" <?php } ?> value="L (10-12)">L (10-12)</option>
+                                                                                            <option <?php if (@$editproduct->dress_recomended == 'XL (14)') { ?> selected="" <?php } ?> value="XL (14)">XL (14)</option>
+                                                                                            <option <?php if (@$editproduct->dress_recomended == 'XXL (16)') { ?> selected="" <?php } ?> value="XXL (16)">XXL (16)</option>
+                                                                                        </optgroup>
+                                                                                        <optgroup label="Women's Plus Sizes">
+                                                                                            <option <?php if (@$editproduct->dress_recomended == '1X (14W-16W)') { ?> selected="" <?php } ?> value="1X (14W-16W)">1X (14W-16W)</option>
+                                                                                            <option <?php if (@$editproduct->dress_recomended == '2X (18W-20W)') { ?> selected="" <?php } ?> value="2X (18W-20W)">2X (18W-20W)</option>
+                                                                                            <option <?php if (@$editproduct->dress_recomended == '3X (22W-24W)') { ?> selected="" <?php } ?> value="3X (22W-24W)">3X (22W-24W)</option>
+                                                                                        </optgroup>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>`;
                                                                 }
                                                                 if(data == 'bra' ){
                                                                     selectSizeAcc = `<div>
-                                                            <label>BRA SIZE  <sup style="color:red;">*</sup></label> 
-                                                            <div class="row">
-                                                                <div class="col-md-1">
-                                                                    <input type="radio" name="primary_size" value="bra" <?= (!empty($editproduct) && ($editproduct->primary_size == 'bra')) ? 'checked' : 'checked'; ?> required/>
-                                                                </div>
-                                                                <div class="col-sm-6">
-                                                                    <select name="variant_size_related[bra_recomend]" id="bra_recomend">
-                                                                        <option <?php if (@$editproduct->bra_recomend == '') { ?> selected="" <?php } ?> value="">--</option>
-                                                                        <option <?php if (@$editproduct->bra_recomend == 'AA') { ?> selected="" <?php } ?> value="AA">AA</option>
-                                                                        <option <?php if (@$editproduct->bra_recomend == 'A') { ?> selected="" <?php } ?> value="A">A</option>
-                                                                        <option <?php if (@$editproduct->bra_recomend == 'B') { ?> selected="" <?php } ?> value="B">B</option>
-                                                                        <option <?php if (@$editproduct->bra_recomend == 'C') { ?> selected="" <?php } ?> value="C">C</option>
-                                                                        <option <?php if (@$editproduct->bra_recomend == 'D') { ?> selected="" <?php } ?> value="D">D</option>
-                                                                        <option <?php if (@$editproduct->bra_recomend == 'DD') { ?> selected="" <?php } ?> value="DD">DD</option>
-                                                                        <option <?php if (@$editproduct->bra_recomend == 'DDD') { ?> selected="" <?php } ?> value="DDD">DDD</option>
-                                                                        <option <?php if (@$editproduct->bra_recomend == 'F') { ?> selected="" <?php } ?> value="F">F</option>
-                                                                        <option <?php if (@$editproduct->bra_recomend == 'G') { ?> selected="" <?php } ?> value="G">G</option>
-                                                                        <option <?php if (@$editproduct->bra_recomend == 'H') { ?> selected="" <?php } ?> value="H">H</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>`;
+                                                                         
+                                                                        <div class="row">
+                                                                            <div class="col-md-1">
+                                                                                <input type="radio" name="primary_size" value="bra" checked required/>
+                                                                            </div>
+                                                                            <div class="col-md-11 recom_div"> 
+                                                                                <label>BRA SIZE  <sup style="color:red;">*</sup></label>
+                                                                                <div class="col-sm-6">
+                                                                                    <select name="[NAME][variant_size_related][bra_recomend]" id="bra_recomend">
+                                                                                        <option <?php if (@$editproduct->bra_recomend == '') { ?> selected="" <?php } ?> value="">--</option>
+                                                                                        <option <?php if (@$editproduct->bra_recomend == 'AA') { ?> selected="" <?php } ?> value="AA">AA</option>
+                                                                                        <option <?php if (@$editproduct->bra_recomend == 'A') { ?> selected="" <?php } ?> value="A">A</option>
+                                                                                        <option <?php if (@$editproduct->bra_recomend == 'B') { ?> selected="" <?php } ?> value="B">B</option>
+                                                                                        <option <?php if (@$editproduct->bra_recomend == 'C') { ?> selected="" <?php } ?> value="C">C</option>
+                                                                                        <option <?php if (@$editproduct->bra_recomend == 'D') { ?> selected="" <?php } ?> value="D">D</option>
+                                                                                        <option <?php if (@$editproduct->bra_recomend == 'DD') { ?> selected="" <?php } ?> value="DD">DD</option>
+                                                                                        <option <?php if (@$editproduct->bra_recomend == 'DDD') { ?> selected="" <?php } ?> value="DDD">DDD</option>
+                                                                                        <option <?php if (@$editproduct->bra_recomend == 'F') { ?> selected="" <?php } ?> value="F">F</option>
+                                                                                        <option <?php if (@$editproduct->bra_recomend == 'G') { ?> selected="" <?php } ?> value="G">G</option>
+                                                                                        <option <?php if (@$editproduct->bra_recomend == 'H') { ?> selected="" <?php } ?> value="H">H</option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>`;
                                                                 }
                                                                 if(data == 'wo_jackect_size' ){
                                                                     selectSizeAcc = `<div>
-                                                            <label>JACKET SIZE  <sup style="color:red;">*</sup></label>
-                                                            <div class="col-md-1">
-                                                                <input type="radio" name="primary_size" value="wo_jackect_size"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'wo_jackect_size')) ? 'checked' : 'checked'; ?> required />
-                                                            </div>
-                                                            
-                                                        </div>`;
+                                                                        <label>JACKET SIZE  <sup style="color:red;">*</sup></label>
+                                                                        <div class="col-md-1">
+                                                                            <input type="radio" name="primary_size" value="wo_jackect_size"  checked required />
+                                                                        </div>
+                                                                        
+                                                                    </div>`;
                                                                 }
                                                                  
                                                                 if(data == 'pantsr1' ){
                                                                     selectSizeAcc = `
-                                                                    <div>
-                                                            <label>Top SIZE  <sup style="color:red;">*</sup></label>
-                                                                <div class="col-md-1">
-                                                            <input type="radio" name="primary_size" value="pantsr1" <?= (!empty($editproduct) && ($editproduct->primary_size == 'pantsr1')) ? 'checked' : ''; ?> />
-                                                        </div>
-                                                        
-                                                        <div class="col-sm-6">
-                                                            <select name="variant_size_related[pantsr2]" id="pantsr2">
-                                                                <option <?php if (@$editproduct->pantsr2 == '') { ?> selected="" <?php } ?> value="">--</option>
-                                                                <option <?php if (@$editproduct->pantsr2 == 'Narrow') { ?> selected="" <?php } ?> value="Narrow">Narrow</option>
-                                                                <option <?php if (@$editproduct->pantsr2 == 'Medium') { ?> selected="" <?php } ?> value="Medium">Medium</option>
-                                                                <option <?php if (@$editproduct->pantsr2 == 'Wide') { ?> selected="" <?php } ?> value="Wide">Wide</option>
-                                                                <option <?php if (@$editproduct->pantsr2 == 'Extra Wide') { ?> selected="" <?php } ?> value="Extra Wide">Extra Wide</option>
-                                                            </select>
-                                                        </div></div>`;
+                                                                    <div>                                                                        
+                                                                            <div class="col-md-1">
+                                                                        <input type="radio" name="primary_size" value="pantsr1" checked />
+                                                                    </div>
+                                                                    <div class="col-md-11 recom_div"> 
+                                                                        <label>Top SIZE  <sup style="color:red;">*</sup></label>
+                                                                        <div class="col-sm-6">
+                                                                            <select name="[NAME][variant_size_related][pantsr2]" id="pantsr2">
+                                                                                <option <?php if (@$editproduct->pantsr2 == '') { ?> selected="" <?php } ?> value="">--</option>
+                                                                                <option <?php if (@$editproduct->pantsr2 == 'Narrow') { ?> selected="" <?php } ?> value="Narrow">Narrow</option>
+                                                                                <option <?php if (@$editproduct->pantsr2 == 'Medium') { ?> selected="" <?php } ?> value="Medium">Medium</option>
+                                                                                <option <?php if (@$editproduct->pantsr2 == 'Wide') { ?> selected="" <?php } ?> value="Wide">Wide</option>
+                                                                                <option <?php if (@$editproduct->pantsr2 == 'Extra Wide') { ?> selected="" <?php } ?> value="Extra Wide">Extra Wide</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    </div>`;
                                                                 }
                                                                  
+                                                                $('#prd_sz_typ_div').hide();
                                                                 $('#prd_sz_typ_div').html(selectSizeAcc);
                                                             }
                                                         </script>
@@ -788,6 +527,482 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                             </div>                            
                                         </div>
                                     </div>
+                                    
+                                    <div class="col-md-12">
+                                            <label for="exampleInputPassword1">Variants </label>
+                                            <div id="variant_main_div">
+                                               
+                                            </div>
+                                            <div style="margin-top: 10px;margin-button: 10px;">
+                                               <button type="button" class="btn btn-info" onclick="addVariants()">Add Variant</button>
+                                            </div>
+                                            
+                                            
+                                            <script>
+                                                function addVariants(){
+                                                    let inx_numx = Math.floor(Math.random() * 899999 + 100000);
+                                                    // let rowCount = $('#payment_table tr').length;
+                                                    
+                                                    let new_variant_html = `<div class="row" id="variant${inx_numx}">
+                                                    <div class="col-md-12">
+                                                        <label style="width: 100%;">Color <span style="float: right" onclick="variantDelete('variant${inx_numx}')">Delete</span></label>
+                                                        <select name="color[]" id="color${inx_numx}" onchange="showSizeBox(${inx_numx});" class="form-control" required>
+                                                            <option value="" selected disabled>----</option>
+                                                            <?php foreach($all_colors as $clr){ ?>
+                                                                <option value="<?=$clr->name;?>"><?=$clr->name;?></option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div id="color_wise_size_variant_main_div${inx_numx}" style="display:none;">
+                                                
+                                                        </div>  
+                                                        <button type="button" onclick="showSizeBox(${inx_numx})" class="add_more_btn${inx_numx}" style="display:none;">Add more size</button>
+                                                       
+                                                    </div>
+                                                </div>`;
+                                                    
+                                                    $('#variant_main_div').append(new_variant_html);
+                                                }
+                                                function showSizeBox(id){
+                                                    let value = $('#color'+id).val();
+                                                    
+                                                    $('#color_wise_size_variant_main_div'+id).show();
+                                                    $('.add_more_btn'+id).hide();//Show add more size button
+                                                    let inx_numx = Math.floor(Math.random() * 899999 + 100000);
+                                                    let new_size_html =`<div class="row"  id="color_size_div${inx_numx}">
+                                                            <div class="col-md-6">
+                                                                <label style="width: 100%;">Size <span style="float: right" onclick="variantDelete('color_size_div${inx_numx}')">Delete</span></label>
+                                                                <select name="size[${value}][]" id="var_sizes${inx_numx}" onchange="showDetailsBox(${inx_numx},${id});$('.add_more_btn${id}').show();" class="form-control" required>
+                                                            <option value="" selected disabled>----</option>
+                                                            <?php foreach($all_sizes as $sz){ ?>
+                                                                <option value="<?=$sz->size;?>"><?=$sz->size;?></option>
+                                                            <?php } ?>
+                                                        </select>
+                                                            </div>
+                                                            <div class="col-md-6" id="showSizeDetails${inx_numx}" style="display:none;">
+                                                                
+                                                            </div>
+                                                            
+                                                            
+                                                        </div>`;
+                                                     $('#color_wise_size_variant_main_div'+id).append(new_size_html);
+                                                    
+                                                }
+                                                function showDetailsBox(id,parent_id){
+                                                    let value =  $('#var_sizes'+id).val();
+                                                    let color_value =  $('#color'+parent_id).val();
+                                                    let inx_numx = Math.floor(Math.random() * 899999 + 100000);
+                                                    let recom_html = $('#prd_sz_typ_div .recom_div').html();
+                                                    // console.log(recom_html);
+                                                    if(recom_html != undefined){
+                                                        recom_html = recom_html.replace(/\[NAME]/g,`variant_data[${color_value}][${value}]`);
+                                                    }else{
+                                                        recom_html = '';
+                                                    }
+                                                    // console.log(recom_html);
+
+                                                    $('#showSizeDetails'+id).show();
+                                                    let new_size_details_html =`<div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="form-group">
+                                                                            <label for="exampleInputPassword1">Height range <sup style="color:red;">*</sup></label>
+                                                                            <div class="women-select-boxes">
+                                                                                <div class="women-select1">
+                                                                                    <select name="variant_data[${color_value}][${value}][tall_feet1]" id="tall_feet" class="form-control" required>
+                                                                                        <option value="" selected>--</option>
+                                                                                        <option value="4">4</option>
+                                                                                        <option value="5">5</option>
+                                                                                        <option value="6">6</option>
+                                                                                    </select>
+                                                                                    <label>ft.</label>
+                                                                                </div>
+                                                                                <div class="women-select1">
+                                                                                    <select name="variant_data[${color_value}][${value}][tall_inch1]" id="tall_inch" class="form-control">
+                                                                                        <option  value="" selected>--</option>
+                                                                                        <option  value="0">0</option>
+                                                                                        <option  value="1">1</option>
+                                                                                        <option  value="2">2</option>
+                                                                                        <option  value="3">3</option>
+                                                                                        <option  value="4">4</option>
+                                                                                        <option  value="5">5</option>
+                                                                                        <option  value="6">6</option>
+                                                                                        <option  value="7">7</option>
+                                                                                        <option  value="8">8</option>
+                                                                                        <option  value="9">9</option>
+                                                                                        <option  value="10">10</option>
+                                                                                        <option  value="11">11</option>
+                                                                                    </select>
+
+                               
+                                                                                </div>
+                                                                                <span>to</span>
+                                                                                <div class="women-select1">
+
+                                                                                    <select name="variant_data[${color_value}][${value}][tall_feet2]" id="tall_feet2" class="form-control" required>
+                                                                                        <option  value="" selected>--</option>
+                                                                                        <option  value="4">4</option>
+                                                                                        <option  value="5">5</option>
+                                                                                        <option  value="6">6</option>
+                                                                                    </select>
+                                                                                    <label>ft.</label>
+                                                                                </div>
+                                                                                <div class="women-select1">
+                                                                                    <select name="variant_data[${color_value}][${value}][tall_inch2]" id="tall_inch2" class="form-control">
+                                                                                        <option  value="" selected>--</option>
+                                                                                        <option  value="0">0</option>
+                                                                                        <option  value="1">1</option>
+                                                                                        <option  value="2">2</option>
+                                                                                        <option  value="3">3</option>
+                                                                                        <option  value="4">4</option>
+                                                                                        <option  value="5">5</option>
+                                                                                        <option  value="6">6</option>
+                                                                                        <option  value="7">7</option>
+                                                                                        <option  value="8">8</option>
+                                                                                        <option  value="9">9</option>
+                                                                                        <option  value="10">10</option>
+                                                                                        <option  value="11">11</option>
+                                                                                    </select>
+
+                               
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="help-block with-errors"></div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12">
+                                                                        <div class="form-group">
+                                                                            <label for="exampleInputPassword1">Weight range <sup style="color:red;">*</sup></label>
+                                                                            <div class="women-select-boxes">
+                                                                                <div class="women-select2">
+                                <input name='variant_data[${color_value}][${value}][best_fit_for_weight1]' value  = '' type = 'text' class = "form-control" placeholder ='Please enter your weight' required>                                                            
+                                                                                </div>
+                                                                                <span>to</span>
+                                                                                <div class="women-select2">
+                                <input name='variant_data[${color_value}][${value}][best_fit_for_weight2]'  value = '' type = 'text' class = "form-control" placeholder = 'Please enter your weight' required >
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12">
+                                                                        <div class="form-group">
+                                                                            <label for="exampleInputPassword1">Age range <sup style="color:red;">*</sup></label>
+                                                                            <div class="women-select-boxes">
+                                                                                <div class="women-select2">
+                               <input name='variant_data[${color_value}][${value}][age1]'  value = '' type = 'text' class = "form-control" placeholder = 'Please enter your age' required >                                                           
+                                                                                </div>
+                                                                                <span>to</span>
+                                                                                <div class="women-select2">
+                               <input name='variant_data[${color_value}][${value}][age2]'  value = '' type = 'text' class = "form-control" placeholder = 'Please enter your age' required > 
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                   <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="exampleInputPassword1">Purchase price ? <sup style="color:red;">*</sup></label>
+                                   <input name='variant_data[${color_value}][${value}][purchase_price]'  value = '' type = 'text' class = "form-control" placeholder = 'Please enter purchase price' required > 
+                            
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="exampleInputPassword1">sale_price ? <sup style="color:red;">*</sup></label>
+                                       <input name='variant_data[${color_value}][${value}][sale_price]'  value = '' type = 'text' class = "form-control" placeholder = 'Please enter sale price' required > 
+                              
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="exampleInputPassword1">Clearance price</label>
+                                           <input name='variant_data[${color_value}][${value}][clearance_price]'  value = '' type = 'text' class = "form-control" placeholder = 'Please enter sale price' > 
+  
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12  var_qty">
+                                            <div class="form-group">
+                                                <label for="exampleInputPassword1">Quantity ? <sup style="color:red;">*</sup></label>
+                                                <input name='variant_data[${color_value}][${value}][quantity]'  value = '' type = 'text' class = "form-control"  placeholder = 'Please enter quantity' <?= !empty($this->request->session()->read('new_variant_po_data'))?"":'required';?> min = "0" steps='1'> 
+       
+                                            </div>
+                                        </div>    
+                                                                </div>
+                                                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputPassword1">Shoulders?</label>
+                                            <select name="variant_data[${color_value}][${value}][proportion_shoulders]" id="proportion_shoulders">
+                                                <option <?php if (@$editproduct->proportion_shoulders == 'NULL') { ?> selected="" <?php } ?> value=""  selected disabled>--</option>
+                                                <optgroup label="Women's Sizes">
+                                                    <option <?php if (@$editproduct->proportion_shoulders == '00') { ?> selected="" <?php } ?> value="00">00</option>
+                                                    <option <?php if (@$editproduct->proportion_shoulders == '0') { ?> selected="" <?php } ?> value="0">0</option>
+                                                    <option <?php if (@$editproduct->proportion_shoulders == '2') { ?> selected="" <?php } ?> value="2">2</option>
+                                                    <option <?php if (@$editproduct->proportion_shoulders == '4') { ?> selected="" <?php } ?> value="4">4</option>
+                                                    <option <?php if (@$editproduct->proportion_shoulders == '6') { ?> selected="" <?php } ?> value="6">6</option>
+                                                    <option <?php if (@$editproduct->proportion_shoulders == '8') { ?> selected="" <?php } ?> value="8">8</option>
+                                                    <option <?php if (@$editproduct->proportion_shoulders == '10') { ?> selected="" <?php } ?> value="10">10</option>
+                                                    <option <?php if (@$editproduct->proportion_shoulders == '12') { ?> selected="" <?php } ?> value="12">12</option>
+                                                    <option <?php if (@$editproduct->proportion_shoulders == '14') { ?> selected="" <?php } ?> value="14">14</option>
+                                                    <option <?php if (@$editproduct->proportion_shoulders == '16') { ?> selected="" <?php } ?> value="16">16</option>
+                                                </optgroup>
+                                                <optgroup label="Women's Plus Sizes">
+                                                    <option <?php if (@$editproduct->proportion_shoulders == '14W') { ?> selected="" <?php } ?> value="14W">14W</option>
+                                                    <option <?php if (@$editproduct->proportion_shoulders == '16W') { ?> selected="" <?php } ?> value="16W">16W</option>
+                                                    <option <?php if (@$editproduct->proportion_shoulders == '18W') { ?> selected="" <?php } ?> value="18W">18W</option>
+                                                    <option <?php if (@$editproduct->proportion_shoulders == '20W') { ?> selected="" <?php } ?> value="20W">20W</option>
+                                                    <option <?php if (@$editproduct->proportion_shoulders == '22W') { ?> selected="" <?php } ?> value="22W">22W</option>
+                                                    <option <?php if (@$editproduct->proportion_shoulders == '24W') { ?> selected="" <?php } ?> value="24W">24W</option>
+                                                </optgroup>
+                                            </select>                                         
+                                        </div>
+                                    </div>
+
+                                    <?php if(in_array($product_ctg_nme,["A3", "A4", "A5", "A6", "A7", "A8"]) || in_array($product_sub_ctg_nme, ["A41", "A42", "A47"]) ){ ?>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputPassword1">Legs?   <?php if($product_ctg_nme != "A4"){ ?> <sup style="color:red;">*</sup> <?php } ?> </label>
+                                            <select name="variant_data[${color_value}][${value}][proportion_legs]" id="proportion_legs"  <?php if($product_ctg_nme != "A4"){ ?> required <?php } ?>>
+                                                <option <?php if (@$editproduct->proportion_legs == 'NULL') { ?> selected="" <?php } ?> value="" selected disabled>--</option>
+                                                <!--<option <?php if (@$editproduct->proportion_legs == 'NULL') { ?> selected="" <?php } ?> value="NULL">--</option>-->
+                                                <option <?php if (@$editproduct->proportion_legs == '30') { ?> selected="" <?php } ?> value="30">30</option>
+                                                <option <?php if (@$editproduct->proportion_legs == '32') { ?> selected="" <?php } ?> value="32">32</option>
+                                                <option <?php if (@$editproduct->proportion_legs == '34') { ?> selected="" <?php } ?> value="34">34</option>
+                                                <option <?php if (@$editproduct->proportion_legs == '36') { ?> selected="" <?php } ?> value="36">36</option>
+                                                <option <?php if (@$editproduct->proportion_legs == '38') { ?> selected="" <?php } ?> value="38">38</option>
+                                                <option <?php if (@$editproduct->proportion_legs == '40') { ?> selected="" <?php } ?> value="40">40</option>
+                                                <option <?php if (@$editproduct->proportion_legs == '42') { ?> selected="" <?php } ?> value="42">42</option>
+                                                <option <?php if (@$editproduct->proportion_legs == '44') { ?> selected="" <?php } ?> value="44">44</option>
+                                                <option <?php if (@$editproduct->proportion_legs == '46') { ?> selected="" <?php } ?> value="46">46</option>
+                                            </select>                                         
+                                        </div>
+                                    </div>
+                                    <?php } ?>
+                                    
+                                    <?php if(in_array($product_ctg_nme,["A1", "A2", "A3", "A4", "A9", "A10", "A11", "A12"]) || in_array($product_sub_ctg_nme, ["A43", "A45"])){ ?>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputPassword1">Arms?   <?php if($product_ctg_nme != "A4"){ ?> <sup style="color:red;">*</sup> <?php } ?> </label>
+                                            <select name="variant_data[${color_value}][${value}][proportion_arms]" id="proportion_arms"  <?php if($product_ctg_nme != "A4"){ ?> required <?php } ?>>
+                                                <option <?php if (@$editproduct->proportion_arms == 'NULL') { ?> selected="" <?php } ?> value="" selected disabled>-</option>
+                                                <!--<option <?php if (@$editproduct->proportion_arms == 'NULL') { ?> selected="" <?php } ?> value="NULL">--</option>-->
+                                                <option <?php if (@$editproduct->proportion_arms == 'XXS') { ?> selected="" <?php } ?> value="XXS">XXS</option>
+                                                <option <?php if (@$editproduct->proportion_arms == 'XS') { ?> selected="" <?php } ?> value="XS">XS</option>
+                                                <option <?php if (@$editproduct->proportion_arms == 'S') { ?> selected="" <?php } ?> value="S">S</option>
+                                                <option <?php if (@$editproduct->proportion_arms == 'M') { ?> selected="" <?php } ?> value="M">M</option>
+                                                <option <?php if (@$editproduct->proportion_arms == 'L') { ?> selected="" <?php } ?> value="L">L</option>
+                                                <option <?php if (@$editproduct->proportion_arms == 'XL') { ?> selected="" <?php } ?> value="XL">XL</option>
+                                                <option <?php if (@$editproduct->proportion_arms == 'XXL') { ?> selected="" <?php } ?> value="XXL">XXL</option>
+                                                <option <?php if (@$editproduct->proportion_arms == '1X') { ?> selected="" <?php } ?> value="1X">1X</option>
+                                                <option <?php if (@$editproduct->proportion_arms == '2X') { ?> selected="" <?php } ?> value="2X">2X</option>
+                                                <option <?php if (@$editproduct->proportion_arms == '3X') { ?> selected="" <?php } ?> value="3X">3X</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <?php } ?>
+                                
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputPassword1">Hips ?</label>
+                                            <select name="variant_data[${color_value}][${value}][proportion_hips]" id="jeansx">
+                                                <option value="">--</option>
+                                                <optgroup label="Women's Sizes"> 
+                                                    <option <?php if (@$editproduct->proportion_hips == 'NULL') { ?> selected="" <?php } ?> value=""  selected disabled>--</option>
+                                                    <option <?php if (@$editproduct->proportion_hips == '00') { ?> selected="" <?php } ?> value="00">00</option>
+                                                    <option <?php if (@$editproduct->proportion_hips == '0') { ?> selected="" <?php } ?> value="0">0</option>
+                                                    <option <?php if (@$editproduct->proportion_hips == '2') { ?> selected="" <?php } ?> value="2">2</option>
+                                                    <option <?php if (@$editproduct->proportion_hips == '4') { ?> selected="" <?php } ?> value="4">4</option>
+                                                    <option <?php if (@$editproduct->proportion_hips == '6') { ?> selected="" <?php } ?> value="6">6</option>
+                                                    <option <?php if (@$editproduct->proportion_hips == '8') { ?> selected="" <?php } ?> value="8">8</option>
+                                                    <option <?php if (@$editproduct->proportion_hips == '10') { ?> selected="" <?php } ?> value="10">10</option>
+                                                    <option <?php if (@$editproduct->proportion_hips == '12') { ?> selected="" <?php } ?> value="12">12</option>
+                                                    <option <?php if (@$editproduct->proportion_hips == '14') { ?> selected="" <?php } ?> value="14">14</option>
+                                                    <option <?php if (@$editproduct->proportion_hips == '16') { ?> selected="" <?php } ?> value="16">16</option>
+                                                </optgroup>
+                                                <optgroup label="Women's Plus Sizes">
+                                                    <option <?php if (@$editproduct->proportion_hips == '14W') { ?> selected="" <?php } ?> value="14W">14W</option>
+                                                    <option <?php if (@$editproduct->proportion_hips == '16W') { ?> selected="" <?php } ?> value="16W">16W</option>
+                                                    <option <?php if (@$editproduct->proportion_hips == '18W') { ?> selected="" <?php } ?> value="18W">18W</option>
+                                                    <option <?php if (@$editproduct->proportion_hips == '20W') { ?> selected="" <?php } ?> value="20W">20W</option>
+                                                    <option <?php if (@$editproduct->proportion_hips == '22W') { ?> selected="" <?php } ?> value="22W">22W</option>
+                                                    <option <?php if (@$editproduct->proportion_hips == '24W') { ?> selected="" <?php } ?> value="24W">24W</option>
+                                                </optgroup>
+                                            </select>                                          
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">${recom_html}</div>
+                                                                `;
+                                                    $('#showSizeDetails'+id).html(new_size_details_html);
+                                                }
+                                                function variantDelete(id){
+                                                    $('#'+id).remove();
+                                                }
+                                            </script>
+                                        </div> 
+                                  
+                                    
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputPassword1">Profession</label>
+                                            <div>
+                                                <button type="button" onclick="professionSelectAll()">Select All</button>
+                                                <button type="button" onclick="professionDeselectAll()">Deselect All</button>
+                                            </div>
+                                            <script>
+                                                function professionSelectAll() {
+                                                    $("#profession > option").prop("selected", true);
+                                                    $("#profession").trigger("change");
+                                                }
+
+                                                function professionDeselectAll() {
+                                                    $("#profession > option").prop("selected", false);
+                                                    $("#profession").trigger("change");
+                                                }
+                                            </script>
+                                            <select name="profession[]" id="profession" class="form-control select2_select" aria-invalid="false" multiple>
+                                                <!--<option value="" <?php // if (!empty($editproduct->profession) && in_array('NULL', json_decode($editproduct->profession, true))) { ?> selected <?php //} ?> >--</option>-->
+                                                <option value="1" <?php if (!empty($editproduct->profession) && in_array(1, json_decode($editproduct->profession, true))) { ?> selected <?php } ?> >Architecture / Engineering</option>
+                                                <option value="2" <?php if (!empty($editproduct->profession) && in_array(2, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Art / Design</option>
+                                                <option value="3" <?php if (!empty($editproduct->profession) && in_array(3, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Building / Maintenance</option>
+                                                <option value="4" <?php if (!empty($editproduct->profession) && in_array(4, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Business / Client Service</option>
+                                                <option value="5" <?php if (!empty($editproduct->profession) && in_array(5, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Community / Social Service</option>
+                                                <option value="6" <?php if (!empty($editproduct->profession) && in_array(6, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Computer / IT</option>
+                                                <option value="7" <?php if (!empty($editproduct->profession) && in_array(7, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Education</option>
+                                                <option value="8" <?php if (!empty($editproduct->profession) && in_array(8, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Entertainer / Performer</option>
+                                                <option value="9" <?php if (!empty($editproduct->profession) && in_array(9, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Farming / Fishing / Forestry</option>
+                                                <option value="10" <?php if (!empty($editproduct->profession) && in_array(10, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Financial Services</option>
+                                                <option value="11" <?php if (!empty($editproduct->profession) && in_array(11, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Health Practitioner / Technician</option>
+                                                <option value="12" <?php if (!empty($editproduct->profession) && in_array(12, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Hospitality / Food Service</option>
+                                                <option value="13" <?php if (!empty($editproduct->profession) && in_array(13, json_decode($editproduct->profession, true))) { ?> selected <?php } ?> >Management</option>
+                                                <option value="14" <?php if (!empty($editproduct->profession) && in_array(14, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Media / Communications</option>
+                                                <option value="15" <?php if (!empty($editproduct->profession) && in_array(15, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Military / Protective Service</option>
+                                                <option value="16" <?php if (!empty($editproduct->profession) && in_array(16, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Legal</option>
+                                                <option value="17" <?php if (!empty($editproduct->profession) && in_array(17, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Office / Administration</option>
+                                                <option value="18" <?php if (!empty($editproduct->profession) && in_array(18, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Average</option>
+                                                <option value="19" <?php if (!empty($editproduct->profession) && in_array(19, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Personal Care & Service</option>
+                                                <option value="20" <?php if (!empty($editproduct->profession) && in_array(20, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Production / Manufacturing</option>
+                                                <option value="21" <?php if (!empty($editproduct->profession) && in_array(21, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Retail</option>
+                                                <option value="22" <?php if (!empty($editproduct->profession) && in_array(22, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Sales</option>
+                                                <option value="23" <?php if (!empty($editproduct->profession) && in_array(23, json_decode($editproduct->profession, true))) { ?> selected <?php } ?> >Science</option>
+                                                <option value="24" <?php if (!empty($editproduct->profession) && in_array(24, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Technology</option>
+                                                <option value="25" <?php if (!empty($editproduct->profession) && in_array(25, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Transportation</option>
+                                                <option value="26" <?php if (!empty($editproduct->profession) && in_array(26, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Self-Employed</option>
+                                                <option value="27" <?php if (!empty($editproduct->profession) && in_array(27, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Stay-At-Home Parent</option>
+                                                <option value="28" <?php if (!empty($editproduct->profession) && in_array(28, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Student</option>
+                                                <option value="29" <?php if (!empty($editproduct->profession) && in_array(29, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Retired</option>
+                                                <option value="30" <?php if (!empty($editproduct->profession) && in_array(30, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Not Employed</option>
+                                                <option value="31" <?php if (!empty($editproduct->profession) && in_array(31, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Other</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputPassword1">Occasions</label>
+                                            <div>
+                                                <button type="button" onclick="occasionsSelectAll()">Select All</button>
+                                                <button type="button" onclick="occasionsDeselectAll()">Deselect All</button>
+                                            </div>
+                                            <script>
+                                                function occasionsSelectAll() {
+                                                    $("#occasional_dress > option").prop("selected", true);
+                                                    $("#occasional_dress").trigger("change");
+                                                }
+
+                                                function occasionsDeselectAll() {
+                                                    $("#occasional_dress > option").prop("selected", false);
+                                                    $("#occasional_dress").trigger("change");
+                                                }
+                                            </script>
+                                            <select name="occasional_dress[]" id="occasional_dress"  class="form-control select2_select" aria-invalid="false" multiple>
+                                                <!-- <option value="" <?php //if (!empty($editproduct->occasional_dress) && in_array('NULL', json_decode($editproduct->occasional_dress, true))) { ?> selected <?php //} ?>>--</option> -->
+                                                <option value="1"  <?php if (!empty($editproduct->occasional_dress) && in_array(1, json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>Business Casual / Work</option>
+                                                <option value="2"  <?php if (!empty($editproduct->occasional_dress) && in_array(2, json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>Cocktail / Wedding / Special</option>
+                                                <?php /* ?>
+                                                  <option value="3"  <?php if(!empty($editproduct->occasional_dress) && in_array(3, json_decode($editproduct->occasional_dress,true))){ ?> selected <?php } ?>>Building / Maintenance</option>
+                                                  <?php */ ?>
+                                                <option value="4"  <?php if (!empty($editproduct->occasional_dress) && in_array(4, json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>Most of the time</option>
+                                                <option value="5"  <?php if (!empty($editproduct->occasional_dress) && in_array(5, json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>Around once or twice a month</option>
+                                                <option value="6"  <?php if (!empty($editproduct->occasional_dress) && in_array(6, json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>Date Night / Night Out</option>
+                                                <option value="7"  <?php if (!empty($editproduct->occasional_dress) && in_array(7, json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>Laid Back Casual</option>
+                                                <option value="8"  <?php if (!empty($editproduct->occasional_dress) && in_array(8, json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>Rarely</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6"></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12 col-lg-12 col-md-12 type-box women-type-box body-women">
+                                        <h3>What's your body type?</h3>
+                                        <ul>
+                                            <li>
+                                                <h4 style="margin-top: 0;">Inverted Triangle</h4>
+                                                <input class="radio-box" id="radio2" name="better_body_shape[]" value="2" type="checkbox" <?php if (!empty($editproduct->better_body_shape) && in_array(2, json_decode($editproduct->better_body_shape, true))) { ?> checked <?php } ?>>
+                                                <label for="radio2">
+                                                    <img src="<?= HTTP_ROOT_BASE; ?>images/inverted-triangle.jpg" alt="">
+                                                </label>
+                                            </li>
+                                            <li>
+                                                <h4 style="margin-top: 0;">Triangle</h4>
+                                                <input class="radio-box" id="radio3" type="checkbox" name="better_body_shape[]" value="3" <?php if (!empty($editproduct->better_body_shape) && in_array(3, json_decode($editproduct->better_body_shape, true))) { ?> checked <?php } ?>>
+                                                <label for="radio3">
+                                                    <img src="<?= HTTP_ROOT_BASE; ?>images/triangle.jpg" alt="">
+                                                </label>
+                                            </li>
+                                            <li>
+                                                <h4 style="margin-top: 0;">rectangle</h4>
+                                                <input class="radio-box" name="better_body_shape[]" value="1" id="radio1" type="checkbox"  <?php if (!empty($editproduct->better_body_shape) && in_array(1, json_decode($editproduct->better_body_shape, true))) { ?> checked <?php } ?>>
+                                                <label for="radio1">
+                                                    <img src="<?= HTTP_ROOT_BASE; ?>images/rectangle.jpg" alt="">
+                                                </label>
+                                            </li>
+                                            <li>
+                                                <h4 style="margin-top: 0;">hourglass</h4>
+                                                <input class="radio-box" id="radio4" type="checkbox" name="better_body_shape[]" value="4"  <?php if (!empty($editproduct->better_body_shape) && in_array(4, json_decode($editproduct->better_body_shape, true))) { ?> checked <?php } ?>>
+                                                <label for="radio4">
+                                                    <img src="<?= HTTP_ROOT_BASE; ?>images/hourglass.jpg" alt="">
+                                                </label>
+                                            </li>
+                                            <li>
+                                                <h4 style="margin-top: 0;">Apple</h4>
+                                                <input class="radio-box" id="radio4z" type="checkbox" name="better_body_shape[]" value="5"  <?php if (!empty($editproduct->better_body_shape) && in_array(5, json_decode($editproduct->better_body_shape, true))) { ?> checked <?php } ?>>
+                                                <label for="radio4z">
+                                                    <img src="<?= HTTP_ROOT_BASE; ?>images/apple.jpg" alt="">
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputPassword1">Brand Name <sup style="color:red;">*</sup></label>
+                                            <select name="brand_id" id="brand_id" class="form-control" required>
+                                                <option value="" selected disabled>--</option>
+                                                <?php
+                                                foreach ($brandsListings as $brandnm) {
+                                                    if (empty(@$editproduct) && ($brandnm->is_active != 0)) {
+                                                        ?>
+
+                                                        <option <?php if ($brandnm->id == @$editproduct->brand_id) { ?> selected=""<?php } ?> value="<?php echo $brandnm->id; ?>"><?php echo $brandnm->brand_name; ?></option>
+                                                        <?php
+                                                    }
+                                                    if (!empty(@$editproduct)) {
+                                                        ?>
+
+                                                        <option <?php if ($brandnm->id == @$editproduct->brand_id) { ?> selected=""<?php } ?> value="<?php echo $brandnm->id; ?>"><?php echo $brandnm->brand_name; ?></option>
+                                                        <?php
+                                                    }
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    
+                                    
                                 </div>
                                 <div class="row">
                                     
@@ -1202,114 +1417,9 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                         </ul>
 
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Shoulders?</label>
-                                            <select name="variant_size_related[proportion_shoulders]" id="proportion_shoulders">
-                                                <option <?php if (@$editproduct->proportion_shoulders == 'NULL') { ?> selected="" <?php } ?> value=""  selected disabled>--</option>
-                                                <optgroup label="Women's Sizes">
-                                                    <option <?php if (@$editproduct->proportion_shoulders == '00') { ?> selected="" <?php } ?> value="00">00</option>
-                                                    <option <?php if (@$editproduct->proportion_shoulders == '0') { ?> selected="" <?php } ?> value="0">0</option>
-                                                    <option <?php if (@$editproduct->proportion_shoulders == '2') { ?> selected="" <?php } ?> value="2">2</option>
-                                                    <option <?php if (@$editproduct->proportion_shoulders == '4') { ?> selected="" <?php } ?> value="4">4</option>
-                                                    <option <?php if (@$editproduct->proportion_shoulders == '6') { ?> selected="" <?php } ?> value="6">6</option>
-                                                    <option <?php if (@$editproduct->proportion_shoulders == '8') { ?> selected="" <?php } ?> value="8">8</option>
-                                                    <option <?php if (@$editproduct->proportion_shoulders == '10') { ?> selected="" <?php } ?> value="10">10</option>
-                                                    <option <?php if (@$editproduct->proportion_shoulders == '12') { ?> selected="" <?php } ?> value="12">12</option>
-                                                    <option <?php if (@$editproduct->proportion_shoulders == '14') { ?> selected="" <?php } ?> value="14">14</option>
-                                                    <option <?php if (@$editproduct->proportion_shoulders == '16') { ?> selected="" <?php } ?> value="16">16</option>
-                                                </optgroup>
-                                                <optgroup label="Women's Plus Sizes">
-                                                    <option <?php if (@$editproduct->proportion_shoulders == '14W') { ?> selected="" <?php } ?> value="14W">14W</option>
-                                                    <option <?php if (@$editproduct->proportion_shoulders == '16W') { ?> selected="" <?php } ?> value="16W">16W</option>
-                                                    <option <?php if (@$editproduct->proportion_shoulders == '18W') { ?> selected="" <?php } ?> value="18W">18W</option>
-                                                    <option <?php if (@$editproduct->proportion_shoulders == '20W') { ?> selected="" <?php } ?> value="20W">20W</option>
-                                                    <option <?php if (@$editproduct->proportion_shoulders == '22W') { ?> selected="" <?php } ?> value="22W">22W</option>
-                                                    <option <?php if (@$editproduct->proportion_shoulders == '24W') { ?> selected="" <?php } ?> value="24W">24W</option>
-                                                </optgroup>
-                                            </select>                                         
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <?php if(in_array($product_ctg_nme,["A3", "A4", "A5", "A6", "A7", "A8"]) || in_array($product_sub_ctg_nme, ["A41", "A42", "A47"]) ){ ?>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Legs?   <?php if($product_ctg_nme != "A4"){ ?> <sup style="color:red;">*</sup> <?php } ?> </label>
-                                            <select name="variant_size_related[proportion_legs]" id="proportion_legs"  <?php if($product_ctg_nme != "A4"){ ?> required <?php } ?>>
-                                                <option <?php if (@$editproduct->proportion_legs == 'NULL') { ?> selected="" <?php } ?> value="" selected disabled>--</option>
-                                                <!--<option <?php if (@$editproduct->proportion_legs == 'NULL') { ?> selected="" <?php } ?> value="NULL">--</option>-->
-                                                <option <?php if (@$editproduct->proportion_legs == '30') { ?> selected="" <?php } ?> value="30">30</option>
-                                                <option <?php if (@$editproduct->proportion_legs == '32') { ?> selected="" <?php } ?> value="32">32</option>
-                                                <option <?php if (@$editproduct->proportion_legs == '34') { ?> selected="" <?php } ?> value="34">34</option>
-                                                <option <?php if (@$editproduct->proportion_legs == '36') { ?> selected="" <?php } ?> value="36">36</option>
-                                                <option <?php if (@$editproduct->proportion_legs == '38') { ?> selected="" <?php } ?> value="38">38</option>
-                                                <option <?php if (@$editproduct->proportion_legs == '40') { ?> selected="" <?php } ?> value="40">40</option>
-                                                <option <?php if (@$editproduct->proportion_legs == '42') { ?> selected="" <?php } ?> value="42">42</option>
-                                                <option <?php if (@$editproduct->proportion_legs == '44') { ?> selected="" <?php } ?> value="44">44</option>
-                                                <option <?php if (@$editproduct->proportion_legs == '46') { ?> selected="" <?php } ?> value="46">46</option>
-                                            </select>                                         
-                                        </div>
-                                    </div>
-                                    <?php } ?>
                                     
-                                    <?php if(in_array($product_ctg_nme,["A1", "A2", "A3", "A4", "A9", "A10", "A11", "A12"]) || in_array($product_sub_ctg_nme, ["A43", "A45"])){ ?>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Arms?   <?php if($product_ctg_nme != "A4"){ ?> <sup style="color:red;">*</sup> <?php } ?> </label>
-                                            <select name="variant_size_related[proportion_arms]" id="proportion_arms"  <?php if($product_ctg_nme != "A4"){ ?> required <?php } ?>>
-                                                <option <?php if (@$editproduct->proportion_arms == 'NULL') { ?> selected="" <?php } ?> value="" selected disabled>-</option>
-                                                <!--<option <?php if (@$editproduct->proportion_arms == 'NULL') { ?> selected="" <?php } ?> value="NULL">--</option>-->
-                                                <option <?php if (@$editproduct->proportion_arms == 'XXS') { ?> selected="" <?php } ?> value="XXS">XXS</option>
-                                                <option <?php if (@$editproduct->proportion_arms == 'XS') { ?> selected="" <?php } ?> value="XS">XS</option>
-                                                <option <?php if (@$editproduct->proportion_arms == 'S') { ?> selected="" <?php } ?> value="S">S</option>
-                                                <option <?php if (@$editproduct->proportion_arms == 'M') { ?> selected="" <?php } ?> value="M">M</option>
-                                                <option <?php if (@$editproduct->proportion_arms == 'L') { ?> selected="" <?php } ?> value="L">L</option>
-                                                <option <?php if (@$editproduct->proportion_arms == 'XL') { ?> selected="" <?php } ?> value="XL">XL</option>
-                                                <option <?php if (@$editproduct->proportion_arms == 'XXL') { ?> selected="" <?php } ?> value="XXL">XXL</option>
-                                                <option <?php if (@$editproduct->proportion_arms == '1X') { ?> selected="" <?php } ?> value="1X">1X</option>
-                                                <option <?php if (@$editproduct->proportion_arms == '2X') { ?> selected="" <?php } ?> value="2X">2X</option>
-                                                <option <?php if (@$editproduct->proportion_arms == '3X') { ?> selected="" <?php } ?> value="3X">3X</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <?php } ?>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Hips ?</label>
-                                            <select name="variant_size_related[proportion_hips]" id="jeansx">
-                                                <option value="">--</option>
-                                                <optgroup label="Women's Sizes"> 
-                                                    <option <?php if (@$editproduct->proportion_hips == 'NULL') { ?> selected="" <?php } ?> value=""  selected disabled>--</option>
-                                                    <option <?php if (@$editproduct->proportion_hips == '00') { ?> selected="" <?php } ?> value="00">00</option>
-                                                    <option <?php if (@$editproduct->proportion_hips == '0') { ?> selected="" <?php } ?> value="0">0</option>
-                                                    <option <?php if (@$editproduct->proportion_hips == '2') { ?> selected="" <?php } ?> value="2">2</option>
-                                                    <option <?php if (@$editproduct->proportion_hips == '4') { ?> selected="" <?php } ?> value="4">4</option>
-                                                    <option <?php if (@$editproduct->proportion_hips == '6') { ?> selected="" <?php } ?> value="6">6</option>
-                                                    <option <?php if (@$editproduct->proportion_hips == '8') { ?> selected="" <?php } ?> value="8">8</option>
-                                                    <option <?php if (@$editproduct->proportion_hips == '10') { ?> selected="" <?php } ?> value="10">10</option>
-                                                    <option <?php if (@$editproduct->proportion_hips == '12') { ?> selected="" <?php } ?> value="12">12</option>
-                                                    <option <?php if (@$editproduct->proportion_hips == '14') { ?> selected="" <?php } ?> value="14">14</option>
-                                                    <option <?php if (@$editproduct->proportion_hips == '16') { ?> selected="" <?php } ?> value="16">16</option>
-                                                </optgroup>
-                                                <optgroup label="Women's Plus Sizes">
-                                                    <option <?php if (@$editproduct->proportion_hips == '14W') { ?> selected="" <?php } ?> value="14W">14W</option>
-                                                    <option <?php if (@$editproduct->proportion_hips == '16W') { ?> selected="" <?php } ?> value="16W">16W</option>
-                                                    <option <?php if (@$editproduct->proportion_hips == '18W') { ?> selected="" <?php } ?> value="18W">18W</option>
-                                                    <option <?php if (@$editproduct->proportion_hips == '20W') { ?> selected="" <?php } ?> value="20W">20W</option>
-                                                    <option <?php if (@$editproduct->proportion_hips == '22W') { ?> selected="" <?php } ?> value="22W">22W</option>
-                                                    <option <?php if (@$editproduct->proportion_hips == '24W') { ?> selected="" <?php } ?> value="24W">24W</option>
-                                                </optgroup>
-                                            </select>                                          
-                                        </div>
-                                    </div>
-                                                                     
-
-                                    
-
-                                </div>
+                                
                                 <div class="row">
                                     <?php if (empty($editproduct)) { ?>
                                         <div class="col-md-6">

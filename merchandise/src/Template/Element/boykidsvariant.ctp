@@ -73,6 +73,75 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                         </div>
                                     </div>
                                 </div>
+                                <?php if(!empty($get_prv_inv_data)){ ?>                    
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                    <table id="exampleXX" class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Brand Name</th>
+                                                <th>Product Name 1</th>
+                                                <th>Product Image</th>
+                                                <th>Color : Size</th>  
+                                                <th style="text-align: center;">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach($get_prv_inv_data as $get_pr_vari_list){
+                                                    foreach($get_pr_vari_list->vari_prd_li as $pdetails){
+           
+                                            ?>
+                                            <tr id="<?php echo $pdetails->id; ?>" class="message_box">
+
+                                                <td><?php echo $this->Custom->brandNamex(@$pdetails->brand_id); ?> </td>
+
+                                                <!-- <td><?php echo $pdetails->user_id ?></td> -->
+                                                <td><?php echo $get_pr_vari_list->product_name_one; ?></td>
+                                                <td>                                                
+                                                    <img src="<?php echo HTTP_ROOT_BASE . PRODUCT_IMAGES; ?><?php echo $get_pr_vari_list->feature_image; ?>" style="width: 50px;"/>                                               
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                        echo $pdetails->color.' : '.$pdetails->size;
+                                                    ?>
+                                                </td>
+                                                <td style="text-align: center;">
+                                                <?php if($pdetails->is_po == 0){ ?>
+                                                <button type="button" id="btnshowPo<?=$pdetails->id;?>" onclick="$('#showPo<?= $pdetails->id;?>').toggle();$('#btnshowPo<?= $pdetails->id;?>').toggle()" class="btn btn-sm btn-primary">Add to PO</button>
+                                                <div id="showPo<?=$pdetails->id;?>" style="display:none;">
+                                                    <?= $this->Form->create('',['type'=>'post','id'=>'updateVarPoFrom'.$pdetails->id ,'url'=>['action'=>'addVariantPoRequest']]);?>
+                                                    <input type="text" step="1" name="qty" min="1" placeholder="Quantity" style="width:100px;" value="1"  required>
+                                                    <input type="hidden"  name="id" value="<?=$pdetails->id;?>">
+                                                    <input type="hidden"  name="user_id" value="<?=$getPaymentGatewayDetails->user_id;?>">
+                                                    <input type="hidden"  name="kid_id" value="<?=$getPaymentGatewayDetails->kid_id;?>">
+                                                    <button type="button" class="btn btn-sm btn-primary" onClick="updateVarPox(<?=$pdetails->id;?>)">Submit</button>
+                                                    <?= $this->Form->end(); ?>
+                                                </div>
+                                                <?php }else{ echo "Already in po"; } ?>
+                                                </td>
+                                            </tr>                                            
+                                            <?php } 
+                                            } ?>
+                                        </tbody>
+                                    </table>
+                                    <script>
+                                        function updateVarPox(id){
+                                            $.ajax({
+                                                type: "POST",
+                                                url: "<?= HTTP_ROOT; ?>appadmins/updateVarPoFrom",
+                                                data: $("#updateVarPoFrom"+id).serialize(),
+                                                dataType: 'html',
+                                                success: function(result) {                                                    
+                                                    $('#btnshowPo'+id).hide();
+                                                    $('#showPo'+id).hide();
+                                                    alert('Added to PO');
+                                                }
+                                            });
+                                        }
+                                    </script>
+                                    </div>
+                                </div>
+                                <?php } ?>
     
     
                                 <div class="row">
@@ -150,7 +219,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                                             <div class="women-select-boxes">
                                                                                 <div class="women-select1">
                                                                                     <select name="variant_data[${color_value}][${value}][tall_feet1]" id="tall_feet" class="form-control" required>
-                                                                                        <option value="" disabled>--</option>
+                                                                                        <option value="" selected>--</option>
                                                                                         <option  value="1">1</option>
                                                                                         <option  value="2">2</option>
                                                                                         <option  value="3">3</option>
@@ -162,7 +231,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                                                 </div>
                                                                                 <div class="women-select1">
                                                                                     <select name="variant_data[${color_value}][${value}][tall_inch1]" id="tall_inch" class="form-control">
-                                                                                        <option  value="" disabled>--</option>
+                                                                                        <option  value="" selected>--</option>
                                                                                         <option  value="0">0</option>
                                                                                         <option  value="1">1</option>
                                                                                         <option  value="2">2</option>
@@ -183,7 +252,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                                                 <div class="women-select1">
 
                                                                                     <select name="variant_data[${color_value}][${value}][tall_feet2]" id="tall_feet2" class="form-control" required>
-                                                                                        <option  value="" disabled>--</option>
+                                                                                        <option  value="" selected>--</option>
                                                                                         <option  value="1">1</option>
                                                                                         <option  value="2">2</option>
                                                                                         <option  value="3">3</option>
@@ -195,7 +264,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                                                 </div>
                                                                                 <div class="women-select1">
                                                                                     <select name="variant_data[${color_value}][${value}][tall_inch2]" id="tall_inch2" class="form-control">
-                                                                                        <option  value="" disabled>--</option>
+                                                                                        <option  value="" selected>--</option>
                                                                                         <option  value="0">0</option>
                                                                                         <option  value="1">1</option>
                                                                                         <option  value="2">2</option>

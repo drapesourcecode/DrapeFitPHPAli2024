@@ -169,6 +169,8 @@
                                                         ?>
                                                 </td>
                                                 <td style="text-align: center;">
+                                                    <a href="<?=HTTP_ROOT;?>appadmins/edit_existing_brand_po/<?php echo $dat_li->id.'/'.$dat_li->brand->id; ?>" class="btn btn-primary">Edit</a>
+                                                    <a href="<?=HTTP_ROOT;?>appadmins/cancle_existing_brand_po/<?php echo $dat_li->id.'/'; ?>" class="btn btn-success">Cancle</a>
                                                     <?php 
                                                     if(!empty($dat_li->po_number)){
                                                     if($dat_li->status == 2){

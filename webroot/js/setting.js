@@ -1393,9 +1393,15 @@ $('#walletCheck').click(function () {
     var refundTotal = parseFloat(wallet) + parseFloat(Refund);
     var stotal = $('#stotal').val();
     var total = $('#total').val();
+    var sales_tax_required = $('#sales_tax_required').val();
+    var sales_tax = $('#sales_tax').val();
     var promo = $('#promoprice').val();
     if ($(this).is(':checked')) {
+        
         var lastBil = parseFloat(stotal) - parseFloat(wallet) - parseFloat(promo);
+        if(sales_tax_required == "YES"){
+            lastBil = parseFloat(lastBil) + parseFloat(sales_tax);
+        }
         //alert(wallet);
         //alert(promo);
         // alert(stotal);
@@ -1434,6 +1440,9 @@ $('#walletCheck').click(function () {
         //walletBlace2
     } else {
         var lastBil = parseFloat(stotal) - parseFloat(promo);
+        if(sales_tax_required == "YES"){
+            lastBil = parseFloat(lastBil) + parseFloat(sales_tax);
+        }
         var refund = $('#excess').val();
         var xxx = parseFloat(Refund) - parseFloat(wallet);
         if (lastBil > 1) {

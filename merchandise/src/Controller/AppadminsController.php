@@ -452,6 +452,9 @@ class AppadminsController extends AppController {
     {
         $this->loadModel('ShippingAddress');
         $this->loadModel('MatchingCase');
+        $this->loadModel('WomenStyle');
+        $this->loadModel('UserDetails');
+        $this->loadModel('WemenStyleSphereSelections');
 
 
         $getData = $this->PaymentGetways->find('all')->where(['id' => $id])->first();
@@ -465,24 +468,27 @@ class AppadminsController extends AppController {
                 $shipping_address = $this->ShippingAddress->find('all')->where(['ShippingAddress.user_id' => $getData->user_id])->first();
             }
         }
-
-        // $all_productsx = $this->Products->find('all')->where(['user_id' => $getData->user_id]);
-        // //pj($products); exit;
-        // $product_Id = [];
-        // foreach ($all_productsx as $pd) {
-        //     $product_Id[] = $pd->id;
-        // }
-        // $prev_products = !empty($all_productsx) ? Hash::extract($all_productsx->toArray(), '{n}.prod_id') : [];
-        // $prev_products = array_filter($prev_products);
-        // $prv_cnd = '';
-        // if (!empty($prev_products)) {
-        //     $prv_cnd = implode('","', $prev_products);
-        // }
-        // if (!empty($prv_cnd)) {
-        //     $prv_cnd = 'AND `in_products`.`prod_id` NOT IN ("' . $prv_cnd . '")';
-        // }
-
-        //        echo $prv_cnd;exit;
+        $Womenstyle = $style_sphere_selectionsWemen = [];
+        if ($getData->kid_id == 0) {
+            $userDetails = $this->UserDetails->find('all')->where(['user_id' => $getData->user_id])->first();
+            $gender = $userDetails->gender;
+            if($gender == 1){
+                //Men
+            }
+            if($gender == 2){
+                //WoMen
+                $Womenstyle = $this->WomenStyle->find('all')->where(['WomenStyle.user_id' => $getData->user_id])->first();
+                $style_sphere_selectionsWemen = $this->WemenStyleSphereSelections->find('all')->where(['user_id' =>  $getData->user_id])->first();
+            }
+        }else{
+            $userDetails = $this->KidsDetails->find('all')->where(['id' => $getData->kid_id])->first();
+            if ($userDetails->kids_clothing_gender == 'girls') {
+                 $gender = 4; // Girl kid
+            }else{
+                $gender = 3; //Boy kid
+            }
+        }
+        
         $seasons = $this->Custom->getSeason($shipping_address->city);
         //        print_r($seasons);//exit;
         $seasons_arry = !empty($seasons) ? json_decode($seasons, true) : [];
@@ -494,7 +500,7 @@ class AppadminsController extends AppController {
         // print_r($seasons_arry);exit;
         // print_r($final_season_name);exit;
      
-        $this->set(compact('final_season_name', 'id', 'getData'));
+        $this->set(compact('final_season_name', 'id', 'getData', 'Womenstyle', 'style_sphere_selectionsWemen'));
     }
 
 //     public function predictionMatching($id)
@@ -1660,6 +1666,12 @@ class AppadminsController extends AppController {
             $profile = "Men";
         }
 
+        $get_prv_inv_data = [];
+        if(!empty($_GET['ctg']) && !empty($_GET['sub_ctg'])){
+            $this->InProductVariants->hasMany('vari_prd_li', ['className' => 'InProductVariantList', 'foreignKey' => 'in_product_variants_id']);
+            $get_prv_inv_data = $this->InProductVariants->find('all')->where(['profile_type' => $user_type_arr[$profile], 'product_type'=>$_GET['ctg'], 'rack'=>$_GET['sub_ctg']])->contain(['vari_prd_li']);
+        }
+
         $product_ctg_nme = '';
         $product_sub_ctg_nme = '';
 
@@ -1702,7 +1714,7 @@ class AppadminsController extends AppController {
             $product_sub_ctg_nme = $in_rack_name_get->rack_number;
         }
 
-        $this->set(compact('utype', 'in_rack', 'productType', 'id', 'editproduct', 'profile', 'brandsListings', 'product_ctg_nme', 'product_sub_ctg_nme', 'tab', 'option', 'id', 'tab1_brand_list', 'tab1_data_list', 'all_sizes', 'all_colors'));
+        $this->set(compact('utype', 'in_rack', 'productType', 'id', 'editproduct', 'profile', 'brandsListings', 'product_ctg_nme', 'product_sub_ctg_nme', 'tab', 'option', 'id', 'tab1_brand_list', 'tab1_data_list', 'all_sizes', 'all_colors', 'get_prv_inv_data'));
     }
 
     public function addPoProduct() {
@@ -4397,8 +4409,12 @@ class AppadminsController extends AppController {
                     $var_prd_rw['color'] = $key;
                     $var_prd_rw['size'] = $keyx;
                     $var_prd_rw['in_product_variants_id'] = $newRow->id;                    
-                    $var_prd_rw['brand_id'] = $postData['brand_id'] ;                    
+                    $var_prd_rw['brand_id'] = $postData['brand_id'] ;  
                     $var_prd_rw += $variant_list_list;
+
+                    $var_prd_rw['variant_size_related'] = !empty($variant_list_list['variant_size_related'])?json_encode($variant_list_list['variant_size_related']):NULL ;   
+
+                    
 
                     if(!empty( $this->request->session()->read('new_variant_po_data'))){
                         $new_variant_po_data = json_decode($this->request->session()->read('new_variant_po_data'),true);
@@ -4639,6 +4655,10 @@ class AppadminsController extends AppController {
                 $newRw['picked_size'] = $variant_details->primary_size;
                 $newRw['allocate_to_user_id'] = $variant_products_details->allocate_user_id;
                 $newRw['allocate_to_kid_id'] = $variant_products_details->allocate_kid_id;
+                $newRw['proportion_shoulders'] = $variant_products_details->proportion_shoulders;
+                $newRw['proportion_legs'] = $variant_products_details->proportion_legs;
+                $newRw['proportion_arms'] = $variant_products_details->proportion_arms;
+                $newRw['proportion_hips'] = $variant_products_details->proportion_hips;
 
                 if (!empty($variant_details->primary_size)) {
                     $newRw[$variant_details->primary_size] = $variant_products_details->size;
@@ -4647,6 +4667,12 @@ class AppadminsController extends AppController {
                     $variant_size_related = json_decode($variant_details->variant_size_related, true);
                     foreach ($variant_size_related as $var_sz_rel_ky => $var_sz_rel) {
                         $newRw[$var_sz_rel_ky] = $var_sz_rel;
+                    }
+                }
+                if (!empty($variant_products_details->variant_size_related)) {
+                    $variant_size_relatedx = json_decode($variant_products_details->variant_size_related, true);
+                    foreach ($variant_size_relatedx as $var_sz_rel_kyx => $var_sz_relx) {
+                        $newRw[$var_sz_rel_kyx] = $var_sz_relx;
                     }
                 }
 
@@ -5108,12 +5134,30 @@ class AppadminsController extends AppController {
     }
 
     public function addVariantForPoRequest(){
+        $this->loadModel('KidsDetails');
+        $this->loadModel('UserDetails');
         if ($this->request->is('post')) {
             $post_data = $this->request->getData();
-            $this->request->session()->write('new_variant_po_data', json_encode($post_data));           
-            if($post_data['look_type'] == "look_1_summer_sleeveless_top"){
-                return $this->redirect(HTTP_ROOT.'appadmins/add_variant_product/tab1/Women?ctg=3&sub_ctg=194');                    
+            print_r($post_data);
+            if(!empty($post_data['pay_kid_id'])){
+                $userDetails = $this->KidsDetails->find('all')->where(['id' => $post_data['pay_kid_id']])->first();
+                if ($userDetails->kids_clothing_gender == 'girls') {
+                    $gender = 'GirlKids'; // Girl kid
+                }else{
+                    $gender = 'BoyKids'; // Boy Kid
+                }
+            }else{
+                $userDetails = $this->UserDetails->find('all')->where(['user_id' => $post_data['pay_user_id']])->first();
+                if($userDetails->gender == 1){
+                    $gender = 'Men';
+                }else{
+                    $gender = 'Women';
+                }
             }
+            $this->request->session()->write('new_variant_po_data', json_encode($post_data));           
+            // if($post_data['look_type'] == "look_1_summer_sleeveless_top"){
+                return $this->redirect(HTTP_ROOT.'appadmins/add_variant_product/tab1/'.$gender);                    
+            // }
         }
         exit;
     }
@@ -5257,6 +5301,57 @@ class AppadminsController extends AppController {
         }
         exit;
     }
+
+    public function updateVarPoFrom(){
+        $this->loadModel('InProductVariantList');
+        if ($this->request->is('post')) {
+            $postData = $this->request->data;
+            $newData = [];
+            $newData['id'] = $postData['id'];
+            $newData['po_quantity'] = $postData['qty'];
+            $newData['is_po'] = 1;            
+            $newData['po_status'] = 1;
+            $newData['user_id'] = $postData['user_id'];
+            $newData['kid_id'] = $postData['kid_id'];
+            $newData['po_date'] = date('Y-m-d');
+            $newRw = $this->InProductVariantList->newEntity();
+            $newRw = $this->InProductVariantList->patchEntity($newRw, $newData);
+            $this->InProductVariantList->save($newRw);
+            echo json_encode(['status'=>'success','msg'=>'Added to PO.']);            
+        }
+        exit;
+    }
+
+    public function newPoCancel($id){
+        $this->loadModel('InProductVariantList');
+        $this->InProductVariantList->updateAll(['is_po'=>0, 'po_status'=>0, 'po_quantity'=>0],['id'=>$id]);
+        $this->Flash->success(__("Po cancelled successfully"));
+        return $this->redirect($this->referer());
+    }
+
+    public function cancleExistingBrandPo($id){
+        $this->loadModel('PurchaseOrderProducts');
+        $this->PurchaseOrderProducts->deleteAll(['id'=>$id]);
+        $this->Flash->success(__("Po cancelled successfully"));
+        return $this->redirect($this->referer());
+    }
+
+    public function editExistingBrandPo($id,$brand_id){
+        $this->loadModel('PurchaseOrderProducts');
+        $po_product = $this->PurchaseOrderProducts->find('all')->where(['id'=>$id])->first();
+        $get_product_details = $this->InProducts->find('all')->where(['prod_id'=>$po_product->product_id])->first();
+        if ($this->request->is('post')) {
+            $post_data = $this->request->getData(); 
+
+            $this->InProducts->updateAll(['clearance_price'=>$post_data['clearance_price'],'sale_price'=>$post_data['sale_price'],'purchase_price'=>$post_data['purchase_price']],['prod_id'=>$post_data['prod_id']]);
+                        
+            $this->Flash->success(__("Po updated successfully"));
+            return $this->redirect(HTTP_ROOT.'appadmins/existing-brand-po/tab2?brand_id='.$post_data['brand_id']);
+        }
+        $this->set(compact('get_product_details', 'id', 'brand_id'));
+    }
+
+  
 
     
 }

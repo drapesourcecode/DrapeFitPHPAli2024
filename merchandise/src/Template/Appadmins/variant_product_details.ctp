@@ -39,7 +39,7 @@
                                         <td><?= h($vpd_li->sale_price) ?></td>
                                        
                                         <td style="text-align: center;">
-                                            <a href="<?=HTTP_ROOT.'appadmins/generate_product/'.$vpd_li->id;?>">Generate Product</a>
+                                            <!-- <a href="<?php //echo HTTP_ROOT.'appadmins/generate_product/'.$vpd_li->id;?>">Generate Product</a> -->
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
