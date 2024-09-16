@@ -488,6 +488,8 @@ class AjaxsController extends AppController
         header("Content-Type: application/json; charset=UTF-8");
         header("Access-Control-Allow-Credentials: true");
         header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+        header("Access-Control-Allow-Headers: Content-Type, Authorization"); // Allowed headers
+        header("Access-Control-Max-Age: 3600"); 
         $this->loadModel('Influencers');
         // $this->viewBuilder()->layout('ajax');
         $user = $this->Users->newEntity();
@@ -2627,9 +2629,12 @@ class AjaxsController extends AppController
                 }
             }
             $aduserlist = $this->LetsPlanYourFirstFix->find('all')->where(['user_id' => $user_id, 'kid_id' => $kid_id])->first();
-            if ($aduserlist->try_new_items_with_scheduled_fixes == 1) {
+            
+            if (!empty($aduserlist) && $aduserlist->try_new_items_with_scheduled_fixes == 1) {
                 $subscription = 1;
-            } else {
+            } else if(empty($aduserlist)){
+                 $subscription = 2; //New user yet not subscribe
+            }else{
                 $subscription = 0;
             }
 
@@ -3451,6 +3456,14 @@ class AjaxsController extends AppController
         header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
         if ($this->request->is('post')) {
             $postData = $this->request->data;
+            $chk =  $this->ShippingAddress->find('all')->where(['id' => $postData['id']])->first();
+            if(!empty($chk)){
+                $chk_address_count = $this->ShippingAddress->find('all')->where(['user_id' => $chk->user_id])->count();
+                if($chk_address_count == 1){
+                    echo json_encode(['status' => 'error', 'msg'=>'One address needed.']);
+                    exit;
+                }
+            }
             $this->ShippingAddress->deleteAll(['id' => $postData['id']]);
         }
         echo json_encode(['status' => 'success']);
@@ -3633,7 +3646,7 @@ class AjaxsController extends AppController
             } else {
                 $is_send_me = 0;
             }
-            $dateTime = date('l, F d, Y', strtotime("+7 day", date('Y-m-d',strtotime(date_format(date_create_from_format("d/m/Y", $datepicker), "Y-m-d")))));
+            $dateTime = date('l, F d, Y', strtotime("+7 day",strtotime(date('Y-m-d',strtotime(date_format(date_create_from_format("d/m/Y", $datepicker), "Y-m-d"))))));
             $data2['date_in_time'] = $dateTime;
             $data2['weeks'] = 0;
             $data2['is_send_me'] = $is_send_me;
@@ -3645,7 +3658,7 @@ class AjaxsController extends AppController
             //$this->UserDetails->updateAll(['is_progressbar' => 100], ['user_id' => $user_id]);
             // return $this->redirect(HTTP_ROOT . 'welcome/reservation');
         }
-        echo json_encode(['status' => 'success', $UserDetails]);
+        echo json_encode(['status' => 'success']);
         exit;
     }
 
@@ -4480,8 +4493,10 @@ class AjaxsController extends AppController
                 $dataDate = $this->DeliverDate->find('all')->where(['DeliverDate.user_id' => $user_id])->order(['id' => 'DESC'])->first();
             }
             if (@$dataDate->date_in_time != '') {
-                $fstdate = date('l, F j, Y', strtotime($dataDate->date_in_time));
-                $second = date('l, F j, Y', strtotime('+7 day', strtotime($dataDate->date_in_time)));
+                
+                $fstdate  = date('l, F j, Y', strtotime('-7 day', strtotime($dataDate->date_in_time)));
+                
+                $second = date('l, F j, Y', strtotime($dataDate->date_in_time));
             } else {
                 $fstdate = date('l, F j, Y');
                 $second = date('l, F j, Y', strtotime('+7 days')); // +7days

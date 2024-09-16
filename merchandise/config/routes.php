@@ -129,7 +129,6 @@ Router::scope('/', function (RouteBuilder $routes) {
     $routes->connect('/gifts/buy/email', ['controller' => 'pages', 'action' => 'giftsEmail']);
     $routes->connect('/gifts/buy/mail', ['controller' => 'pages', 'action' => 'giftsMail']);
     
-    
     $routes->connect('/women/plus-size', array('controller' => 'users', 'action' => 'plusSize'));
     $routes->connect('/women/maternity', array('controller' => 'users', 'action' => 'maternity'));
     $routes->connect('/women/petite', array('controller' => 'users', 'action' => 'petite'));
@@ -186,8 +185,6 @@ Router::scope('/', function (RouteBuilder $routes) {
     $routes->connect('/not-yet-shipped/*', array('controller' => 'users', 'action' => 'notYetShipped'));
     $routes->connect('/order/*', array('controller' => 'users', 'action' => 'order'));
     $routes->connect('/unsubscribe/*', array('controller' => 'users', 'action' => 'unsubscribe'));
-
-
 
     /**
      * ...and connect the rest of 'Pages' controller's URLs.
