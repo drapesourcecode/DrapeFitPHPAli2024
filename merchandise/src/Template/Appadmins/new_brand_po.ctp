@@ -71,7 +71,14 @@ $color_arr = $this->Custom->inColor();
                         <?php } ?>
                         <?= $this->Form->input('id', ['value' => @$id, 'type' => 'hidden', 'label' => false]); ?>
                         <?= $this->Form->input('for_po', ['value' => 1, 'type' => 'hidden', 'label' => false]); ?>
-
+                        <?= $this->Form->input('variant_id', ['value' => !empty($_GET['variant_id'])?$_GET['variant_id']:'', 'type' => 'hidden', 'label' => false]); ?>
+                        <?php if(!empty($_GET['variant_id'])){ ?>
+                            <script>
+                                $(document).ready(function(){
+                                    $('.new_var_xx').remove();
+                                });
+                            </script>
+                        <?php } ?>
                         <div class="nav-tabs-custom">
                             <select id="profile_type" class="form-control" onchange="return getChanges(this.value)">
                                 <option <?php if (@$profile == 'Men') { ?> selected="" <?php } ?> value="Men">Men</option>

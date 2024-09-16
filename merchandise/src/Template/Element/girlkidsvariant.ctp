@@ -4,7 +4,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
 ?>
 <div class="tab-content boy-kid-select" style="width: 100%;float: left;">
     <?= $this->Form->input('profile_type', ['value' => '4', 'type' => 'hidden', 'class' => "form-control", 'required' => "required", 'label' => false]); ?>
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Product Category <sup style="color:red;">*</sup></label>
@@ -105,6 +105,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                 <td style="text-align: center;">
                                                 <?php if($pdetails->is_po == 0){ ?>
                                                 <button type="button" id="btnshowPo<?=$pdetails->id;?>" onclick="$('#showPo<?= $pdetails->id;?>').toggle();$('#btnshowPo<?= $pdetails->id;?>').toggle()" class="btn btn-sm btn-primary">Add to PO</button>
+                                                <a href="<?=HTTP_ROOT;?>appadmins/newBrandPo/tab1/<?=$option;?>?ctg=<?=$_GET['ctg'];?>&sub_ctg=<?=$_GET['sub_ctg'];?>&variant_id=<?=$get_pr_vari_list->id;?>" class="btn btn-sm btn-primary">Add New Variant</a>
                                                 <div id="showPo<?=$pdetails->id;?>" style="display:none;">
                                                     <?= $this->Form->create('',['type'=>'post','id'=>'updateVarPoFrom'.$pdetails->id ,'url'=>['action'=>'addVariantPoRequest']]);?>
                                                     <input type="text" step="1" name="qty" min="1" placeholder="Quantity" style="width:100px;" value="1"  required>
@@ -349,6 +350,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
 
                                     
                                 </div>
+                                <div class="row">
     
                                 <?php if (in_array($product_ctg_nme, ["D11", "D12", "D10", "D1", "D2", "D3", "D7", "D8", "D9", "D4", "D5", "D6"])) { ?>
                                     <div class="col-sm-6"   >
@@ -440,9 +442,10 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                         }
                                     </script>
                                 <?php } ?>
+                                </div>
     
                                
-                                <div class="row">
+                                <div class="row new_var_xx">
                                
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -499,7 +502,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     </div>
                                 </div>
                                
-                                <div class="row">
+                                <div class="row new_var_xx">
     <?php if (empty($editproduct)) { ?>
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -545,7 +548,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Product Image <sup style="color:red;">*</sup>  <span style="color:red;font-weight: 400;">(20 KB PNG, JPG ,JPEG)</span></label>

@@ -4353,6 +4353,62 @@ class AppadminsController extends AppController {
         //    print_r($postData);
         //    echo "</pre>";
         //    exit;
+        
+           //add new variant data to existing 
+           if(!empty($postData['variant_id'])){
+                $main_variant_data = $this->InProductVariants->find('all')->where(['id'=>$postData['variant_id']])->first()->toArray();
+                    
+                    $exit_color = json_decode($main_variant_data['color'],true);
+                    $exit_size = json_decode($main_variant_data['size'],true);
+                    $exit_color =array_unique(array_merge($exit_color,$postData['color']));
+                    $new_size_arr = [];
+                    foreach($exit_size as $ky=>$ex_sz){
+                        $new_size_arr[$ky]=$ex_sz;
+                    }
+                    foreach($postData['color'] as $ky_c=>$ex_sz_c){
+                        if(!empty($new_size_arr[$ex_sz_c])){
+                            $cnt =  count($new_size_arr[$ex_sz_c]);
+                            
+                            $new_size_arr[$ex_sz_c]=array_unique(array_merge($new_size_arr[$ex_sz_c],$postData['size'][$ex_sz_c]));
+                        }else{
+                            $new_size_arr[$ex_sz_c]=$postData['size'][$ex_sz_c];
+                        }
+                        
+                    }
+
+                    $this->InProductVariants->updateAll(['size'=>json_encode($new_size_arr), 'color' => json_encode($exit_color)],['id'=>$postData['variant_id']]);
+                    
+                    $variant_data  = $postData['variant_data'];
+                    foreach ($variant_data as $key => $variant_list) {
+                        foreach ($variant_list as $keyx => $variant_list_list) {
+                            $var_prd_rw = [];
+                            $var_prd_rw['color'] = $key;
+                            $var_prd_rw['size'] = $keyx;
+                            $var_prd_rw['in_product_variants_id'] = $main_variant_data['id'];                    
+                            $var_prd_rw['brand_id'] = $main_variant_data['brand_id'] ;  
+                            $var_prd_rw += $variant_list_list;
+        
+                            $var_prd_rw['variant_size_related'] = !empty($variant_list_list['variant_size_related'])?json_encode($variant_list_list['variant_size_related']):NULL ;   
+                    
+                            $var_prd_rw['quantity'] = 0;
+                            $var_prd_rw['po_quantity'] = $variant_list_list['quantity'];
+                            $var_prd_rw['is_po'] = 1;
+                            $var_prd_rw['po_status'] = 1;
+                            $var_prd_rw['po_date'] = date('Y-m-d');                        
+                            
+        
+                            $nwRw = $this->InProductVariantList->newEntity();
+                            $nwRw = $this->InProductVariantList->patchEntity($nwRw, $var_prd_rw);
+                            $nwRw = $this->InProductVariantList->save($nwRw);
+                            $last_variant_id = $nwRw->id;
+                            
+                        }
+                    }
+                $this->Flash->success(__("Product Variant added to po"));
+                return $this->redirect(HTTP_ROOT.'appadmins/newBrandPo/tab1?brand_id='.$main_variant_data['brand_id']);
+                exit;
+           }
+
             $is_po = !empty($postData['for_po'])?$postData['for_po']:0;
             unset($postData['for_po']);
 

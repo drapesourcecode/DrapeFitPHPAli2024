@@ -4,7 +4,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
 ?>
 <div class="tab-content women" style="width: 100%;float: left;">
     <?= $this->Form->input('profile_type', ['value' => '2', 'type' => 'hidden', 'class' => "form-control", 'required' => "required", 'label' => false]); ?>
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Product Category <sup style="color:red;">*</sup></label>
@@ -104,7 +104,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                 <td style="text-align: center;">
                                                 <?php if($pdetails->is_po == 0){ ?>
                                                 <button type="button" id="btnshowPo<?=$pdetails->id;?>" onclick="$('#showPo<?= $pdetails->id;?>').toggle();$('#btnshowPo<?= $pdetails->id;?>').toggle()" class="btn btn-sm btn-primary">Add to PO</button>
-                                                <a href="<?=HTTP_ROOT;?>appadmins/add_variant_product/tab1/<?=$option;?>?ctg=<?=$_GET['ctg'];?>&sub_ctg=<?=$_GET['sub_ctg'];?>&variant_id=<?=$get_pr_vari_list->id;?>" class="btn btn-sm btn-primary">Add New Variant</a>
+                                                <a href="<?=HTTP_ROOT;?>appadmins/newBrandPo/tab1/<?=$option;?>?ctg=<?=$_GET['ctg'];?>&sub_ctg=<?=$_GET['sub_ctg'];?>&variant_id=<?=$get_pr_vari_list->id;?>" class="btn btn-sm btn-primary">Add New Variant</a>
                                                 <div id="showPo<?=$pdetails->id;?>" style="display:none;">
                                                     <?= $this->Form->create('',['type'=>'post','id'=>'updateVarPoFrom'.$pdetails->id ,'url'=>['action'=>'addVariantPoRequest']]);?>
                                                     <input type="text" step="1" name="qty" min="1" placeholder="Quantity" style="width:100px;" value="1"  required>
@@ -843,7 +843,8 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                         </div> 
                                   
                                     
-
+                                </div>
+                                <div class="row new_var_xx">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Profession</label>
@@ -933,7 +934,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     </div>
                                     <div class="col-md-6"></div>
                                 </div>
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <div class="col-sm-12 col-lg-12 col-md-12 type-box women-type-box body-women">
                                         <h3>What's your body type?</h3>
                                         <ul>
@@ -1004,14 +1005,14 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     
                                     
                                 </div>
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     
 
 
 
                                 </div>
 
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <?php if(in_array($product_ctg_nme,["A1", "A2", "A3", "A4", "A5", "A6", "A9", "A10", "A11", "A12"]) /*|| in_array($product_sub_ctg_nme, ["A41", "A42", "A47", "A43", "A45", "A44"])*/){ ?>
                                     <div class="col-md-6"    >
                                         <div class="form-group">
@@ -1048,7 +1049,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     <?php // } ?>
                                 </div>
 
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <?php if(in_array($product_ctg_nme,["A1", "A3", "A4", "A9", "A10", "A11", "A12", "A14"]) /*|| in_array($product_sub_ctg_nme, ["A43", "A45", "A44", "A1411"])*/){ ?>
                                     <div class="col-md-6"     <?= (in_array($product_sub_ctg_nme, ["A141", "A142", "A143", "A144", "A145", "A146", "A147", "A148", "A149", "A1410", "A1412"]))?'style="display:none;"':''; ?> >
                                         <div class="form-group">
@@ -1080,7 +1081,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     <?php } ?>
                                 </div>
 
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <?php if(in_array($product_ctg_nme,[/*"A3",*/ "A4", "A5", "A7", "A8"]) /*|| in_array($product_sub_ctg_nme, ["A41", "A42", "A47"])*/){ ?>
                                     <div class="col-md-6" >
                                         <div class="form-group">
@@ -1114,7 +1115,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     <?php } ?>
                                 </div>
 
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <?php if(in_array($product_ctg_nme,["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A11", "A12", "A14"]) || in_array($product_sub_ctg_nme, ["A41", "A42", "A47", "A43", "A45", "A44", "A141", "A142", "A143", "A144", "A145", "A146", "A147", "A148", "A149", "A1410", "A1412", "A1411"])){ ?>
                                     <div class="col-md-6" <?= (in_array($product_sub_ctg_nme, ["A141", "A142", "A143", "A144", "A145", "A146", "A147", "A148", "A149", "A1410", "A1412"]))?'style="display:none;"':''; ?> >
                                         <div class="form-group">
@@ -1158,7 +1159,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     <?php } ?>
                                 </div>
 
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <?php if(in_array($product_ctg_nme,["A1", "A3", "A4", "A9", "A10", "A11", "A12", "A14"]) /*|| in_array($product_sub_ctg_nme, ["A43", "A45", "A44", "A1411"])*/){ ?>
                                     <div class="col-md-6"     <?= (in_array($product_sub_ctg_nme, ["A141", "A142", "A143", "A144", "A145", "A146", "A147", "A148", "A149", "A1410", "A1412"]))?'style="display:none;"':''; ?>>
                                         <div class="form-group">
@@ -1191,7 +1192,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     </div>
                                 </div>
 
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <?php if(in_array($product_ctg_nme,["A7"])){ ?>
                                     <div class="col-md-6" >
                                         <div class="form-group">
@@ -1271,13 +1272,13 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
 
                                 </div>
 
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <div class="col-md-12">
                                         <h4><b>Budget</b></h4>
                                     </div>
                                 </div>
 
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">TOPS</label>
@@ -1308,7 +1309,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     </div>
                                 </div>
 
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">OUTERWEAR</label>
@@ -1339,7 +1340,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     </div>
                                 </div>
 
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">JEWELRY</label>
@@ -1369,7 +1370,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">DRESS</label>
@@ -1386,7 +1387,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     </div>
                                 </div>
 
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <div class="col-md-6 skin">
                                         <label >Skin tone ?</label>
                                         <ul>
@@ -1420,7 +1421,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     
                                 </div>
                                 
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <?php if (empty($editproduct)) { ?>
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -1460,23 +1461,23 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                         </div>
 
                                 </div>
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Product Image <sup style="color:red;">*</sup> <span style="color:red;font-weight: 400;">20 Kb ( PNG, JPG ,JPEG)</span></label>
 
-    <?php if (@$editproduct->product_image) { ?>
+                                                <?php if (@$editproduct->product_image) { ?>
                                                 <div class="form-group">                                                        
                                                     <img src="<?php echo HTTP_ROOT . PRODUCT_IMAGES; ?><?php echo @$editproduct->product_image; ?>" style="width: 50px;"/>
                                                     <p><a onclick="return confirm('Are you sure want to delete ?')" href="<?php echo HTTP_ROOT . 'appadmins/productimgdelete/Women/' . @$id ?>"><img src="<?php echo HTTP_ROOT . 'img/trash.png' ?>"/></a></p>
                                                 </div>                                    
                                                 <?php } else { ?>
                                                 <div class="form-group">
-        <?= $this->Form->input('product_image', ['type' => 'file', 'id' => 'image', 'label' => false, 'kl_virtual_keyboard_secure_input' => "on", 'required']); ?>                                        
+                                                    <?= $this->Form->input('product_image', ['type' => 'file', 'id' => 'image', 'label' => false, 'kl_virtual_keyboard_secure_input' => "on", 'required']); ?>                                        
 
                                                     <div class="help-block with-errors"></div>
                                                 </div>
-    <?php } ?>  
+                                                <?php } ?>  
                                             <div id="imagePreview"></div>                           
                                             <div class="help-block with-errors"></div>
                                         </div>
@@ -1485,20 +1486,20 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Note</label>
-    <?= $this->Form->input('note', ['value' => @$editproduct->note, 'type' => 'textarea', 'class' => "form-control", 'label' => false, 'placeholder' => 'Please enter note']); ?>
+                                        <?= $this->Form->input('note', ['value' => @$editproduct->note, 'type' => 'textarea', 'class' => "form-control", 'label' => false, 'placeholder' => 'Please enter note']); ?>
                                         </div>
                                     </div>
                                     
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Material details</label>
-    <?= $this->Form->input('material_details', ['value' => @$editproduct->material_details, 'type' => 'textarea', 'class' => "form-control ckeditor", 'label' => false, 'placeholder' => 'Please material details']); ?>
+                                            <?= $this->Form->input('material_details', ['value' => @$editproduct->material_details, 'type' => 'textarea', 'class' => "form-control ckeditor", 'label' => false, 'placeholder' => 'Please material details']); ?>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Product details</label>
-    <?= $this->Form->input('product_details', ['value' => @$editproduct->product_details, 'type' => 'textarea', 'class' => "form-control ckeditor", 'label' => false, 'placeholder' => 'Please  product details']); ?>
+                                            <?= $this->Form->input('product_details', ['value' => @$editproduct->product_details, 'type' => 'textarea', 'class' => "form-control ckeditor", 'label' => false, 'placeholder' => 'Please  product details']); ?>
                                         </div>
                                     </div>
                                     
