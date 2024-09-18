@@ -324,8 +324,15 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                 </div>`;
                                                     
                                                     $('#variant_main_div').append(new_variant_html);
+
+                                                    let sel_colo_array = []
+                                                    $('select[id^=color]').each(function(index,value){
+                                                        sel_colo_array.push(value.value);
+                                                        $("#color"+inx_numx+" option[value='"+ value.value + "']").attr('disabled', true);
+                                                    })
                                                 }
-                                                function showSizeBox(id){
+                                                function showSizeBox(id){                                                    
+                                                    $('#color'+id).css({'cursor': 'not-allowed', 'pointer-events': 'none'});
                                                     let value = $('#color'+id).val();
                                                     
                                                     $('#color_wise_size_variant_main_div'+id).show();
@@ -363,7 +370,8 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                     }
                                                     // console.log(recom_html);
                                                     $('#showSizeDetails'+id).show();
-                                                    let new_size_details_html =`<div class="row">
+                                                    let new_size_details_html =` <div class="row">${recom_html}</div>
+                                                                <div class="row">
                                                                     <div class="col-md-12">
                                                                         <div class="form-group">
                                                                             <label for="exampleInputPassword1">Height range <sup style="color:red;">*</sup></label>
@@ -488,9 +496,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
        
                                             </div>
                                         </div>    
-                                                                </div>
-                                                                <div class="row">${recom_html}</div>
-                                                                `;
+                                                                </div> `;
                                                     $('#showSizeDetails'+id).html(new_size_details_html);
                                                 }
                                                 function variantDelete(id){

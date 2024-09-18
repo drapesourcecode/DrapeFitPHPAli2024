@@ -177,8 +177,16 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                 </div>`;
                                                     
                                                     $('#variant_main_div').append(new_variant_html);
+
+                                                    let sel_colo_array = []
+                                                    $('select[id^=color]').each(function(index,value){
+                                                        sel_colo_array.push(value.value);
+                                                        $("#color"+inx_numx+" option[value='"+ value.value + "']").attr('disabled', true);
+                                                    })
                                                 }
                                                 function showSizeBox(id){
+
+                                                    $('#color'+id).css({'cursor': 'not-allowed', 'pointer-events': 'none'});
                                                     let value = $('#color'+id).val();
                                                     
                                                     $('#color_wise_size_variant_main_div'+id).show();

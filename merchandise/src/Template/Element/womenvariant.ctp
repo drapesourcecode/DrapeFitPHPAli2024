@@ -541,8 +541,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                             <script>
                                                 function addVariants(){
                                                     let inx_numx = Math.floor(Math.random() * 899999 + 100000);
-                                                    // let rowCount = $('#payment_table tr').length;
-                                                    
+                                                    // let rowCount = $('#payment_table tr').length;                                                     
                                                     let new_variant_html = `<div class="row" id="variant${inx_numx}">
                                                     <div class="col-md-12">
                                                         <label style="width: 100%;">Color <span style="float: right" onclick="variantDelete('variant${inx_numx}')">Delete</span></label>
@@ -563,8 +562,24 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                 </div>`;
                                                     
                                                     $('#variant_main_div').append(new_variant_html);
+
+                                                    let sel_colo_array = []
+                                                    $('select[id^=color]').each(function(index,value){
+                                                        sel_colo_array.push(value.value);
+                                                        $("#color"+inx_numx+" option[value='"+ value.value + "']").attr('disabled', true);
+                                                    })
+                                                     
                                                 }
                                                 function showSizeBox(id){
+
+                                                    let sel_sz_array = []
+                                                    $('#color'+id+' select[id^=var_sizes]').each(function(index,value){
+                                                        sel_sz_array.push(value.value);
+                                                        // $("#color"+inx_numx+" option[value='"+ value.value + "']").attr('disabled', true);
+                                                    })
+                                                    console.log(sel_sz_array);
+
+                                                    $('#color'+id).css({'cursor': 'not-allowed', 'pointer-events': 'none'});
                                                     let value = $('#color'+id).val();
                                                     
                                                     $('#color_wise_size_variant_main_div'+id).show();
@@ -603,7 +618,8 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                     // console.log(recom_html);
 
                                                     $('#showSizeDetails'+id).show();
-                                                    let new_size_details_html =`<div class="row">
+                                                    let new_size_details_html =`<div class="row">${recom_html}</div>
+                                                                <div class="row">
                                                                     <div class="col-md-12">
                                                                         <div class="form-group">
                                                                             <label for="exampleInputPassword1">Height range <sup style="color:red;">*</sup></label>
@@ -831,9 +847,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                             </select>                                          
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">${recom_html}</div>
-                                                                `;
+                                </div> `;
                                                     $('#showSizeDetails'+id).html(new_size_details_html);
                                                 }
                                                 function variantDelete(id){

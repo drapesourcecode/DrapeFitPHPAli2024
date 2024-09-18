@@ -1349,9 +1349,9 @@ class AppadminsController extends AppController {
             curl_setopt($ch, CURLOPT_URL, $url);
 
             $result = curl_exec($ch);
-            //            print_r($result);
+            // var_dump($result);
             // echo $po_number;
-            //exit;
+            // exit;
 
             if ($result) {
                 $filename = 'files/report_pdf/po_' . $po_number . '.pdf';
@@ -1429,6 +1429,7 @@ class AppadminsController extends AppController {
                 //            
             }
         }
+        exit;
     }
 
     public function generateNewBrandPoPdf($product_id, $brand_id, $po_number) {
@@ -1450,7 +1451,7 @@ class AppadminsController extends AppController {
 
         
         $this->InProductVariantList->belongsTo('prd_detl', ['className' => 'InProductVariants',  'foreignKey' => 'in_product_variants_id']);
-        $data_list = $this->InProductVariantList->find('all')->where(['InProductVariantList.po_status' => 1,'InProductVariantList.po_number' => $po_number])->contain(['prd_detl', 'brand']);
+        $data_list = $this->InProductVariantList->find('all')->where(['InProductVariantList.po_status' => 1,'InProductVariantList.id IN' => $prd_id])->contain(['prd_detl', 'brand']);
         $brand_details = $this->InUsers->find('all')->where(['id' => $brand_id])->first();
         $filename = 'files/report_pdf/po_' . $po_number . '.pdf';
         $this->set(compact('data_list', 'brand_details', 'po_number'));
@@ -5194,7 +5195,7 @@ class AppadminsController extends AppController {
         $this->loadModel('UserDetails');
         if ($this->request->is('post')) {
             $post_data = $this->request->getData();
-            print_r($post_data);
+            // print_r($post_data);
             if(!empty($post_data['pay_kid_id'])){
                 $userDetails = $this->KidsDetails->find('all')->where(['id' => $post_data['pay_kid_id']])->first();
                 if ($userDetails->kids_clothing_gender == 'girls') {
@@ -5212,9 +5213,12 @@ class AppadminsController extends AppController {
             }
             $this->request->session()->write('new_variant_po_data', json_encode($post_data));           
             // if($post_data['look_type'] == "look_1_summer_sleeveless_top"){
-                return $this->redirect(HTTP_ROOT.'appadmins/add_variant_product/tab1/'.$gender);                    
+                // return $this->redirect(HTTP_ROOT.'appadmins/add_variant_product/tab1/'.$gender);                    
             // }
+            echo json_encode(['status'=>'success', 'url'=>HTTP_ROOT.'appadmins/add_variant_product/tab1/'.$gender]);
+            exit;
         }
+        echo json_encode(['status'=>'error']);
         exit;
     }
 
@@ -5256,7 +5260,7 @@ class AppadminsController extends AppController {
             $all_data = $this->PoAttachments->find('all')->where(['purchase_order_products_id'=>$post_data['po_product_id']]);
             if(!empty($all_data->count())){
                 foreach($all_data as $ky => $dat){
-                    $html .= '<div id="file_'.$dat->id.'"><a href="'.HTTP_ROOT.$dat->file.'" >Attachment'.($ky+1).'</a>  <button onclick="deleteFile('.$dat->id.')">Delete</button></div>';
+                    $html .= '<div id="file_'.$dat->id.'"><a href="'.HTTP_ROOT.$dat->file.'" target="_blank">Attachment'.($ky+1).'</a>  <button onclick="deleteFile('.$dat->id.')">Delete</button></div>';
                 }                
             }
             echo $html;
@@ -5338,7 +5342,7 @@ class AppadminsController extends AppController {
             $all_data = $this->PoNewAttachments->find('all')->where(['variant_products_id'=>$post_data['po_product_id']]);
             if(!empty($all_data->count())){
                 foreach($all_data as $ky => $dat){
-                    $html .= '<div id="file_'.$dat->id.'"><a href="'.HTTP_ROOT.$dat->file.'" >Attachment'.($ky+1).'</a>  <button onclick="deleteFile('.$dat->id.')">Delete</button></div>';
+                    $html .= '<div id="file_'.$dat->id.'"><a href="'.HTTP_ROOT.$dat->file.'" target="_blank">Attachment'.($ky+1).'</a>  <button onclick="deleteFile('.$dat->id.')">Delete</button></div>';
                 }                
             }
             echo $html;
@@ -5346,13 +5350,13 @@ class AppadminsController extends AppController {
         exit;
     }
 
-    public function deletePoNewProductFile(){
+    public function deleteNewPoProductFile(){
         $this->loadModel('PoNewAttachments');
         if ($this->request->is('post')) {
             $post_data = $this->request->getData(); 
-            $file_data = $this->PoAttachments->find('all')->where(['id'=>$post_data['id']])->first();
+            $file_data = $this->PoNewAttachments->find('all')->where(['id'=>$post_data['id']])->first();
             @unlink($file_data->file);
-            $this->PoAttachments->deleteAll(['id'=>$post_data['id']]);            
+            $this->PoNewAttachments->deleteAll(['id'=>$post_data['id']]);            
             echo json_encode(true);  
         }
         exit;

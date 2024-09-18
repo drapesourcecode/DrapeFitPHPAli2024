@@ -874,13 +874,35 @@
     }
 
     function addVariantForPoRequest(look_type, user_size_col, user_size, pay_user_id, pay_kid_id, payment_id){
-            $('#po_variant_add input[name=look_type]').val(look_type);
-            $('#po_variant_add input[name=user_size_col]').val(user_size_col);
-            $('#po_variant_add input[name=user_size]').val(user_size);
-            $('#po_variant_add input[name=pay_user_id]').val(pay_user_id);
-            $('#po_variant_add input[name=pay_kid_id]').val(pay_kid_id);
-            $('#po_variant_add input[name=payment_id]').val(payment_id);
-            $('#po_variant_add').submit();
+            // $('#po_variant_add input[name=look_type]').val(look_type);
+            // $('#po_variant_add input[name=user_size_col]').val(user_size_col);
+            // $('#po_variant_add input[name=user_size]').val(user_size);
+            // $('#po_variant_add input[name=pay_user_id]').val(pay_user_id);
+            // $('#po_variant_add input[name=pay_kid_id]').val(pay_kid_id);
+            // $('#po_variant_add input[name=payment_id]').val(payment_id);
+            $.ajax({
+            type: "POST",
+            url: "<?= HTTP_ROOT; ?>appadmins/addVariantForPoRequest",
+            data: {
+                look_type: look_type,
+                user_size_col: user_size_col,
+                user_size: user_size,
+                pay_user_id: pay_user_id,
+                pay_kid_id: pay_kid_id,
+                payment_id: payment_id
+            },
+            dataType: 'json',
+            success: function(result) {
+                if(result.status == "success"){
+                    window.open(
+                        result.url,
+                        '_blank' // <- This is what makes it open in a new window.
+                        );
+                }else{
+                    alert('Try after some time');
+                }
+            }
+        });
     }
     
     $('.modal-footer .btn-default').click(function() {
