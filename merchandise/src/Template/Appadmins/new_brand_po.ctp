@@ -591,6 +591,7 @@ $color_arr = $this->Custom->inColor();
                                             <th>Brands Name</th>
                                             <th>Name</th>
                                             <th>Photo</th>
+                                            <th>Color : Size</th>
                                             <th style="width: 10%;text-align: center;">Quantity</th>
                                             <th style="width: 10%;text-align: center;">Po date</th>
                                             <th style="width: 10%;text-align: center;">Po customer</th>
@@ -609,6 +610,7 @@ $color_arr = $this->Custom->inColor();
                                                 <td><?= h($dat_li->brand->brand_name) ?></td>
                                                 <td><?php echo $dat_li->prd_detl->product_name_one; ?></td>
                                                 <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->prd_detl->feature_image; ?>" style="width: 80px;"/></td>
+                                                <td><?php echo $dat_li->color ." : ". $dat_li->size; ?></td>
 
                                                 <td style="text-align: center;"><?php echo $dat_li->po_quantity; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_date; ?></td>
@@ -668,6 +670,7 @@ $color_arr = $this->Custom->inColor();
                                             <th>Brands Name</th>
                                             <th>Name</th>
                                             <th>Photo</th>
+                                            <th>Color : Size</th>
                                             <th style="width: 10%;text-align: center;">Quantity</th>
                                             <th style="width: 10%;text-align: center;">Po date</th>
                                             <th style="text-align: center;">Po number</th>
@@ -690,7 +693,7 @@ $color_arr = $this->Custom->inColor();
                                                 <td><?= h($dat_li->brand->brand_name) ?></td>
                                                 <td><?php echo $dat_li->prd_detl->product_name_one; ?></td>
                                                 <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->prd_detl->feature_image; ?>" style="width: 80px;"/></td>
-
+                                                <td><?php echo $dat_li->color ." : ". $dat_li->size; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_quantity; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_date; ?></td>
                                                 <td style="text-align: center;">
@@ -769,6 +772,7 @@ $color_arr = $this->Custom->inColor();
                                             <th>Brands Name</th>
                                             <th>Name</th>
                                             <th>Photo</th>
+                                            <th>Color : Size</th>
                                             <th style="width: 10%;text-align: center;">Quantity</th>
                                             <th style="width: 10%;text-align: center;">Po date</th>
                                             <th style="text-align: center;">Po number</th>
@@ -787,7 +791,7 @@ $color_arr = $this->Custom->inColor();
                                                 <td><?= h($dat_li->brand->brand_name) ?></td>
                                                 <td><?php echo $dat_li->prd_detl->product_name_one; ?></td>
                                                 <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->prd_detl->feature_image; ?>" style="width: 80px;"/></td>
-
+                                                <td><?php echo $dat_li->color ." : ". $dat_li->size; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_quantity; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_date; ?></td>
                                                 <td style="text-align: center;">

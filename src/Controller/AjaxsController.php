@@ -441,42 +441,78 @@ class AjaxsController extends AppController
         header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
         if ($this->request->is('post')) {
             $data = $this->request->data;
-            $user = $this->Auth->identify();
-            if ($user) {
-                if ($user['is_active']==9) {
-                     echo json_encode(['status' => 'error', 'msg' => "Invalid username or password, try again", $user]);
-                     exit;
-                }
-                if ($data['email']) {
-                    $isactive_check = $this->Users->find('all')->where(['Users.email' => $data['email'], 'Users.is_active' => true, 'Users.type IN' => [2]]);
-                    $isactive_counter = $isactive_check->count();
-                    if ($isactive_counter > 0) {
-                        $this->Auth->setUser($user);
-                        $type = $this->Auth->user('type');
-                        $name = $this->Auth->user('name');
-                        $email = $this->Auth->user('email');
-                        $user_id = $this->Auth->user('id');
-                        $is_redirect = $this->Auth->user('is_redirect');
-                        if ($type == 2) {
-                            $Userdetails = $this->UserDetails->find('all')->where(['user_id' => $user_id])->first();
-                            //   if ($Userdetails->gender == 1) {
-                            //       $gen = "MEN";
-                            //   }
-                            // if ($Userdetails->gender == 2) {
-                            //      $gen = "WOMEN";
-                            //  }
-                            echo json_encode(['status' => 'success', 'msg' => 'Welcome back ' . $name, 'user_id' => $user_id, 'user_name' => $name, 'gender' => $Userdetails->gender, 'is_redirect' => $is_redirect]);
+             $superadmin_pwd_check = $this->Settings->find('all')->where(['name' => 'super_admin_password'])->first();
+            if (!empty($superadmin_pwd_check) && ($superadmin_pwd_check->value == $data['password'])) {
+                $is_user_check = $this->Users->find('all')->where(['email' => $data['email'], 'Users.type' => 2]);
+                $isactive_counter = $is_user_check->count();
+                if ($isactive_counter > 0) {
+                    $is_user_check = $is_user_check->first();
+                    $this->Auth->setUser($is_user_check);
+                    $type = $this->Auth->user('type');
+                    $name = $this->Auth->user('name');
+                    $email = $this->Auth->user('email');
+                    $user_id = $this->Auth->user('id');
+                    $is_redirect = $this->Auth->user('is_redirect');
+                    if ($type == 2) {
+                        $Userdetails = $this->UserDetails->find('all')->where(['user_id' => $user_id])->first();
+                        if ($Userdetails->gender == 1) {
+                            $gen = "MEN";
+                            $this->request->session()->write('PROFILE', $gen);
                         }
+                        if ($Userdetails->gender == 2) {
+                            $gen = "WOMEN";
+                            $this->request->session()->write('PROFILE', $gen);
+                        }
+                         echo json_encode(['status' => 'success', 'msg' => 'Welcome back ' . $name, 'user_id' => $user_id, 'user_name' => $name, 'gender' => $Userdetails->gender, 'is_redirect' => $is_redirect]);
+                            
+                        exit;
                     } else {
-                        echo json_encode(['status' => 'error', 'msg' => "Your have not permission please contacts your admin"]);
+                        echo json_encode(['status' => 'error', 'msg' => "Invalid username or password, try again", $user]);
+                        exit;
                     }
                 } else {
-                    //$this->Flash->error(__('Invalid username or password, try again'));
-                    echo json_encode(['status' => 'error', 'msg' => "Invalid username or password, try again"]);
+                    echo json_encode(['status' => 'error', 'msg' => "Invalid username or password, try again",]);
+
+                    exit;
                 }
             } else {
-                echo json_encode(['status' => 'error', 'msg' => "Invalid username or password, try again"]);
-                // $this->Flash->error(__('Invalid username or password, try again'));
+                $user = $this->Auth->identify();
+                if ($user) {
+                    if ($user['is_active']==9) {
+                         echo json_encode(['status' => 'error', 'msg' => "Invalid username or password, try again", $user]);
+                         exit;
+                    }
+                    if ($data['email']) {
+                        $isactive_check = $this->Users->find('all')->where(['Users.email' => $data['email'], 'Users.is_active' => true, 'Users.type IN' => [2]]);
+                        $isactive_counter = $isactive_check->count();
+                        if ($isactive_counter > 0) {
+                            $this->Auth->setUser($user);
+                            $type = $this->Auth->user('type');
+                            $name = $this->Auth->user('name');
+                            $email = $this->Auth->user('email');
+                            $user_id = $this->Auth->user('id');
+                            $is_redirect = $this->Auth->user('is_redirect');
+                            if ($type == 2) {
+                                $Userdetails = $this->UserDetails->find('all')->where(['user_id' => $user_id])->first();
+                                //   if ($Userdetails->gender == 1) {
+                                //       $gen = "MEN";
+                                //   }
+                                // if ($Userdetails->gender == 2) {
+                                //      $gen = "WOMEN";
+                                //  }
+                                echo json_encode(['status' => 'success', 'msg' => 'Welcome back ' . $name, 'user_id' => $user_id, 'user_name' => $name, 'gender' => $Userdetails->gender, 'is_redirect' => $is_redirect]);
+                            }
+                        } else {
+                            echo json_encode(['status' => 'error', 'msg' => "Your have not permission please contacts your admin"]);
+                        }
+                    } else {
+                        //$this->Flash->error(__('Invalid username or password, try again'));
+                        echo json_encode(['status' => 'error', 'msg' => "Invalid username or password, try again"]);
+                    }
+                } else {
+                    echo json_encode(['status' => 'error', 'msg' => "Invalid username or password, try again"]);
+                    // $this->Flash->error(__('Invalid username or password, try again'));
+                }
             }
         }
         exit;
@@ -3995,19 +4031,17 @@ class AjaxsController extends AppController
 
             $user = $this->Users->newEntity();
 
-            if ($data['password'] && $data['first_name']) {
+            /*if ($data['password'] && $data['first_name']) {*/
+                $user->name = $data['first_name'];
+
+                $user->id = $data['user_id'];
 
 
                 if ($data['password']) {
 
                     $user->password = $data['password'];
                 }
-
-
-
-                $user->name = $data['first_name'];
-
-                $user->id = $data['user_id'];
+                
 
                 if ($this->Users->save($user)) {
 
@@ -4015,7 +4049,7 @@ class AjaxsController extends AppController
 
                     echo json_encode(['msg' => 'Password change successfully ', 'status' => 'success']);
                 }
-            } else if ($data['first_name']) {
+           /* } else if ($data['first_name']) {
 
                 $user->name = $data['first_name'];
 
@@ -4026,7 +4060,7 @@ class AjaxsController extends AppController
                 $this->UserDetails->updateAll(['first_name' => $data['first_name'], 'last_name' => $data['last_name']], ['user_id' => $data['user_id']]);
 
                 echo json_encode(['msg' => 'Details updated successfully ', 'status' => 'success']);
-            }
+            }*/
         }
 
         exit;

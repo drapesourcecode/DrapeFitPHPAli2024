@@ -570,21 +570,14 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                     })
                                                      
                                                 }
-                                                function showSizeBox(id){
-
-                                                    let sel_sz_array = []
-                                                    $('#color'+id+' select[id^=var_sizes]').each(function(index,value){
-                                                        sel_sz_array.push(value.value);
-                                                        // $("#color"+inx_numx+" option[value='"+ value.value + "']").attr('disabled', true);
-                                                    })
-                                                    console.log(sel_sz_array);
+                                                function showSizeBox(id){                                                   
 
                                                     $('#color'+id).css({'cursor': 'not-allowed', 'pointer-events': 'none'});
                                                     let value = $('#color'+id).val();
                                                     
                                                     $('#color_wise_size_variant_main_div'+id).show();
                                                     $('.add_more_btn'+id).hide();//Show add more size button
-                                                    let inx_numx = Math.floor(Math.random() * 899999 + 100000);
+                                                    let inx_numx = Math.floor(Math.random() * 899999 + 100000);                                                    
                                                     let new_size_html =`<div class="row"  id="color_size_div${inx_numx}">
                                                             <div class="col-md-6">
                                                                 <label style="width: 100%;">Size <span style="float: right" onclick="variantDelete('color_size_div${inx_numx}')">Delete</span></label>
@@ -602,6 +595,13 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                             
                                                         </div>`;
                                                      $('#color_wise_size_variant_main_div'+id).append(new_size_html);
+
+                                                     let sel_sz_array = [];
+                                                    $('#variant'+id+' select[id^=var_sizes]').each(function(index,value){
+                                                        sel_sz_array.push(value.value);
+                                                        $("#var_sizes"+inx_numx+" option[value='"+ value.value + "']").attr('disabled', true);
+                                                    })
+                                                    console.log(sel_sz_array);
                                                     
                                                 }
                                                 function showDetailsBox(id,parent_id){
@@ -1439,7 +1439,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     <?php if (empty($editproduct)) { ?>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="exampleInputPassword1">Available status</label>
+                                                <label for="exampleInputPassword1">Available status <sup style="color:red;">*</sup></label>
                                                 <select name="available_status" class="form-control">
                                                     <option <?php if (@$editproduct->available_status == '') { ?> selected="" <?php } ?> value="">--</option>
                                                     <option <?php if (@$editproduct->available_status == '1') { ?> selected="" <?php } ?> value="1">Available</option>                                

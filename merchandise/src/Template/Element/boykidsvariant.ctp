@@ -213,6 +213,12 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                             
                                                         </div>`;
                                                      $('#color_wise_size_variant_main_div'+id).append(new_size_html);
+                                                     let sel_sz_array = [];
+                                                    $('#variant'+id+' select[id^=var_sizes]').each(function(index,value){
+                                                        sel_sz_array.push(value.value);
+                                                        $("#var_sizes"+inx_numx+" option[value='"+ value.value + "']").attr('disabled', true);
+                                                    })
+                                                    console.log(sel_sz_array);
                                                     
                                                 }
                                                 function showDetailsBox(id,parent_id){
@@ -529,7 +535,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
     <?php if (empty($editproduct)) { ?>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="exampleInputPassword1">Available status</label>
+                                                <label for="exampleInputPassword1">Available status <sup style="color:red;">*</sup></label>
                                                 <select name="available_status" class="form-control">
                                                     <option <?php if (@$editproduct->available_status == '') { ?> selected="" <?php } ?> value="">--</option> 
                                                     <option <?php if (@$editproduct->available_status == '1') { ?> selected="" <?php } ?> value="1">Available</option>                                

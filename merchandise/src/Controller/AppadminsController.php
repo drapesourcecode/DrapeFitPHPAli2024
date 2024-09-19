@@ -1217,6 +1217,7 @@ class AppadminsController extends AppController {
             //            print_r($result);
             // echo $po_number;
             //exit;
+            curl_close($ch);
 
             if ($result) {
                 $filename = 'files/report_pdf/po_' . $po_number . '.pdf';
@@ -1352,6 +1353,7 @@ class AppadminsController extends AppController {
             // var_dump($result);
             // echo $po_number;
             // exit;
+            curl_close($ch);
 
             if ($result) {
                 $filename = 'files/report_pdf/po_' . $po_number . '.pdf';
