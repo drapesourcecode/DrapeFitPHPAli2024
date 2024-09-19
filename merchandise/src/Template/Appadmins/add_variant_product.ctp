@@ -1,11 +1,11 @@
 <?php
 if(!empty( $this->request->session()->read('new_variant_po_data'))){
     $new_variant_po_data = json_decode($this->request->session()->read('new_variant_po_data'),true);
-    print_r($new_variant_po_data );
+    // print_r($new_variant_po_data );
     ?>
     <script>
         $(document).ready(function(){
-            addVariants();
+            // addVariants();
         });
     </script>
     <style>.var_qty{ display:none; }</style>

@@ -37,8 +37,301 @@
                     <button type="submit" class="btn btn-sm btn-info">Search</button>
                     <a href="<?=HTTP_ROOT.'appadmins/matching/'.$id;?>" class="btn btn-sm btn-primary">See All</a>
                 </div>
-                <?= $this->Form->end() ?>
+                <?= $this->Form->end(); ?>
             </div>
+            <div class=" box">
+                <div class="col-xs-12 box-body">
+                    <div class="panel-group" id="accordion">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse2" style="padding: 10px 10px 10px 10px;float: left; width:100%;">Budget</a>
+                                </h4>
+                            </div>
+                            <div id="collapse2" class="panel-collapse collapse">
+                                <?php if(!empty($Womenstyle)){ ?>
+                                            <div class="post budget-women">                                    
+                                                <div class="timeline-footer prefer">
+                                                    <h4>TOPS</h4>
+                                                    <ul>
+                                                        <li class='<?php if (@$Womenstyle->tops == 1) { ?> active <?php } ?>'>Under $50</li>
+                                                        <li class='<?php if (@$Womenstyle->tops == 2) { ?> active <?php } ?>'>$50 - $75</li>
+                                                        <li class='<?php if (@$Womenstyle->tops == 3) { ?> active <?php } ?>'>$75 - $100</li>
+                                                        <li class='<?php if (@$Womenstyle->tops == 4) { ?> active <?php } ?>'>$100 - $125</li>
+                                                        <li class='<?php if (@$Womenstyle->tops == 5) { ?> active <?php } ?>'>$125+</li>
+                                                    </ul>
+                                                </div>
+                                                <div class="timeline-footer prefer">
+                                                    <h4>BOTTOMS</h4>
+                                                    <ul>
+                                                        <li class='<?php if (@$Womenstyle->bottoms == 1) { ?>  active <?php } ?>'>Under $30</li>
+                                                        <li class='<?php if (@$Womenstyle->bottoms == 2) { ?>  active <?php } ?>'>$30 - $50</li>
+                                                        <li class='<?php if (@$Womenstyle->bottoms == 3) { ?>  active <?php } ?>'>$50 - $70</li>
+                                                        <li class='<?php if (@$Womenstyle->bottoms == 4) { ?>  active <?php } ?>'>$70 - $90</li>
+                                                        <li class='<?php if (@$Womenstyle->bottoms == 5) { ?>  active <?php } ?>'>$90+</li>
+                                                    </ul>
+                                                </div>
+                                                <div class="timeline-footer prefer">
+                                                    <h4>OUTERWEAR</h4>
+                                                    <ul>
+                                                        <li class='<?php if (@$Womenstyle->outwear == 1) { ?> active <?php } ?>'>Under $50</li>
+                                                        <li class='<?php if (@$Womenstyle->outwear == 2) { ?> active <?php } ?>'>$50 - $75</li>
+                                                        <li class='<?php if (@$Womenstyle->outwear == 3) { ?> active <?php } ?>'>$75 - $100</li>
+                                                        <li class='<?php if (@$Womenstyle->outwear == 4) { ?> active <?php } ?>'>$100 - $125</li>
+                                                        <li class='<?php if (@$Womenstyle->outwear == 5) { ?> active <?php } ?>'>$125+</li>
+                                                    </ul>
+                                                </div>
+                                                <div class="timeline-footer prefer">
+                                                    <h4>JEANS</h4>
+                                                    <ul>
+                                                        <li class='<?php if (@$Womenstyle->jeans == 1) { ?> active <?php } ?>'>Under $75</li>
+                                                        <li class='<?php if (@$Womenstyle->jeans == 2) { ?> active <?php } ?>'>$75 - $100</li>
+                                                        <li class='<?php if (@$Womenstyle->jeans == 3) { ?> active <?php } ?>'>$100 - $125</li>
+                                                        <li class='<?php if (@$Womenstyle->jeans == 4) { ?> active <?php } ?>'>$125 - $175</li>
+                                                        <li class='<?php if (@$Womenstyle->jeans == 5) { ?> active <?php } ?>'>$175+</li>
+                                                    </ul>
+                                                </div>
+                                                <div class="timeline-footer prefer">
+                                                    <h4>JEWELRY</h4>
+                                                    <ul>
+                                                        <li class='<?php if (@$Womenstyle->jewelry == 1) { ?> active <?php } ?>'>Under $40</li>
+                                                        <li class='<?php if (@$Womenstyle->jewelry == 2) { ?> active <?php } ?>'>$40 - $60</li>
+                                                        <li class='<?php if (@$Womenstyle->jewelry == 3) { ?> active <?php } ?>'>$60 - $80</li>
+                                                        <li class='<?php if (@$Womenstyle->jewelry == 4) { ?> active <?php } ?>'>$80 - $100</li>
+                                                        <li class='<?php if (@$Womenstyle->jewelry == 5) { ?> active <?php } ?>'>$100+</li>
+                                                    </ul>
+                                                </div>
+                                                <div class="timeline-footer prefer">
+                                                    <h4>ACCESSORIES</h4>
+                                                    <ul>
+                                                        <li class='<?php if (@$Womenstyle->accessproes == 1) { ?> active <?php } ?>'>Under $75</li>
+                                                        <li class='<?php if (@$Womenstyle->accessproes == 2) { ?> active <?php } ?>'>$75 - $125</li>
+                                                        <li class='<?php if (@$Womenstyle->accessproes == 3) { ?> active <?php } ?>'>$125 - $175</li>
+                                                        <li class='<?php if (@$Womenstyle->accessproes == 4) { ?> active <?php } ?>'>$175 - $250</li>
+                                                        <li class='<?php if (@$Womenstyle->accessproes == 5) { ?> active <?php } ?>'>$175 - $250</li>
+                                                    </ul>
+                                                </div>
+                                                <div class="timeline-footer prefer">
+                                                    <h4>DRESS</h4>
+                                                    <ul>
+                                                        <li class='<?php if (@$Womenstyle->dress == 1) { ?> active <?php } ?>'>Under $75</li>
+                                                        <li class='<?php if (@$Womenstyle->dress == 2) { ?> active <?php } ?>'>$75 - $125</li>
+                                                        <li class='<?php if (@$Womenstyle->dress == 3) { ?> active <?php } ?>'>$125 - $175</li>
+                                                        <li class='<?php if (@$Womenstyle->dress == 4) { ?> active <?php } ?>'>$175 - $250</li>
+                                                        <li class='<?php if (@$Womenstyle->dress == 5) { ?> active <?php } ?>'>$175 - $250</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                    <?php if(!empty($style_sphere_selectionsWemen)){ ?>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse3" style="padding: 10px 10px 10px 10px;float: left; width:100%;">Color you prefer</a>
+                            </h4>
+                        </div>
+                        <div id="collapse3" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                            <div class="timeline-footer color">
+                                                <ul>
+                                                    <li class='<?php if ((strlen(@$style_sphere_selectionsWemen->color_prefer) > 2) && (in_array('1', json_decode(@$style_sphere_selectionsWemen->color_prefer, true)))) { ?> active <?php } ?>'>
+                                                        <h4>Black</h4>
+                                                        <div class="wear-img">
+                                                        </div>
+                                                    </li>
+                                                    <li class='<?php if ((strlen(@$style_sphere_selectionsWemen->color_prefer) > 2) && (in_array('2', json_decode(@$style_sphere_selectionsWemen->color_prefer, true)))) { ?> active <?php } ?>'>
+                                                        <h4>Grey</h4>
+                                                        <div class="wear-img">
+                                                        </div>
+                                                    </li>
+                                                    <li class='<?php if ((strlen(@$style_sphere_selectionsWemen->color_prefer) > 2) && (in_array('3', json_decode(@$style_sphere_selectionsWemen->color_prefer, true)))) { ?> active <?php } ?>'>
+                                                        <h4>White</h4>
+                                                        <div class="wear-img">
+                                                        </div>
+                                                    </li>
+                                                    <li class='<?php if ((strlen(@$style_sphere_selectionsWemen->color_prefer) > 2) && (in_array('4', json_decode(@$style_sphere_selectionsWemen->color_prefer, true)))) { ?> active <?php } ?>'>
+                                                        <h4>Cream</h4>
+                                                        <div class="wear-img">
+                                                        </div>
+                                                    </li>
+                                                    <li class='<?php if ((strlen(@$style_sphere_selectionsWemen->color_prefer) > 2) && (in_array('5', json_decode(@$style_sphere_selectionsWemen->color_prefer, true)))) { ?> active <?php } ?>'>
+                                                        <h4>Brown</h4>
+                                                        <div class="wear-img">
+                                                        </div>
+                                                    </li>
+                                                    <li class='<?php if ((strlen(@$style_sphere_selectionsWemen->color_prefer) > 2) && (in_array('6', json_decode(@$style_sphere_selectionsWemen->color_prefer, true)))) { ?> active <?php } ?>'>
+                                                        <h4>Purple</h4>
+                                                        <div class="wear-img">
+                                                        </div>
+                                                    </li>
+                                                    <li class='<?php if ((strlen(@$style_sphere_selectionsWemen->color_prefer) > 2) && (in_array('7', json_decode(@$style_sphere_selectionsWemen->color_prefer, true)))) { ?> active <?php } ?>'>
+                                                        <h4>Green</h4>
+                                                        <div class="wear-img">
+                                                        </div>
+                                                    </li>
+                                                    <li class='<?php if ((strlen(@$style_sphere_selectionsWemen->color_prefer) > 2) && (in_array('8', json_decode(@$style_sphere_selectionsWemen->color_prefer, true)))) { ?> active <?php } ?>'>
+                                                        <h4>Blue</h4>
+                                                        <div class="wear-img">
+                                                        </div>
+                                                    </li>
+                                                    <li class='<?php if ((strlen(@$style_sphere_selectionsWemen->color_prefer) > 2) && (in_array('9', json_decode(@$style_sphere_selectionsWemen->color_prefer, true)))) { ?> active <?php } ?>'>
+                                                        <h4>Orange</h4>
+                                                        <div class="wear-img">
+                                                        </div>
+                                                    </li>
+                                                    <li class='<?php if ((strlen(@$style_sphere_selectionsWemen->color_prefer) > 2) && (in_array('10', json_decode(@$style_sphere_selectionsWemen->color_prefer, true)))) { ?> active <?php } ?>'>
+                                                        <h4>Yellow</h4>
+                                                        <div class="wear-img">
+                                                        </div>
+                                                    </li>
+                                                    <li class='<?php if ((strlen(@$style_sphere_selectionsWemen->color_prefer) > 2) && (in_array('11', json_decode(@$style_sphere_selectionsWemen->color_prefer, true)))) { ?> active <?php } ?>'>
+                                                        <h4>Red</h4>
+                                                        <div class="wear-img">
+                                                        </div>
+                                                    </li>
+                                                    <li class='<?php if ((strlen(@$style_sphere_selectionsWemen->color_prefer) > 2) && (in_array('12', json_decode(@$style_sphere_selectionsWemen->color_prefer, true)))) { ?> active <?php } ?>'>
+                                                        <h4>Pink</h4>
+                                                        <div class="wear-img">
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse4" style="padding: 10px 10px 10px 10px;float: left; width:100%;">Patterns should we avoid</a>
+                            </h4>
+                        </div>
+                        <div id="collapse4" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                    <div class="timeline-footer wear wear2">
+                                            <ul>
+                                                <li class='<?php if (isset($style_sphere_selectionsWemen->style_sphere_selections_v10) && in_array('1', explode(',', $style_sphere_selectionsWemen->style_sphere_selections_v10))) { ?> active <?php } ?>'>
+                                                    <h4>Lace</h4>
+                                                    <div class="wear-img">
+                                                        <img src="<?php echo HTTP_ROOT_BASE ?>assets/women-img/lace.jpg" alt="">
+                                                    </div>
+                                                </li>
+                                                <li class='<?php if (isset($style_sphere_selectionsWemen->style_sphere_selections_v10) && in_array('2', explode(',', $style_sphere_selectionsWemen->style_sphere_selections_v10))) { ?> active <?php } ?>'>
+                                                    <h4>Animal Print</h4>
+                                                    <div class="wear-img">
+                                                        <img src="<?php echo HTTP_ROOT_BASE ?>assets/women-img/animal-print.jpg" alt="">
+                                                    </div>
+                                                </li>
+                                                <li class='<?php if (isset($style_sphere_selectionsWemen->style_sphere_selections_v10) && in_array('3', explode(',', $style_sphere_selectionsWemen->style_sphere_selections_v10))) { ?> active <?php } ?>'>
+                                                    <h4>Tribal</h4>
+                                                    <div class="wear-img">
+                                                        <img src="<?php echo HTTP_ROOT_BASE ?>assets/women-img/tribal.jpg" alt="">
+                                                    </div>
+                                                </li>
+                                                <li class='<?php if (isset($style_sphere_selectionsWemen->style_sphere_selections_v10) && in_array('4', explode(',', $style_sphere_selectionsWemen->style_sphere_selections_v10))) { ?> active <?php } ?>'>
+                                                    <h4>Polka Dot</h4>
+                                                    <div class="wear-img">
+                                                        <img src="<?php echo HTTP_ROOT_BASE ?>assets/women-img/polkadot.jpg" alt="">
+                                                    </div>
+                                                </li>
+                                                <li class='<?php if (isset($style_sphere_selectionsWemen->style_sphere_selections_v10) && in_array('5', explode(',', $style_sphere_selectionsWemen->style_sphere_selections_v10))) { ?> active <?php } ?>'>
+                                                    <h4>Stripes</h4>
+                                                    <div class="wear-img">
+                                                        <img src="<?php echo HTTP_ROOT_BASE ?>assets/women-img/stripes.jpg" alt="">
+                                                    </div>
+                                                </li>
+                                                <li class='<?php if (isset($style_sphere_selectionsWemen->style_sphere_selections_v10) && in_array('6', explode(',', $style_sphere_selectionsWemen->style_sphere_selections_v10))) { ?> active <?php } ?>'>
+                                                    <h4>Floral</h4>
+                                                    <div class="wear-img">
+                                                        <img src="<?php echo HTTP_ROOT_BASE ?>assets/women-img/floral.jpg" alt="">
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse5" style="padding: 10px 10px 10px 10px;float: left; width:100%;">Top half</a>
+                            </h4>
+                        </div>
+                        <div id="collapse5" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                        <div class="timeline-footer wear outfit-wear">
+                                            <ul>
+                                                <li class='<?php if (isset($style_sphere_selectionsWemen->wo_top_half) && in_array('1', explode(',', $style_sphere_selectionsWemen->wo_top_half))) { ?> active <?php } ?>'>
+                                                    <h4>Fitted</h4>
+                                                    <div class="wear-img">
+                                                        <img src="<?php echo HTTP_ROOT_BASE ?>assets/women-img/fitted.jpg" alt="">
+                                                    </div>
+                                                </li>
+                                                <li class='<?php if (isset($style_sphere_selectionsWemen->wo_top_half) && in_array('2', explode(',', $style_sphere_selectionsWemen->wo_top_half))) { ?> active <?php } ?>'>
+                                                    <h4>Straight</h4>
+                                                    <div class="wear-img">
+                                                        <img src="<?php echo HTTP_ROOT_BASE ?>assets/women-img/straight2.jpg" alt="">
+                                                    </div>
+                                                </li>
+                                                <li class='<?php if (isset($style_sphere_selectionsWemen->wo_top_half) && in_array('3', explode(',', $style_sphere_selectionsWemen->wo_top_half))) { ?> active <?php } ?>'>
+                                                    <h4>Loose</h4>
+                                                    <div class="wear-img">
+                                                        <img src="<?php echo HTTP_ROOT_BASE ?>assets/women-img/loose.jpg" alt="">
+                                                    </div>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse6" style="padding: 10px 10px 10px 10px;float: left; width:100%;">Which colors do you tend to mostly wear</a>
+                            </h4>
+                        </div>
+                        <div id="collapse6" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                        <div class="timeline-footer women-shose-prefer">
+                                            <h4>NEUTRALS</h4>
+                                            <ul>
+                                                <li class='<?php if (isset($style_sphere_selectionsWemen->color_mostly_wear) && in_array('Black', explode(',', $style_sphere_selectionsWemen->color_mostly_wear))) { ?> active <?php } ?>'>Black</li>
+                                                <li class='<?php if (isset($style_sphere_selectionsWemen->color_mostly_wear) && in_array('Grey', explode(',', $style_sphere_selectionsWemen->color_mostly_wear))) { ?> active <?php } ?>'>Grey</li>
+                                                <li class='<?php if (isset($style_sphere_selectionsWemen->color_mostly_wear) && in_array('Navy', explode(',', $style_sphere_selectionsWemen->color_mostly_wear))) { ?> active <?php } ?>'>Navy</li>
+                                                <li class='<?php if (isset($style_sphere_selectionsWemen->color_mostly_wear) && in_array('Beige', explode(',', $style_sphere_selectionsWemen->color_mostly_wear))) { ?> active <?php } ?>'>Beige</li>
+                                                <li class='<?php if (isset($style_sphere_selectionsWemen->color_mostly_wear) && in_array('nWhite', explode(',', $style_sphere_selectionsWemen->color_mostly_wear))) { ?> active <?php } ?>'>White</li>
+                                            </ul>
+                                        </div>
+                                        <div class="timeline-footer women-shose-prefer">
+                                            <h4>COLOR</h4>
+                                            <ul>
+                                                <li class="<?php if (isset($style_sphere_selectionsWemen->color_mostly_wear) && in_array('Red', explode(',', $style_sphere_selectionsWemen->color_mostly_wear))) { ?> active <?php } ?>">Red</li>
+                                                <li class="<?php if (isset($style_sphere_selectionsWemen->color_mostly_wear) && in_array('Blue', explode(',', $style_sphere_selectionsWemen->color_mostly_wear))) { ?> active <?php } ?>">Blue</li>
+                                                <li class="<?php if (isset($style_sphere_selectionsWemen->color_mostly_wear) && in_array('Yellow', explode(',', $style_sphere_selectionsWemen->color_mostly_wear))) { ?> active <?php } ?>">Yellow</li>
+                                                <li class="<?php if (isset($style_sphere_selectionsWemen->color_mostly_wear) && in_array('Purple', explode(',', $style_sphere_selectionsWemen->color_mostly_wear))) { ?> active <?php } ?>">Purple</li>
+                                            </ul>
+                                        </div>
+                                        <div class="timeline-footer women-shose-prefer">
+                                            <h4>LIGHTS</h4>
+                                            <ul>
+                                                <li class='<?php if (isset($style_sphere_selectionsWemen->color_mostly_wear) && in_array('White', explode(',', $style_sphere_selectionsWemen->color_mostly_wear))) { ?> active <?php } ?>'>White</li>
+                                                <li class='<?php if (isset($style_sphere_selectionsWemen->color_mostly_wear) && in_array('Sand', explode(',', $style_sphere_selectionsWemen->color_mostly_wear))) { ?> active <?php } ?>'>Sand</li>
+                                                <li class='<?php if (isset($style_sphere_selectionsWemen->color_mostly_wear) && in_array('Pastels', explode(',', $style_sphere_selectionsWemen->color_mostly_wear))) { ?> active <?php } ?>'>Pastels</li>
+                                            </ul>
+                                        </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php } ?>
+                </div> 
+            </div> 
+            
             <div class="col-xs-12">
                 <div class="box">
 
@@ -581,13 +874,35 @@
     }
 
     function addVariantForPoRequest(look_type, user_size_col, user_size, pay_user_id, pay_kid_id, payment_id){
-            $('#po_variant_add input[name=look_type]').val(look_type);
-            $('#po_variant_add input[name=user_size_col]').val(user_size_col);
-            $('#po_variant_add input[name=user_size]').val(user_size);
-            $('#po_variant_add input[name=pay_user_id]').val(pay_user_id);
-            $('#po_variant_add input[name=pay_kid_id]').val(pay_kid_id);
-            $('#po_variant_add input[name=payment_id]').val(payment_id);
-            $('#po_variant_add').submit();
+            // $('#po_variant_add input[name=look_type]').val(look_type);
+            // $('#po_variant_add input[name=user_size_col]').val(user_size_col);
+            // $('#po_variant_add input[name=user_size]').val(user_size);
+            // $('#po_variant_add input[name=pay_user_id]').val(pay_user_id);
+            // $('#po_variant_add input[name=pay_kid_id]').val(pay_kid_id);
+            // $('#po_variant_add input[name=payment_id]').val(payment_id);
+            $.ajax({
+            type: "POST",
+            url: "<?= HTTP_ROOT; ?>appadmins/addVariantForPoRequest",
+            data: {
+                look_type: look_type,
+                user_size_col: user_size_col,
+                user_size: user_size,
+                pay_user_id: pay_user_id,
+                pay_kid_id: pay_kid_id,
+                payment_id: payment_id
+            },
+            dataType: 'json',
+            success: function(result) {
+                if(result.status == "success"){
+                    window.open(
+                        result.url,
+                        '_blank' // <- This is what makes it open in a new window.
+                        );
+                }else{
+                    alert('Try after some time');
+                }
+            }
+        });
     }
     
     $('.modal-footer .btn-default').click(function() {

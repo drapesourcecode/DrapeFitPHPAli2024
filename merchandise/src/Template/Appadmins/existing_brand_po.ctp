@@ -1,3 +1,4 @@
+<?php $color_arr = $this->Custom->inColor(); ?>
 <div class="content-wrapper">
     <section class="content-header">
         <h1> Existing Customer Po</h1>
@@ -54,6 +55,7 @@
                                             <th>Brands Name</th>
                                             <th>Name</th>
                                             <th>Photo</th>
+                                            <th>Color : Size</th>
                                             <th style="width: 10%;text-align: center;">Quantity</th>
                                             <th style="width: 10%;text-align: center;">Po date</th>
                                             <th style="text-align: center;">Po Customer</th>
@@ -72,7 +74,25 @@
                                                 <td><?= h($dat_li->brand->brand_name) ?></td>
                                                 <td><?php echo $dat_li->prd_detl[0]['product_name_one']; ?></td>
                                                 <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->prd_detl[0]['product_image']; ?>" style="width: 80px;"/></td>
-
+                                                <td><?php
+                                                    echo $color_arr[$dat_li->prd_detl[0]['color']] ." : ";
+                                                    $pick_s = $dat_li->prd_detl[0]['picked_size'];
+                                                    if (!empty($pick_s)) {
+                                                        $li_size = explode('-', $pick_s);
+                                                        foreach ($li_size as $sz_l) {
+                                                            $pdc_sz = $dat_li->prd_detl[0][$sz_l];
+                                                            if (($pdc_sz == 0) || ($pdc_sz == 00)) {
+                                                                echo $pdc_sz;
+                                                            } else {
+                                                                echo!empty($pdc_sz) ? $pdc_sz . '&nbsp;&nbsp;' : '';
+                                                            }
+                                                        }
+                                                    }
+                                                    if (!empty($dat_li->prd_detl[0]['primary_size']) && ($dat_li->prd_detl[0]['primary_size'] == 'free_size')) {
+                                                        echo "Free Size";
+                                                    }
+                                                    ?>
+                                                </td>
                                                 <td style="text-align: center;"><?php echo $dat_li->qty; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_date; ?></td>
                                                 <td style="text-align: center;">
@@ -129,6 +149,7 @@
                                             <th>Brands Name</th>
                                             <th>Name</th>
                                             <th>Photo</th>
+                                            <th>Color : Size</th>
                                             <th style="width: 10%;text-align: center;">Quantity</th>
                                             <th style="width: 10%;text-align: center;">Po date</th>
                                             <th style="text-align: center;">Po number</th>
@@ -151,7 +172,25 @@
                                                 <td><?= h($dat_li->brand->brand_name) ?></td>
                                                 <td><?php echo $dat_li->prd_detl[0]['product_name_one']; ?></td>
                                                 <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->prd_detl[0]['product_image']; ?>" style="width: 80px;"/></td>
-
+                                                <td><?php
+                                                    echo $color_arr[$dat_li->prd_detl[0]['color']] ." : ";
+                                                    $pick_s = $dat_li->prd_detl[0]['picked_size'];
+                                                    if (!empty($pick_s)) {
+                                                        $li_size = explode('-', $pick_s);
+                                                        foreach ($li_size as $sz_l) {
+                                                            $pdc_sz = $dat_li->prd_detl[0][$sz_l];
+                                                            if (($pdc_sz == 0) || ($pdc_sz == 00)) {
+                                                                echo $pdc_sz;
+                                                            } else {
+                                                                echo!empty($pdc_sz) ? $pdc_sz . '&nbsp;&nbsp;' : '';
+                                                            }
+                                                        }
+                                                    }
+                                                    if (!empty($dat_li->prd_detl[0]['primary_size']) && ($dat_li->prd_detl[0]['primary_size'] == 'free_size')) {
+                                                        echo "Free Size";
+                                                    }
+                                                    ?>
+                                                </td>
                                                 <td style="text-align: center;"><?php echo $dat_li->qty; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_date; ?></td>
                                                 <td style="text-align: center;">
@@ -169,6 +208,8 @@
                                                         ?>
                                                 </td>
                                                 <td style="text-align: center;">
+                                                    <a href="<?=HTTP_ROOT;?>appadmins/edit_existing_brand_po/<?php echo $dat_li->id.'/'.$dat_li->brand->id; ?>" class="btn btn-primary">Edit</a>
+                                                    <a href="<?=HTTP_ROOT;?>appadmins/cancle_existing_brand_po/<?php echo $dat_li->id.'/'; ?>" class="btn btn-success">Cancle</a>
                                                     <?php 
                                                     if(!empty($dat_li->po_number)){
                                                     if($dat_li->status == 2){
@@ -238,6 +279,7 @@
                                             <th>Brands Name</th>
                                             <th>Name</th>
                                             <th>Photo</th>
+                                            <th>Color : Size</th>
                                             <th style="width: 10%;text-align: center;">Quantity</th>
                                             <th style="width: 10%;text-align: center;">Po date</th>
                                             <th style="text-align: center;">Po number</th>
@@ -256,7 +298,25 @@
                                                 <td><?= h($dat_li->brand->brand_name) ?></td>
                                                 <td><?php echo $dat_li->prd_detl[0]['product_name_one']; ?></td>
                                                 <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->prd_detl[0]['product_image']; ?>" style="width: 80px;"/></td>
-
+                                                <td><?php
+                                                    echo $color_arr[$dat_li->prd_detl[0]['color']] ." : ";
+                                                    $pick_s = $dat_li->prd_detl[0]['picked_size'];
+                                                    if (!empty($pick_s)) {
+                                                        $li_size = explode('-', $pick_s);
+                                                        foreach ($li_size as $sz_l) {
+                                                            $pdc_sz = $dat_li->prd_detl[0][$sz_l];
+                                                            if (($pdc_sz == 0) || ($pdc_sz == 00)) {
+                                                                echo $pdc_sz;
+                                                            } else {
+                                                                echo!empty($pdc_sz) ? $pdc_sz . '&nbsp;&nbsp;' : '';
+                                                            }
+                                                        }
+                                                    }
+                                                    if (!empty($dat_li->prd_detl[0]['primary_size']) && ($dat_li->prd_detl[0]['primary_size'] == 'free_size')) {
+                                                        echo "Free Size";
+                                                    }
+                                                    ?>
+                                                </td>
                                                 <td style="text-align: center;"><?php echo $dat_li->qty; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_date; ?></td>
                                                 <td style="text-align: center;">

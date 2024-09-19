@@ -4,7 +4,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
 ?>
 <div class="tab-content boy-kid-select" style="width: 100%;float: left;">
     <?= $this->Form->input('profile_type', ['value' => '3', 'type' => 'hidden', 'class' => "form-control", 'required' => "required", 'label' => false]); ?>
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Product Category <sup style="color:red;">*</sup></label>
@@ -12,7 +12,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                 <option value="" selected disabled>Select Category</option>
                                                 <?php foreach ($productType as $type) { ?>
                                                     <option  value="<?php echo $type->id; ?>" <?php echo (!empty($editproduct) && ($editproduct->product_type == $type->id)) ? "selected" : "";  echo (!empty($_GET['ctg']) && ($_GET['ctg'] ==$type->id))?'selected':''; ?> ><?php echo $type->product_type . '-' . $type->name; ?></option>
-    <?php } ?>
+                                                <?php } ?>
                                             </select>
                                         </div>
                                     </div>
@@ -43,13 +43,13 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Product Name 1 <sup style="color:red;">*</sup></label>
-    <?= $this->Form->input('product_name_one', ['value' => @$editproduct->product_name_one, 'type' => 'text', 'class' => "form-control", 'label' => false, 'placeholder' => 'Please enter product name 1', 'required', 'maxlength' => "40"]); ?>
+                                            <?= $this->Form->input('product_name_one', ['value' => @$editproduct->product_name_one, 'type' => 'text', 'class' => "form-control", 'label' => false, 'placeholder' => 'Please enter product name 1', 'required', 'maxlength' => "40"]); ?>
                                         </div>
                                     </div>
                                     <div class="col-md-6" style="display:none;">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Product Name 2</label>
-    <?= $this->Form->input('product_name_two', ['value' => @$editproduct->product_name_two, 'type' => 'text', 'class' => "form-control", 'label' => false, 'placeholder' => 'Please enter product name 2', 'maxlength' => "40"]); ?>
+                                            <?= $this->Form->input('product_name_two', ['value' => @$editproduct->product_name_two, 'type' => 'text', 'class' => "form-control", 'label' => false, 'placeholder' => 'Please enter product name 2', 'maxlength' => "40"]); ?>
                                         </div>
                                     </div>
                                     
@@ -66,13 +66,83 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                 foreach ($all_seson as $ky => $al_ses_li) {
                                                     ?>
                                                     <li><input id="all_seso<?= $ky; ?>" type="checkbox" name="season[]" value="<?= $al_ses_li; ?>"  <?php if (!empty($editproduct->season) && in_array($al_ses_li, json_decode($editproduct->season, true))) { ?> checked <?php } ?> /><label for="all_seso<?= $ky; ?>"><?= $al_ses_li; ?></label></li>
-    <?php } ?>
+                                        <?php } ?>
 
                                             </ul>
 
                                         </div>
                                     </div>
                                 </div>
+                                <?php if(!empty($get_prv_inv_data)){ ?>                    
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                    <table id="exampleXX" class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Brand Name</th>
+                                                <th>Product Name 1</th>
+                                                <th>Product Image</th>
+                                                <th>Color : Size</th>  
+                                                <th style="text-align: center;">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach($get_prv_inv_data as $get_pr_vari_list){
+                                                    foreach($get_pr_vari_list->vari_prd_li as $pdetails){
+           
+                                            ?>
+                                            <tr id="<?php echo $pdetails->id; ?>" class="message_box">
+
+                                                <td><?php echo $this->Custom->brandNamex(@$pdetails->brand_id); ?> </td>
+
+                                                <!-- <td><?php echo $pdetails->user_id ?></td> -->
+                                                <td><?php echo $get_pr_vari_list->product_name_one; ?></td>
+                                                <td>                                                
+                                                    <img src="<?php echo HTTP_ROOT_BASE . PRODUCT_IMAGES; ?><?php echo $get_pr_vari_list->feature_image; ?>" style="width: 50px;"/>                                               
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                        echo $pdetails->color.' : '.$pdetails->size;
+                                                    ?>
+                                                </td>
+                                                <td style="text-align: center;">
+                                                <?php if($pdetails->is_po == 0){ ?>
+                                                <button type="button" id="btnshowPo<?=$pdetails->id;?>" onclick="$('#showPo<?= $pdetails->id;?>').toggle();$('#btnshowPo<?= $pdetails->id;?>').toggle()" class="btn btn-sm btn-primary">Add to PO</button>                                                
+                                                <a href="<?=HTTP_ROOT;?>appadmins/newBrandPo/tab1/<?=$option;?>?ctg=<?=$_GET['ctg'];?>&sub_ctg=<?=$_GET['sub_ctg'];?>&variant_id=<?=$get_pr_vari_list->id;?>" class="btn btn-sm btn-primary">Add New Variant</a>
+                                                <div id="showPo<?=$pdetails->id;?>" style="display:none;">
+                                                    <?= $this->Form->create('',['type'=>'post','id'=>'updateVarPoFrom'.$pdetails->id ,'url'=>['action'=>'addVariantPoRequest']]);?>
+                                                    <input type="text" step="1" name="qty" min="1" placeholder="Quantity" style="width:100px;" value="1"  required>
+                                                    <input type="hidden"  name="id" value="<?=$pdetails->id;?>">
+                                                    <input type="hidden"  name="user_id" value="<?=$getPaymentGatewayDetails->user_id;?>">
+                                                    <input type="hidden"  name="kid_id" value="<?=$getPaymentGatewayDetails->kid_id;?>">
+                                                    <button type="button" class="btn btn-sm btn-primary" onClick="updateVarPox(<?=$pdetails->id;?>)">Submit</button>
+                                                    <?= $this->Form->end(); ?>
+                                                </div>
+                                                <?php }else{ echo "Already in po"; } ?>
+                                                </td>
+                                            </tr>                                            
+                                            <?php } 
+                                            } ?>
+                                        </tbody>
+                                    </table>
+                                    <script>
+                                        function updateVarPox(id){
+                                            $.ajax({
+                                                type: "POST",
+                                                url: "<?= HTTP_ROOT; ?>appadmins/updateVarPoFrom",
+                                                data: $("#updateVarPoFrom"+id).serialize(),
+                                                dataType: 'html',
+                                                success: function(result) {                                                    
+                                                    $('#btnshowPo'+id).hide();
+                                                    $('#showPo'+id).hide();
+                                                    alert('Added to PO');
+                                                }
+                                            });
+                                        }
+                                    </script>
+                                    </div>
+                                </div>
+                                <?php } ?>
     
     
                                 <div class="row">
@@ -112,8 +182,15 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                 </div>`;
                                                     
                                                     $('#variant_main_div').append(new_variant_html);
+
+                                                    let sel_colo_array = []
+                                                    $('select[id^=color]').each(function(index,value){
+                                                        sel_colo_array.push(value.value);
+                                                        $("#color"+inx_numx+" option[value='"+ value.value + "']").attr('disabled', true);
+                                                    })
                                                 }
                                                 function showSizeBox(id){
+                                                    $('#color'+id).css({'cursor': 'not-allowed', 'pointer-events': 'none'});
                                                     let value = $('#color'+id).val();
                                                     
                                                     $('#color_wise_size_variant_main_div'+id).show();
@@ -136,6 +213,12 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                             
                                                         </div>`;
                                                      $('#color_wise_size_variant_main_div'+id).append(new_size_html);
+                                                     let sel_sz_array = [];
+                                                    $('#variant'+id+' select[id^=var_sizes]').each(function(index,value){
+                                                        sel_sz_array.push(value.value);
+                                                        $("#var_sizes"+inx_numx+" option[value='"+ value.value + "']").attr('disabled', true);
+                                                    })
+                                                    console.log(sel_sz_array);
                                                     
                                                 }
                                                 function showDetailsBox(id,parent_id){
@@ -150,7 +233,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                                             <div class="women-select-boxes">
                                                                                 <div class="women-select1">
                                                                                     <select name="variant_data[${color_value}][${value}][tall_feet1]" id="tall_feet" class="form-control" required>
-                                                                                        <option value="" disabled>--</option>
+                                                                                        <option value="" selected>--</option>
                                                                                         <option  value="1">1</option>
                                                                                         <option  value="2">2</option>
                                                                                         <option  value="3">3</option>
@@ -162,7 +245,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                                                 </div>
                                                                                 <div class="women-select1">
                                                                                     <select name="variant_data[${color_value}][${value}][tall_inch1]" id="tall_inch" class="form-control">
-                                                                                        <option  value="" disabled>--</option>
+                                                                                        <option  value="" selected>--</option>
                                                                                         <option  value="0">0</option>
                                                                                         <option  value="1">1</option>
                                                                                         <option  value="2">2</option>
@@ -183,7 +266,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                                                 <div class="women-select1">
 
                                                                                     <select name="variant_data[${color_value}][${value}][tall_feet2]" id="tall_feet2" class="form-control" required>
-                                                                                        <option  value="" disabled>--</option>
+                                                                                        <option  value="" selected>--</option>
                                                                                         <option  value="1">1</option>
                                                                                         <option  value="2">2</option>
                                                                                         <option  value="3">3</option>
@@ -195,7 +278,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                                                 </div>
                                                                                 <div class="women-select1">
                                                                                     <select name="variant_data[${color_value}][${value}][tall_inch2]" id="tall_inch2" class="form-control">
-                                                                                        <option  value="" disabled>--</option>
+                                                                                        <option  value="" selected>--</option>
                                                                                         <option  value="0">0</option>
                                                                                         <option  value="1">1</option>
                                                                                         <option  value="2">2</option>
@@ -297,8 +380,8 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     </div>
                                     <?php } ?>
                                 </div>
-    
-    
+
+                                <div class="row">       
     
                                 <?php if (in_array($product_ctg_nme, ["C7","C9", "C13", "C1", "C2", "C4", "C6", "C8","C10", "C3", "C5", "C12"])) { ?>
                                                 <div class="col-sm-6"   >
@@ -374,27 +457,27 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                         }
                                                         if(data == 'top_size' ){
                                                             selectSizeAcc = `<div class="form-group">
-                                            <div class="col-md-1">
-                                                <label><input type="radio" name="primary_size" value="top_size"  checked required> TOPS SIZE?</label>
-                                            </div>
-                                        </div>`;
+                                                                <div class="col-md-1">
+                                                                    <label><input type="radio" name="primary_size" value="top_size"  checked required> TOPS SIZE?</label>
+                                                                </div>
+                                                            </div>`;
                                                         }                                                                        
                                                         if(data == 'bottom_size' ){
                                                             selectSizeAcc = `<div class="form-group">
-                                            <div class="row">
-                                                <div class="col-md-1">
-                                                   <label> <input type="radio" name="primary_size" value="bottom_size"  checked required>BOTTOMS SIZE</label>
-                                                </div>
-                                                                          
-                                            </div>                            
-                                        </div>`;
+                                                                <div class="row">
+                                                                    <div class="col-md-1">
+                                                                    <label> <input type="radio" name="primary_size" value="bottom_size"  checked required>BOTTOMS SIZE</label>
+                                                                    </div>
+                                                                                            
+                                                                </div>                            
+                                                            </div>`;
                                                         }                                                                        
                                                         $('#prd_sz_typ_div').html(selectSizeAcc);
                                                     }
                                                 </script>
                                             <?php } ?>
-                               
-                                        <div class="row">                                    
+                                </div>
+                                        <div class="row new_var_xx">                                    
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>Body shape?</label>
@@ -448,11 +531,11 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                             </div>
                                         </div>
                                 
-                                <div class="row">
+                                <div class="row new_var_xx">
     <?php if (empty($editproduct)) { ?>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="exampleInputPassword1">Available status</label>
+                                                <label for="exampleInputPassword1">Available status <sup style="color:red;">*</sup></label>
                                                 <select name="available_status" class="form-control">
                                                     <option <?php if (@$editproduct->available_status == '') { ?> selected="" <?php } ?> value="">--</option> 
                                                     <option <?php if (@$editproduct->available_status == '1') { ?> selected="" <?php } ?> value="1">Available</option>                                
@@ -494,7 +577,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row new_var_xx">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Product Image <sup style="color:red;">*</sup>  <span style="color:red;font-weight: 400;">(20 KB PNG, JPG ,JPEG)</span></label>

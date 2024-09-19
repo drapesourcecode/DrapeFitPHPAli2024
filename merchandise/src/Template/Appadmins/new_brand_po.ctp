@@ -71,7 +71,14 @@ $color_arr = $this->Custom->inColor();
                         <?php } ?>
                         <?= $this->Form->input('id', ['value' => @$id, 'type' => 'hidden', 'label' => false]); ?>
                         <?= $this->Form->input('for_po', ['value' => 1, 'type' => 'hidden', 'label' => false]); ?>
-
+                        <?= $this->Form->input('variant_id', ['value' => !empty($_GET['variant_id'])?$_GET['variant_id']:'', 'type' => 'hidden', 'label' => false]); ?>
+                        <?php if(!empty($_GET['variant_id'])){ ?>
+                            <script>
+                                $(document).ready(function(){
+                                    $('.new_var_xx').remove();
+                                });
+                            </script>
+                        <?php } ?>
                         <div class="nav-tabs-custom">
                             <select id="profile_type" class="form-control" onchange="return getChanges(this.value)">
                                 <option <?php if (@$profile == 'Men') { ?> selected="" <?php } ?> value="Men">Men</option>
@@ -584,6 +591,7 @@ $color_arr = $this->Custom->inColor();
                                             <th>Brands Name</th>
                                             <th>Name</th>
                                             <th>Photo</th>
+                                            <th>Color : Size</th>
                                             <th style="width: 10%;text-align: center;">Quantity</th>
                                             <th style="width: 10%;text-align: center;">Po date</th>
                                             <th style="width: 10%;text-align: center;">Po customer</th>
@@ -602,6 +610,7 @@ $color_arr = $this->Custom->inColor();
                                                 <td><?= h($dat_li->brand->brand_name) ?></td>
                                                 <td><?php echo $dat_li->prd_detl->product_name_one; ?></td>
                                                 <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->prd_detl->feature_image; ?>" style="width: 80px;"/></td>
+                                                <td><?php echo $dat_li->color ." : ". $dat_li->size; ?></td>
 
                                                 <td style="text-align: center;"><?php echo $dat_li->po_quantity; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_date; ?></td>
@@ -661,6 +670,7 @@ $color_arr = $this->Custom->inColor();
                                             <th>Brands Name</th>
                                             <th>Name</th>
                                             <th>Photo</th>
+                                            <th>Color : Size</th>
                                             <th style="width: 10%;text-align: center;">Quantity</th>
                                             <th style="width: 10%;text-align: center;">Po date</th>
                                             <th style="text-align: center;">Po number</th>
@@ -683,7 +693,7 @@ $color_arr = $this->Custom->inColor();
                                                 <td><?= h($dat_li->brand->brand_name) ?></td>
                                                 <td><?php echo $dat_li->prd_detl->product_name_one; ?></td>
                                                 <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->prd_detl->feature_image; ?>" style="width: 80px;"/></td>
-
+                                                <td><?php echo $dat_li->color ." : ". $dat_li->size; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_quantity; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_date; ?></td>
                                                 <td style="text-align: center;">
@@ -702,6 +712,7 @@ $color_arr = $this->Custom->inColor();
                                                 </td>
                                                 <td style="text-align: center;">
                                                     <a href="<?=HTTP_ROOT;?>appadmins/new_po_edit/<?php echo $dat_li->id.'/'.$dat_li->po_number; ?>" class="btn btn-primary">Edit</a>
+                                                    <a href="<?=HTTP_ROOT;?>appadmins/new_po_cancel/<?php echo $dat_li->id; ?>" class="btn btn-success">Cancel</a>
                                                       
                                                     <?php 
                                                     if(!empty($dat_li->po_number)){
@@ -761,6 +772,7 @@ $color_arr = $this->Custom->inColor();
                                             <th>Brands Name</th>
                                             <th>Name</th>
                                             <th>Photo</th>
+                                            <th>Color : Size</th>
                                             <th style="width: 10%;text-align: center;">Quantity</th>
                                             <th style="width: 10%;text-align: center;">Po date</th>
                                             <th style="text-align: center;">Po number</th>
@@ -779,7 +791,7 @@ $color_arr = $this->Custom->inColor();
                                                 <td><?= h($dat_li->brand->brand_name) ?></td>
                                                 <td><?php echo $dat_li->prd_detl->product_name_one; ?></td>
                                                 <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->prd_detl->feature_image; ?>" style="width: 80px;"/></td>
-
+                                                <td><?php echo $dat_li->color ." : ". $dat_li->size; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_quantity; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_date; ?></td>
                                                 <td style="text-align: center;">
