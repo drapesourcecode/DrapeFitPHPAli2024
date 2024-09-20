@@ -540,6 +540,10 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                             
                                             <script>
                                                 function addVariants(){
+                                                    if($('#prd_sz_typ').val() == null ){
+                                                        $('#prd_sz_typ').focus();
+                                                        return false;
+                                                    }
                                                     let inx_numx = Math.floor(Math.random() * 899999 + 100000);
                                                     // let rowCount = $('#payment_table tr').length;                                                     
                                                     let new_variant_html = `<div class="row" id="variant${inx_numx}">
@@ -847,6 +851,36 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                             </select>                                          
                                         </div>
                                     </div>
+                                        <div class="col-md-12 skin">
+                                            <label >Skin tone ?</label>
+                                            <ul>
+                                                <li>
+                                                    <input class="radio-box" value="1"  id="radio${inx_numx}a" name="variant_data[${color_value}][${value}][skin_tone][]" type="checkbox">
+                                                    <label for="radio${inx_numx}a"></label>
+                                                </li>
+                                                <li>
+                                                    <input class="radio-box" value="2"  id="radio${inx_numx}b" name="variant_data[${color_value}][${value}][skin_tone][]" type="checkbox">
+                                                    <label for="radio${inx_numx}b"></label>
+                                                </li>
+                                                <li>
+                                                    <input class="radio-box" value="3" id="radio${inx_numx}c" name="variant_data[${color_value}][${value}][skin_tone][]" type="checkbox">
+                                                    <label for="radio${inx_numx}c"></label>
+                                                </li>
+                                                <li>
+                                                    <input class="radio-box" value="4" id="radio${inx_numx}d" name="variant_data[${color_value}][${value}][skin_tone][]" type="checkbox">
+                                                    <label for="radio${inx_numx}d"></label>
+                                                </li>
+                                                <li>
+                                                    <input class="radio-box" value="5" id="radio${inx_numx}e" name="variant_data[${color_value}][${value}][skin_tone][]" type="checkbox">
+                                                    <label for="radio${inx_numx}e"></label>
+                                                </li>
+                                                <li>
+                                                    <input class="radio-box" value="6" id="radio${inx_numx}f" name="variant_data[${color_value}][${value}][skin_tone][]" type="checkbox">
+                                                    <label for="radio${inx_numx}f"><span>OTHER</span></label>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    
                                 </div> `;
                                                     $('#showSizeDetails'+id).html(new_size_details_html);
                                                 }
@@ -862,22 +896,8 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Profession</label>
-                                            <div>
-                                                <button type="button" onclick="professionSelectAll()">Select All</button>
-                                                <button type="button" onclick="professionDeselectAll()">Deselect All</button>
-                                            </div>
-                                            <script>
-                                                function professionSelectAll() {
-                                                    $("#profession > option").prop("selected", true);
-                                                    $("#profession").trigger("change");
-                                                }
-
-                                                function professionDeselectAll() {
-                                                    $("#profession > option").prop("selected", false);
-                                                    $("#profession").trigger("change");
-                                                }
-                                            </script>
-                                            <select name="profession[]" id="profession" class="form-control select2_select" aria-invalid="false" multiple>
+                                            
+                                            <select name="profession[]" id="profession" class="form-control select3_select" aria-invalid="false" multiple>
                                                 <!--<option value="" <?php // if (!empty($editproduct->profession) && in_array('NULL', json_decode($editproduct->profession, true))) { ?> selected <?php //} ?> >--</option>-->
                                                 <option value="1" <?php if (!empty($editproduct->profession) && in_array(1, json_decode($editproduct->profession, true))) { ?> selected <?php } ?> >Architecture / Engineering</option>
                                                 <option value="2" <?php if (!empty($editproduct->profession) && in_array(2, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Art / Design</option>
@@ -911,27 +931,41 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                 <option value="30" <?php if (!empty($editproduct->profession) && in_array(30, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Not Employed</option>
                                                 <option value="31" <?php if (!empty($editproduct->profession) && in_array(31, json_decode($editproduct->profession, true))) { ?> selected <?php } ?>>Other</option>
                                             </select>
+                                            <script>                                                
+                                                const addSelectAll = matches => {
+                                                        if (matches.length > 0) {
+                                                        // Insert a special "Select all matches" item at the start of the 
+                                                        // list of matched items.
+                                                        return [        
+                                                            ...matches,
+                                                            {id: 'selectAll', text: 'Select all', matchIds: matches.map(match => match.id)},
+                                                            {id: 'deSelectAll', text: 'Deselect all', matchIds: matches.map(match => match.id)},
+                                                        ];
+                                                        }
+                                                    };
+                                                    const handleSelection = event => {
+                                                        if (event.params.data.id === 'selectAll') {
+                                                            $('#profession').val(event.params.data.matchIds);
+                                                            $('#profession').trigger('change');
+                                                        };
+                                                        if (event.params.data.id === 'deSelectAll') {
+                                                            $('#profession').val('');
+                                                            $('#profession').trigger('change');
+                                                        };
+                                                    };
+                                                    $('#profession').select2({
+                                                        multiple: true,
+                                                        sorter: addSelectAll
+                                                    });
+                                                    $("#profession").on('select2:select', handleSelection);
+                                            </script>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Occasions</label>
-                                            <div>
-                                                <button type="button" onclick="occasionsSelectAll()">Select All</button>
-                                                <button type="button" onclick="occasionsDeselectAll()">Deselect All</button>
-                                            </div>
-                                            <script>
-                                                function occasionsSelectAll() {
-                                                    $("#occasional_dress > option").prop("selected", true);
-                                                    $("#occasional_dress").trigger("change");
-                                                }
-
-                                                function occasionsDeselectAll() {
-                                                    $("#occasional_dress > option").prop("selected", false);
-                                                    $("#occasional_dress").trigger("change");
-                                                }
-                                            </script>
-                                            <select name="occasional_dress[]" id="occasional_dress"  class="form-control select2_select" aria-invalid="false" multiple>
+                                            
+                                            <select name="occasional_dress[]" id="occasional_dress"  class="form-control select3_select" aria-invalid="false" multiple>
                                                 <!-- <option value="" <?php //if (!empty($editproduct->occasional_dress) && in_array('NULL', json_decode($editproduct->occasional_dress, true))) { ?> selected <?php //} ?>>--</option> -->
                                                 <option value="1"  <?php if (!empty($editproduct->occasional_dress) && in_array(1, json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>Business Casual / Work</option>
                                                 <option value="2"  <?php if (!empty($editproduct->occasional_dress) && in_array(2, json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>Cocktail / Wedding / Special</option>
@@ -944,6 +978,23 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                 <option value="7"  <?php if (!empty($editproduct->occasional_dress) && in_array(7, json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>Laid Back Casual</option>
                                                 <option value="8"  <?php if (!empty($editproduct->occasional_dress) && in_array(8, json_decode($editproduct->occasional_dress, true))) { ?> selected <?php } ?>>Rarely</option>
                                             </select>
+                                            <script>
+                                                const handleSelection2 = event => {
+                                                        if (event.params.data.id === 'selectAll') {
+                                                            $('#occasional_dress').val(event.params.data.matchIds);
+                                                            $('#occasional_dress').trigger('change');
+                                                        };
+                                                        if (event.params.data.id === 'deSelectAll') {
+                                                            $('#occasional_dress').val('');
+                                                            $('#occasional_dress').trigger('change');
+                                                        };
+                                                    };
+                                                    $('#occasional_dress').select2({
+                                                        multiple: true,
+                                                        sorter: addSelectAll
+                                                    });
+                                                    $("#occasional_dress").on('select2:select', handleSelection2);
+                                            </script>
                                         </div>
                                     </div>
                                     <div class="col-md-6"></div>
@@ -1401,40 +1452,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     </div>
                                 </div>
 
-                                <div class="row new_var_xx">
-                                    <div class="col-md-6 skin">
-                                        <label >Skin tone ?</label>
-                                        <ul>
-                                            <li>
-                                                <input class="radio-box" value="1"  <?php if (!empty($editproduct->skin_tone) && in_array(1, json_decode($editproduct->skin_tone, true))) { ?> checked <?php } ?> id="radio2a" name="skin_tone[]" type="checkbox">
-                                                <label for="radio2a"></label>
-                                            </li>
-                                            <li>
-                                                <input class="radio-box" value="2"  <?php if (!empty($editproduct->skin_tone) && in_array(2, json_decode($editproduct->skin_tone, true))) { ?> checked <?php } ?>  id="radio2b" name="skin_tone[]" type="checkbox">
-                                                <label for="radio2b"></label>
-                                            </li>
-                                            <li>
-                                                <input class="radio-box" value="3" <?php if (!empty($editproduct->skin_tone) && in_array(3, json_decode($editproduct->skin_tone, true))) { ?> checked <?php } ?>  id="radio2c" name="skin_tone[]" type="checkbox">
-                                                <label for="radio2c"></label>
-                                            </li>
-                                            <li>
-                                                <input class="radio-box" value="4" <?php if (!empty($editproduct->skin_tone) && in_array(4, json_decode($editproduct->skin_tone, true))) { ?> checked <?php } ?>  id="radio2d" name="skin_tone[]" type="checkbox">
-                                                <label for="radio2d"></label>
-                                            </li>
-                                            <li>
-                                                <input class="radio-box" value="5" <?php if (!empty($editproduct->skin_tone) && in_array(5, json_decode($editproduct->skin_tone, true))) { ?> checked <?php } ?>  id="radio2e" name="skin_tone[]" type="checkbox">
-                                                <label for="radio2e"></label>
-                                            </li>
-                                            <li>
-                                                <input class="radio-box" value="6" <?php if (!empty($editproduct->skin_tone) && in_array(6, json_decode($editproduct->skin_tone, true))) { ?> checked <?php } ?>  id="radio2f" name="skin_tone[]" type="checkbox">
-                                                <label for="radio2f"><span>OTHER</span></label>
-                                            </li>
-                                        </ul>
-
-                                    </div>
-                                    
-                                </div>
-                                
+                                                                
                                 <div class="row new_var_xx">
                                     <?php if (empty($editproduct)) { ?>
                                         <div class="col-md-6">

@@ -626,7 +626,8 @@ $color_arr = $this->Custom->inColor();
                                                         ?>
                                                 </td>
                                                 <td style="text-align: center;">
-                                                <button onclick="attachDoc(<?php echo $dat_li->id; ?>)" type="button">Attach DOC</button>
+                                                    <a href="<?=HTTP_ROOT;?>appadmins/new_po_cancel/<?php echo $dat_li->id; ?>" class="btn btn-success">Cancel</a>
+                                                    <button onclick="attachDoc(<?php echo $dat_li->id; ?>)" type="button">Attach DOC</button>
                                                 </td>
                                             </tr>
                                         <?php } } ?>

@@ -1,17 +1,6 @@
-<?php
-if(!empty( $this->request->session()->read('new_variant_po_data'))){
-    $new_variant_po_data = json_decode($this->request->session()->read('new_variant_po_data'),true);
-    // print_r($new_variant_po_data );
-    ?>
-    <script>
-        $(document).ready(function(){
-            // addVariants();
-        });
-    </script>
-    <style>.var_qty{ display:none; }</style>
-    <?php
-}
-?>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+                                    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+                                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
 
 <div class="content-wrapper">
     <section class="content-header">
@@ -28,12 +17,32 @@ if(!empty( $this->request->session()->read('new_variant_po_data'))){
 
                     <div class="box-body"> 
                         <div >
+                        <?php
+                            if(!empty( $this->request->session()->read('new_variant_po_data'))){
+                                $new_variant_po_data = json_decode($this->request->session()->read('new_variant_po_data'),true);
+                                // print_r($new_variant_po_data );
+                                ?>
+                                <script>
+                                    $(document).ready(function(){
+                                        // addVariants();
+                                    });
+                                </script>
+                                <style>.var_qty{ display:none; }</style>
+                                <div class="row">
+                                <div class="col-sm-12">
+                                    Product will added for customer
+                                </div>
+                                <div class="col-sm-12">
+                                    If you want to add stock <a class="btn btn-info btn-sm" href="<?=HTTP_ROOT;?>appadmins/removePoCustomerSession">Click Here</a>
+                                </div>
+                                </div>
+                                <?php
+                            }
+                            ?>
                             <div>
                                 <div id="add_product">
                                     
-                                    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-                                    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-                                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
+                                    
                                     <script>
                                         function getChanges(value) {
                                             if (value) {
@@ -293,6 +302,7 @@ $color_arr = $this->Custom->inColor();
     }
 
     $(document).ready(function () {
+        
         $('.select2_select').select2();
         $('.select2_select').on('select2:closing', function (e) {
             let id = $(this).attr('id');
@@ -309,6 +319,8 @@ $color_arr = $this->Custom->inColor();
             }
 //            console.log(val_arr); 
         });
+        
+        
       
        /* $("#seson input[type=checkbox]").attr('required','required');*/
         $("#seson #selectAllseson").click(function () {
@@ -324,6 +336,7 @@ $color_arr = $this->Custom->inColor();
         });
 
     });
+    
     function updateChkbox() {
         $('input[name="style_sphere_selections_v5[]"]').not(this).prop('checked', false);
         let chkbox = $('#mens12300').attr('checked');
