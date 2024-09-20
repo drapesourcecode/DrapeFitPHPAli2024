@@ -106,7 +106,9 @@
                                                         }
                                                         ?>
                                                 </td>
-                                                <td> <button onclick="attachDoc(<?php echo $dat_li->id; ?>)" type="button">Attach DOC</button> </td>
+                                                <td>     
+                                                    <a href="<?=HTTP_ROOT;?>appadmins/cancle_existing_brand_po/<?php echo $dat_li->id.'/'; ?>" class="btn btn-success">Cancle</a>
+                                                    <button onclick="attachDoc(<?php echo $dat_li->id; ?>)" type="button">Attach DOC</button> </td>
                                             </tr>
                                         <?php } } ?>
                                 </table>

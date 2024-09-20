@@ -142,6 +142,101 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                 <?php } ?>
 
                                 <div class="row">
+    
+                                <?php if (in_array($product_ctg_nme, ["D11", "D12", "D10", "D1", "D2", "D3", "D7", "D8", "D9", "D4", "D5", "D6"])) { ?>
+                                    <div class="col-sm-6"   >
+                                        <label for="exampleInputPassword1">What size you prefer?</label>
+                                        <select id="prd_sz_typ" class="form-control" required onchange="prdsztyp(this.value)"  <?= (!empty($editproduct)) ? 'style="pointer-events: none;" readonly' : ''; ?>>
+                                            <option value="" selected disabled>----</option>
+                                            
+                                            <?php if (in_array($product_ctg_nme, ["D11", "D1", "D2", "D3", "D7", "D8", "D9"])) { ?>
+                                            <option value="top_size" <?= (!empty($editproduct) && ($editproduct->primary_size == 'top_size')) ? 'selected' : ''; ?>> Top size </option>
+                                            <?php } ?>
+                                            <?php if (in_array($product_ctg_nme, ["D11", "D4", "D5", "D6"])) { ?>
+                                            <option value="bottom_size"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'bottom_size')) ? 'selected' : ''; ?> > Bottom size </option>
+                                            <?php } ?>
+                                            <?php if(in_array($product_ctg_nme,["D12","D10"])){ ?>
+                                            <option value="free_size"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'free_size')) ? 'selected' : ''; ?> > Free size </option>
+                                            <?php } ?>
+                                            <?php if(!in_array($product_ctg_nme,["D11"])){ ?>
+                                            <option value="shoe_size"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'shoe_size')) ? 'selected' : ''; ?> > Shoe size </option>
+                                            <?php } ?>
+
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6"   id="prd_sz_typ_div"  <?= (!empty($editproduct)) ? 'style="pointer-events: none;"' : ''; ?>>
+
+                                    </div>
+                                    <?php if (!empty($editproduct) && ($editproduct->primary_size == 'free_size')) { ?>
+                                        <script>
+                                            $(document).ready(function(){
+                                                prdsztyp('<?= $editproduct->primary_size; ?>');
+                                            })
+                                        </script>
+                                    <?php } ?>
+                                    <?php if (!empty($editproduct) && ($editproduct->primary_size == 'top_size')) { ?>
+                                        <script>
+                                            $(document).ready(function(){
+                                                prdsztyp('<?= $editproduct->primary_size; ?>');
+                                            })
+                                        </script>
+                                    <?php } ?>
+                                    <?php if (!empty($editproduct) && ($editproduct->primary_size == 'bottom_size')) { ?>
+                                        <script>
+                                            $(document).ready(function(){
+                                                prdsztyp('<?= $editproduct->primary_size; ?>');
+                                            })
+                                        </script>
+                                    <?php } ?>
+                                    <?php if (!empty($editproduct) && ($editproduct->primary_size == 'shoe_size')) { ?>
+                                        <script>
+                                            $(document).ready(function(){
+                                                prdsztyp('<?= $editproduct->primary_size; ?>');
+                                            })
+                                        </script>
+                                    <?php } ?>
+
+                                    <script> 
+                                        function prdsztyp(data){
+                                            let selectSizeAcc = ``;
+                                            if(data == 'shoe_size' ){
+                                                selectSizeAcc = `<div class="form-group">                                
+                                <div class="col-md-12">
+                                    <label><input type="radio" name="primary_size" value="shoe_size" checked required> SHOE SIZE  </label>
+                                    
+                                </div>
+                            </div>`;
+                                            }                                                                        
+                                            if(data == 'free_size' ){
+                                                selectSizeAcc = `<div class="form-group">
+                                <div class="col-md-12">
+                                    <label><input type="radio" name="primary_size" value="free_size" checked required> FREE SIZE </label>
+                                </div>
+                            </div>`;
+                                            }                                                                        
+                                            if(data == 'top_size' ){
+                                                selectSizeAcc = `<div class="form-group">
+                                <div class="col-md-12">
+                                    <label><input type="radio" name="primary_size" value="top_size" checked required> TOPS SIZE? </label>
+                                </div>
+                            </div>`;
+                                            }                                                                        
+                                            if(data == 'bottom_size' ){
+                                                selectSizeAcc = `<div class="form-group">
+                                <div class="col-md-12">
+                                    <label><input type="radio" name="primary_size" value="bottom_size" checked required> BOTTOMS SIZE</label>
+                                </div>
+
+                            </div>   `;
+                                            }        
+                                            $('#prd_sz_typ_div').hide();                                                                
+                                            $('#prd_sz_typ_div').html(selectSizeAcc);
+                                        }
+                                    </script>
+                                <?php } ?>
+                                </div>
+
+                                <div class="row">
                                     <div class="col-md-12">
                                             <label for="exampleInputPassword1">Variants </label>
                                             <div id="variant_main_div">
@@ -364,99 +459,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
 
                                     
                                 </div>
-                                <div class="row">
-    
-                                <?php if (in_array($product_ctg_nme, ["D11", "D12", "D10", "D1", "D2", "D3", "D7", "D8", "D9", "D4", "D5", "D6"])) { ?>
-                                    <div class="col-sm-6"   >
-                                        <label for="exampleInputPassword1">What size you prefer?</label>
-                                        <select id="prd_sz_typ" class="form-control" required onchange="prdsztyp(this.value)"  <?= (!empty($editproduct)) ? 'style="pointer-events: none;" readonly' : ''; ?>>
-                                            <option value="" selected disabled>----</option>
-                                            
-                                            <?php if (in_array($product_ctg_nme, ["D11", "D1", "D2", "D3", "D7", "D8", "D9"])) { ?>
-                                            <option value="top_size" <?= (!empty($editproduct) && ($editproduct->primary_size == 'top_size')) ? 'selected' : ''; ?>> Top size </option>
-                                            <?php } ?>
-                                            <?php if (in_array($product_ctg_nme, ["D11", "D4", "D5", "D6"])) { ?>
-                                            <option value="bottom_size"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'bottom_size')) ? 'selected' : ''; ?> > Bottom size </option>
-                                            <?php } ?>
-                                            <?php if(in_array($product_ctg_nme,["D12","D10"])){ ?>
-                                            <option value="free_size"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'free_size')) ? 'selected' : ''; ?> > Free size </option>
-                                            <?php } ?>
-                                            <?php if(!in_array($product_ctg_nme,["D11"])){ ?>
-                                            <option value="shoe_size"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'shoe_size')) ? 'selected' : ''; ?> > Shoe size </option>
-                                            <?php } ?>
-
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-6"   id="prd_sz_typ_div"  <?= (!empty($editproduct)) ? 'style="pointer-events: none;"' : ''; ?>>
-
-                                    </div>
-                                    <?php if (!empty($editproduct) && ($editproduct->primary_size == 'free_size')) { ?>
-                                        <script>
-                                            $(document).ready(function(){
-                                                prdsztyp('<?= $editproduct->primary_size; ?>');
-                                            })
-                                        </script>
-                                    <?php } ?>
-                                    <?php if (!empty($editproduct) && ($editproduct->primary_size == 'top_size')) { ?>
-                                        <script>
-                                            $(document).ready(function(){
-                                                prdsztyp('<?= $editproduct->primary_size; ?>');
-                                            })
-                                        </script>
-                                    <?php } ?>
-                                    <?php if (!empty($editproduct) && ($editproduct->primary_size == 'bottom_size')) { ?>
-                                        <script>
-                                            $(document).ready(function(){
-                                                prdsztyp('<?= $editproduct->primary_size; ?>');
-                                            })
-                                        </script>
-                                    <?php } ?>
-                                    <?php if (!empty($editproduct) && ($editproduct->primary_size == 'shoe_size')) { ?>
-                                        <script>
-                                            $(document).ready(function(){
-                                                prdsztyp('<?= $editproduct->primary_size; ?>');
-                                            })
-                                        </script>
-                                    <?php } ?>
-
-                                    <script> 
-                                        function prdsztyp(data){
-                                            let selectSizeAcc = ``;
-                                            if(data == 'shoe_size' ){
-                                                selectSizeAcc = `<div class="form-group">                                
-                                <div class="col-md-12">
-                                    <label><input type="radio" name="primary_size" value="shoe_size" checked required> SHOE SIZE  </label>
-                                    
-                                </div>
-                            </div>`;
-                                            }                                                                        
-                                            if(data == 'free_size' ){
-                                                selectSizeAcc = `<div class="form-group">
-                                <div class="col-md-12">
-                                    <label><input type="radio" name="primary_size" value="free_size" checked required> FREE SIZE </label>
-                                </div>
-                            </div>`;
-                                            }                                                                        
-                                            if(data == 'top_size' ){
-                                                selectSizeAcc = `<div class="form-group">
-                                <div class="col-md-12">
-                                    <label><input type="radio" name="primary_size" value="top_size" checked required> TOPS SIZE? </label>
-                                </div>
-                            </div>`;
-                                            }                                                                        
-                                            if(data == 'bottom_size' ){
-                                                selectSizeAcc = `<div class="form-group">
-                                <div class="col-md-12">
-                                    <label><input type="radio" name="primary_size" value="bottom_size" checked required> BOTTOMS SIZE</label>
-                                </div>
-
-                            </div>   `;
-                                            }                                                                        
-                                            $('#prd_sz_typ_div').html(selectSizeAcc);
-                                        }
-                                    </script>
-                                <?php } ?>
-                                </div>
+                                
     
                                
                                 <div class="row new_var_xx">

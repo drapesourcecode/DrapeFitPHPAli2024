@@ -301,8 +301,8 @@ Router::scope('/api', function (RouteBuilder $routes) {
     
     $routes->connect('/sendSmsPost/*', ['controller' => 'Clicksend', 'action' => 'sendSmsPost']);
     
-    $routes->connect('/delete-account/*', ['controller' => 'Ajaxs', 'action' => 'deleteAccount']);
-    
+    $routes->connect('/delete-account/*', ['controller' => 'Ajaxs', 'action' => 'deleteAccount']);    
+    $routes->connect('/check_address_present_or_not/*', ['controller' => 'Ajaxs', 'action' => 'checkAddressPresentOrNot']);
 });
 
 /**

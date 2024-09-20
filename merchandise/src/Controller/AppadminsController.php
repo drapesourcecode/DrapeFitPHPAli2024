@@ -4392,7 +4392,8 @@ class AppadminsController extends AppController {
                             $var_prd_rw += $variant_list_list;
         
                             $var_prd_rw['variant_size_related'] = !empty($variant_list_list['variant_size_related'])?json_encode($variant_list_list['variant_size_related']):NULL ;   
-                    
+                            $var_prd_rw['skin_tone'] = !empty($variant_list_list['skin_tone'])?json_encode($variant_list_list['skin_tone']):NULL ;
+                            
                             $var_prd_rw['quantity'] = 0;
                             $var_prd_rw['po_quantity'] = $variant_list_list['quantity'];
                             $var_prd_rw['is_po'] = 1;
@@ -4425,7 +4426,6 @@ class AppadminsController extends AppController {
             $postData['profession'] = !empty($postData['profession']) ? json_encode($postData['profession']) : NULL;
             $postData['variant_size_related'] = !empty($postData['variant_size_related']) ? json_encode($postData['variant_size_related']) : NULL;
             $postData['better_body_shape'] = !empty($postData['better_body_shape']) ? json_encode($postData['better_body_shape']) : NULL;
-            $postData['skin_tone'] = !empty($postData['skin_tone']) ? json_encode($postData['skin_tone']) : NULL;
             $postData['work_type'] = !empty($postData['work_type']) ? json_encode($postData['work_type']) : NULL;
             $postData['style_sphere_selections_v5'] = !empty($postData['style_sphere_selections_v5']) ? json_encode($postData['style_sphere_selections_v5']) : NULL;
             $postData['budget_value'] = !empty($postData[$postData['budget_type']]) ? $postData[$postData['budget_type']] : NULL;
@@ -4472,8 +4472,7 @@ class AppadminsController extends AppController {
                     $var_prd_rw += $variant_list_list;
 
                     $var_prd_rw['variant_size_related'] = !empty($variant_list_list['variant_size_related'])?json_encode($variant_list_list['variant_size_related']):NULL ;   
-
-                    
+                    $var_prd_rw['skin_tone'] = !empty($variant_list_list['skin_tone'])?json_encode($variant_list_list['skin_tone']):NULL ;   
 
                     if(!empty( $this->request->session()->read('new_variant_po_data'))){
                         $new_variant_po_data = json_decode($this->request->session()->read('new_variant_po_data'),true);
@@ -4736,7 +4735,7 @@ class AppadminsController extends AppController {
                 }
 
                 $newRw['better_body_shape'] = $variant_details->better_body_shape;
-                $newRw['skin_tone'] = $variant_details->skin_tone;
+                $newRw['skin_tone'] = $variant_products_details->skin_tone;
                 $newRw['work_type'] = $variant_details->work_type;
                 $newRw['jeans_Fit'] = $variant_details->jeans_Fit;
                 $get_color_id = $this->InColors->find('all')->where(['name' => $variant_products_details->color])->first();
@@ -5413,6 +5412,12 @@ class AppadminsController extends AppController {
         $this->set(compact('get_product_details', 'id', 'brand_id'));
     }
 
+    public function removePoCustomerSession(){
+        $this->request->session()->write('new_variant_po_data','');
+        $this->request->session()->delete('new_variant_po_data');
+        $this->Flash->success(__("Customer po data deleted."));
+        return $this->redirect($this->referer());
+    }
   
 
     

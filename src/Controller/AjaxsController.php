@@ -127,7 +127,7 @@ class AjaxsController extends AppController
 
     public function beforeFilter(Event $event)
     {
-        $this->Auth->allow(['addBlankKid', 'setaddress', 'login', 'registration', 'checkChildren', 'ajaxWemenFit', 'ajaxWemenFitGetdata', 'styleInspiration', 'ajaxMenFit', 'colorupdate', 'colortrend', 'denimstyles', 'pricerange', 'designbrand', 'ajaxKidsstyle', 'pricerangekid', 'pricerangekidboy', 'ajaxKidsprofile', 'menStyleInspiration', 'ajaxMenPrice', 'styleSphereSelectionsV3', 'styleSphereSelectionsV4', 'styleSphereSelectionsV5', 'styleSphereSelectionsV6', 'styleSphereSelectionsV7', 'styleSphereSelectionsV8', 'styleSphereSelectionsV9', 'styleSphereSelectionsV11', 'ajaxboyKidsstyle', 'stripeCustomerKey', 'StylefitPayment', 'saveAddress', 'cardStatus', 'addNewCard', 'paymentProcess', 'stylefitPaymentReAuth', 'paymentSuccess', 'stylepayment', 'orderDetails', 'orderDetailsKids', 'fitProducts', 'ajaxEmailPreformeProfile', 'userDetails', 'womenStyleInsp', 'ajaxMenFitGetdata', 'ajaxKidFitGetdata', 'stylefitProducts', 'updateStylefitProduct', 'userAddressList', 'paymentCardList', 'notYetShipped', 'deleteaddress', 'fitsetting', 'kidBrandUpdate', 'ajaxforget', 'getProgressStatus', 'ajaxMenImg', 'ajaxKidImg', 'updateBasicInfo', 'ajaxReadmeCodeOrder', 'ajaxReadmeCodeCheck', 'StylefitFee', 'cardAddedSuccess', 'genderUpdate', 'reservationDetails', 'customerOrderCommentReview', 'customerOrderCommentReviewGet', 'selectAddresss', 'deleteAccount']);
+        $this->Auth->allow(['addBlankKid', 'setaddress', 'login', 'registration', 'checkChildren', 'ajaxWemenFit', 'ajaxWemenFitGetdata', 'styleInspiration', 'ajaxMenFit', 'colorupdate', 'colortrend', 'denimstyles', 'pricerange', 'designbrand', 'ajaxKidsstyle', 'pricerangekid', 'pricerangekidboy', 'ajaxKidsprofile', 'menStyleInspiration', 'ajaxMenPrice', 'styleSphereSelectionsV3', 'styleSphereSelectionsV4', 'styleSphereSelectionsV5', 'styleSphereSelectionsV6', 'styleSphereSelectionsV7', 'styleSphereSelectionsV8', 'styleSphereSelectionsV9', 'styleSphereSelectionsV11', 'ajaxboyKidsstyle', 'stripeCustomerKey', 'StylefitPayment', 'saveAddress', 'cardStatus', 'addNewCard', 'paymentProcess', 'stylefitPaymentReAuth', 'paymentSuccess', 'stylepayment', 'orderDetails', 'orderDetailsKids', 'fitProducts', 'ajaxEmailPreformeProfile', 'userDetails', 'womenStyleInsp', 'ajaxMenFitGetdata', 'ajaxKidFitGetdata', 'stylefitProducts', 'updateStylefitProduct', 'userAddressList', 'paymentCardList', 'notYetShipped', 'deleteaddress', 'fitsetting', 'kidBrandUpdate', 'ajaxforget', 'getProgressStatus', 'ajaxMenImg', 'ajaxKidImg', 'updateBasicInfo', 'ajaxReadmeCodeOrder', 'ajaxReadmeCodeCheck', 'StylefitFee', 'cardAddedSuccess', 'genderUpdate', 'reservationDetails', 'customerOrderCommentReview', 'customerOrderCommentReviewGet', 'selectAddresss', 'deleteAccount', 'checkAddressPresentOrNot']);
     }
 
     public function styleSphereSelectionsV3()
@@ -4655,6 +4655,21 @@ class AjaxsController extends AppController
             $data = $this->request->data;
             $this->Users->updateAll(['is_active' => 9], ['id' => $data['user_id']]);
             echo json_encode(['status'=>'success']);
+            exit;
+        }
+        echo json_encode(['status'=>'error']);
+        exit;
+    }
+    
+    public function checkAddressPresentOrNot(){
+        header('Access-Control-Allow-Origin: *');
+        header("Content-Type: application/json; charset=UTF-8");
+        header("Access-Control-Allow-Credentials: true");
+        header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+        if ($this->request->is('post')) {
+            $data = $this->request->data;
+            $address = $this->ShippingAddress->find('all')->where(['user_id' => $data['user_id']]);
+            echo json_encode(['status'=>'success','address_count'=>$address->count()]);
             exit;
         }
         echo json_encode(['status'=>'error']);
