@@ -500,7 +500,7 @@ class AppadminsController extends AppController {
         // print_r($seasons_arry);exit;
         // print_r($final_season_name);exit;
      
-        $this->set(compact('final_season_name', 'id', 'getData', 'Womenstyle', 'style_sphere_selectionsWemen'));
+        $this->set(compact('final_season_name', 'id', 'getData', 'Womenstyle', 'style_sphere_selectionsWemen','userDetails','getData'));
     }
 
 //     public function predictionMatching($id)
@@ -4398,7 +4398,24 @@ class AppadminsController extends AppController {
                             $var_prd_rw['po_quantity'] = $variant_list_list['quantity'];
                             $var_prd_rw['is_po'] = 1;
                             $var_prd_rw['po_status'] = 1;
-                            $var_prd_rw['po_date'] = date('Y-m-d');                        
+                            $var_prd_rw['po_date'] = date('Y-m-d');   
+                            
+                            if (!empty($variant_list_list['product_image']['tmp_name'])) {
+                                if ($variant_list_list['product_image']['size'] <= 20000) {
+                                    $new_name = time().rand(1111,9999);
+                                    $file_path = str_replace('merchandise', 'webroot/', ROOT);
+                                    $avatarName = $this->Custom->uploadAvatarImage($variant_list_list['product_image']['tmp_name'], $variant_list_list['product_image']['name'], $file_path . PRODUCT_IMAGES, 500, $new_name);
+                //                    var_dump([$postData['product_image']['tmp_name'], $avatarName]);
+                                    
+                                    $file_path2 = str_replace('merchandise', 'inventory/webroot/', ROOT);
+                //                    $avatarName = $this->Custom->uploadAvatarImage($postData['product_image']['tmp_name'], $postData['product_image']['name'], $file_path2 . PRODUCT_IMAGES, 500, $new_name);
+                                    copy($file_path . PRODUCT_IMAGES.$avatarName, $file_path2.PRODUCT_IMAGES.$avatarName);
+                                    
+                                    $var_prd_rw['feature_image'] = $avatarName;
+                                } else {
+                                    $this->Flash->error(__('Image size should be 8  to 20 kb'));
+                                }
+                            }
                             
         
                             $nwRw = $this->InProductVariantList->newEntity();
@@ -4438,26 +4455,11 @@ class AppadminsController extends AppController {
             $postData['occasional_dress'] = !empty($postData['occasional_dress']) ? json_encode($postData['occasional_dress']) : NULL;
 
             //InProductVariantList
-            if (!empty($postData['product_image']['tmp_name'])) {
-                if ($postData['product_image']['size'] <= 20000) {
-                    $new_name = time().rand(1111,9999);
-                    $file_path = str_replace('merchandise', 'webroot/', ROOT);
-                    $avatarName = $this->Custom->uploadAvatarImage($postData['product_image']['tmp_name'], $postData['product_image']['name'], $file_path . PRODUCT_IMAGES, 500, $new_name);
-//                    var_dump([$postData['product_image']['tmp_name'], $avatarName]);
-                    
-                    $file_path2 = str_replace('merchandise', 'inventory/webroot/', ROOT);
-//                    $avatarName = $this->Custom->uploadAvatarImage($postData['product_image']['tmp_name'], $postData['product_image']['name'], $file_path2 . PRODUCT_IMAGES, 500, $new_name);
-                    copy($file_path . PRODUCT_IMAGES.$avatarName, $file_path2.PRODUCT_IMAGES.$avatarName);
-                    
-                    $postData['feature_image'] = $avatarName;
-                } else {
-                    $this->Flash->error(__('Image size should be 8  to 20 kb'));
-                }
-            }
-//            echo "<pre>";
-//            print_r($postData);
-//            echo "</pre>";
-//            exit;
+            
+        //    echo "<pre>";
+        //    print_r($postData);
+        //    echo "</pre>";
+        //    exit;
 
             $newRow = $this->InProductVariants->newEntity();
             $newRow = $this->InProductVariants->patchEntity($newRow, $postData);
@@ -4465,6 +4467,7 @@ class AppadminsController extends AppController {
             foreach ($variant_data as $key => $variant_list) {
                 foreach ($variant_list as $keyx => $variant_list_list) {
                     $var_prd_rw = [];
+                    
                     $var_prd_rw['color'] = $key;
                     $var_prd_rw['size'] = $keyx;
                     $var_prd_rw['in_product_variants_id'] = $newRow->id;                    
@@ -4473,6 +4476,23 @@ class AppadminsController extends AppController {
 
                     $var_prd_rw['variant_size_related'] = !empty($variant_list_list['variant_size_related'])?json_encode($variant_list_list['variant_size_related']):NULL ;   
                     $var_prd_rw['skin_tone'] = !empty($variant_list_list['skin_tone'])?json_encode($variant_list_list['skin_tone']):NULL ;   
+
+                    if (!empty($variant_list_list['product_image']['tmp_name'])) {
+                        if ($variant_list_list['product_image']['size'] <= 20000) {
+                            $new_name = time().rand(1111,9999);
+                            $file_path = str_replace('merchandise', 'webroot/', ROOT);
+                            $avatarName = $this->Custom->uploadAvatarImage($variant_list_list['product_image']['tmp_name'], $variant_list_list['product_image']['name'], $file_path . PRODUCT_IMAGES, 500, $new_name);
+        //                    var_dump([$postData['product_image']['tmp_name'], $avatarName]);
+                            
+                            $file_path2 = str_replace('merchandise', 'inventory/webroot/', ROOT);
+        //                    $avatarName = $this->Custom->uploadAvatarImage($postData['product_image']['tmp_name'], $postData['product_image']['name'], $file_path2 . PRODUCT_IMAGES, 500, $new_name);
+                            copy($file_path . PRODUCT_IMAGES.$avatarName, $file_path2.PRODUCT_IMAGES.$avatarName);
+                            
+                            $var_prd_rw['feature_image'] = $avatarName;
+                        } else {
+                            $this->Flash->error(__('Image size should be 8  to 20 kb'));
+                        }
+                    }
 
                     if(!empty( $this->request->session()->read('new_variant_po_data'))){
                         $new_variant_po_data = json_decode($this->request->session()->read('new_variant_po_data'),true);
@@ -4483,8 +4503,7 @@ class AppadminsController extends AppController {
                         $var_prd_rw['po_date'] = date('Y-m-d');
                         $var_prd_rw['allocate_user_id'] = $new_variant_po_data['pay_user_id'];
                         $var_prd_rw['allocate_kid_id'] = $new_variant_po_data['pay_kid_id'];
-                        $this->request->session()->write('new_variant_po_data','');
-                        $this->request->session()->delete('new_variant_po_data');
+                        
                     }
                     if(!empty($is_po) && ($is_po == 1)){                        
                         $var_prd_rw['quantity'] = 0;
@@ -4493,6 +4512,11 @@ class AppadminsController extends AppController {
                         $var_prd_rw['po_status'] = 1;
                         $var_prd_rw['po_date'] = date('Y-m-d');                        
                     }
+                    // echo "<pre>";
+                    // var_dump(($variant_list_list['product_image']['size'] <= 20000) );
+                    // print_r($var_prd_rw);
+                    // echo "</pre>";
+                    // exit;
 
                     $nwRw = $this->InProductVariantList->newEntity();
                     $nwRw = $this->InProductVariantList->patchEntity($nwRw, $var_prd_rw);
@@ -4502,6 +4526,10 @@ class AppadminsController extends AppController {
                 }
             }
 
+            if(!empty( $this->request->session()->read('new_variant_po_data'))){
+                $this->request->session()->write('new_variant_po_data','');
+                $this->request->session()->delete('new_variant_po_data');
+            }
             $this->Flash->success(__("Product Variant added"));
 //            echo "<pre>";
 //            print_r($postData);
@@ -4743,7 +4771,7 @@ class AppadminsController extends AppController {
                 $newRw['men_bottom_prefer'] = $variant_details->men_bottom_prefer;
                 $newRw['style_sphere_selections_v5'] = $variant_details->style_sphere_selections_v5;
                 $newRw['note'] = $variant_details->note;
-                $newRw['product_image'] = $variant_details->feature_image;
+                $newRw['product_image'] = $variant_products_details->feature_image;
                 $newRw['available_status'] = $variant_details->available_status;
                 $newRw['rack'] = $variant_details->rack;
                 $newRw['profession'] = $variant_details->profession;

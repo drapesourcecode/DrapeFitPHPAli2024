@@ -240,6 +240,23 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                 <div class="col-md-1">
                                                     <input type="radio" name="primary_size" value="men_bottom" checked required/>
                                                 </div>
+
+                                                <div class="col-md-11 recom_div">                                                      
+                                                    
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="exampleInputPassword1">Inseam size?  </label>
+                                                            <select name="[NAME][variant_size_related][inseam_size]" id="inseam_size" aria-required="true" class="form-control" aria-invalid="false">
+                                                                <option <?php if (@$editproduct->inseam_size == '') { ?> selected="" <?php } ?> value="">--</option>
+                                                                <option <?php if (@$editproduct->inseam_size == '28') { ?> selected="" <?php } ?> value="28">28</option>
+                                                                <option <?php if (@$editproduct->inseam_size == '30') { ?> selected="" <?php } ?> value="30">30</option>
+                                                                <option <?php if (@$editproduct->inseam_size == '32') { ?> selected="" <?php } ?> value="32">32</option>
+                                                                <option <?php if (@$editproduct->inseam_size == '34') { ?> selected="" <?php } ?> value="34">34</option>
+                                                                <option <?php if (@$editproduct->inseam_size == '36') { ?> selected="" <?php } ?> value="36">36</option>
+                                                            </select>                                            
+                                                        </div>
+                                                    </div>                
+                                                </div> 
                                                 
                                             </div>
                                         </div>
@@ -535,9 +552,34 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                     <label for="radio${inx_numx}f"><span>OTHER</span></label>
                                                 </li>
                                             </ul>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="exampleInputPassword1">Product Image <sup style="color:red;">*</sup>  <span style="color:red;font-weight: 400;">(20 KB PNG, JPG ,JPEG)</span></label>
+
+                                                    <div class="form-group">
+                                                        <input name='variant_data[${color_value}][${value}][product_image]' type='file'  id ='image${inx_numx}' required onchange="readURL(this);">
+                                                    </div>    
+                                                <div id="imagePreview${inx_numx}"></div>                          
+                                                
+                                            </div>
                                         </div>  
+
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="exampleInputPassword1">Material details</label>
+                                                    <textarea name="variant_data[${color_value}][${value}][material_details]" class = "form-control ckeditor" ></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="exampleInputPassword1">Product details</label>
+                                                        <textarea name="variant_data[${color_value}][${value}][product_details]" class = "form-control ckeditor" ></textarea>
+                                                </div>
+                                            </div>
                                                                 </div> `;
                                                     $('#showSizeDetails'+id).html(new_size_details_html);
+                                                    CKEDITOR.replaceClass = 'ckeditor';
                                                 }
                                                 function variantDelete(id){
                                                     $('#'+id).remove();
@@ -1320,27 +1362,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                         <?php } ?>
                                 </div>
                                 <div class="row new_var_xx">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Product Image  <sup style="color:red;">*</sup><span style="color:red;font-weight: 400;">(20 KB PNG, JPG ,JPEG)</span></label>
-
-                                                <?php if (@$editproduct->product_image) { ?>
-                                                <div class="form-group">
-                                                    <img src="<?php echo HTTP_ROOT . PRODUCT_IMAGES; ?><?php echo @$editproduct->product_image; ?>" style="width: 50px;"/>
-                                                    <p><a onclick="return confirm('Are you sure want to delete ?')" href="<?php echo HTTP_ROOT . 'appadmins/productimgdelete/Men/' . @$id ?>"><img src="<?php echo HTTP_ROOT . 'img/trash.png' ?>"/></a></p>
-                                                </div>  
-
-                                                <?php } else { ?>
-                                                <div class="form-group">
-                                                    <?= $this->Form->input('product_image', ['type' => 'file', 'id' => 'image', 'label' => false, 'kl_virtual_keyboard_secure_input' => "on", 'required']); ?>                                        
-                                                    <div class="help-block with-errors"></div>
-                                                </div>
-
-                                                <?php } ?>  
-                                            <div id="imagePreview"></div>                          
-                                            <div class="help-block with-errors"></div>
-                                        </div>
-                                    </div>
+                                    
 
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -1373,18 +1395,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                 <?= $this->Form->input('note', ['value' => @$editproduct->note, 'type' => 'textarea', 'class' => "form-control", 'label' => false, 'placeholder' => 'Please enter note']); ?>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Material details</label>
-                                            <?= $this->Form->input('material_details', ['value' => @$editproduct->material_details, 'type' => 'textarea', 'class' => "form-control ckeditor", 'label' => false, 'placeholder' => 'Please material details']); ?>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Product details</label>
-                                                <?= $this->Form->input('product_details', ['value' => @$editproduct->product_details, 'type' => 'textarea', 'class' => "form-control ckeditor", 'label' => false, 'placeholder' => 'Please  product details']); ?>
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                                 <?php
                                 if ($editproduct->is_deleted == 1) {
