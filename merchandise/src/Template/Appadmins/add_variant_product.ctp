@@ -237,6 +237,9 @@ $color_arr = $this->Custom->inColor();
 
 <script type="text/javascript">
     function readURL(input) {
+        let idx = input.id;
+        let digits = idx.replace(/\D/g, ''); // Extract only digits
+        console.log(digits);
         if (input.files && input.files[0]) {
             var sizeKB = input.files[0].size / 1000;
             //alert(sizeKB);
@@ -248,7 +251,7 @@ $color_arr = $this->Custom->inColor();
                         alt: 'MyAlt',
                         width: '200'
                     });
-                    $('#imagePreview').html(img);
+                    $('#imagePreview'+digits).html(img);
 
                 }
                 reader.readAsDataURL(input.files[0]);
@@ -259,16 +262,17 @@ $color_arr = $this->Custom->inColor();
                     text: 'Image not supported',
                     background: '#fff url(https://sweetalert2.github.io/images/trees.png)'
                 })
-                $("#image").val('');
-                $('#imagePreview').html('');
+                $("#image"+digits).val('');
+                $('#imagePreview'+digits).html('');
             }
         }
     }
 
-    $("#image").change(function () {
-        readURL(this);
+    // $("input[id^=image]").change(function () {
+    //     alert($(this).attr('id'));
+    //     readURL(this);
 
-    });
+    // });
     
     function setSubCatg(id){
         let user_type = $('#profile_type').val();
@@ -581,7 +585,9 @@ sub, sup {
     line-height: 0;
     vertical-align: baseline;
 }
-
+option[disabled] {
+  background: #6563637d;
+}
 </style> 
 
 

@@ -515,5 +515,7 @@ sub, sup {
     line-height: 0;
     vertical-align: baseline;
 }
-
+option[disabled] {
+  background: #6563637d;
+}
 </style>                           

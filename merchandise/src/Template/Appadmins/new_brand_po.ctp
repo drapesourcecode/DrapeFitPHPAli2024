@@ -217,6 +217,9 @@ $color_arr = $this->Custom->inColor();
 <?php } ?>
 <script type="text/javascript">
     function readURL(input) {
+        let idx = input.id;
+        let digits = idx.replace(/\D/g, ''); // Extract only digits
+        console.log(digits);
         if (input.files && input.files[0]) {
             var sizeKB = input.files[0].size / 1000;
             //alert(sizeKB);
@@ -228,7 +231,7 @@ $color_arr = $this->Custom->inColor();
                         alt: 'MyAlt',
                         width: '200'
                     });
-                    $('#imagePreview').html(img);
+                    $('#imagePreview'+digits).html(img);
 
                 }
                 reader.readAsDataURL(input.files[0]);
@@ -239,16 +242,11 @@ $color_arr = $this->Custom->inColor();
                     text: 'Image not supported',
                     background: '#fff url(https://sweetalert2.github.io/images/trees.png)'
                 })
-                $("#image").val('');
-                $('#imagePreview').html('');
+                $("#image"+digits).val('');
+                $('#imagePreview'+digits).html('');
             }
         }
     }
-
-    $("#image").change(function () {
-        readURL(this);
-
-    });
     
     function setSubCatg(id){
         let user_type = $('#profile_type').val();
@@ -609,7 +607,7 @@ $color_arr = $this->Custom->inColor();
                                                 <td><?= $ky + 1 ?></td>
                                                 <td><?= h($dat_li->brand->brand_name) ?></td>
                                                 <td><?php echo $dat_li->prd_detl->product_name_one; ?></td>
-                                                <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->prd_detl->feature_image; ?>" style="width: 80px;"/></td>
+                                                <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->feature_image; ?>" style="width: 80px;"/></td>
                                                 <td><?php echo $dat_li->color ." : ". $dat_li->size; ?></td>
 
                                                 <td style="text-align: center;"><?php echo $dat_li->po_quantity; ?></td>
@@ -693,7 +691,7 @@ $color_arr = $this->Custom->inColor();
                                                 <td><?= $ky + 1 ?></td>
                                                 <td><?= h($dat_li->brand->brand_name) ?></td>
                                                 <td><?php echo $dat_li->prd_detl->product_name_one; ?></td>
-                                                <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->prd_detl->feature_image; ?>" style="width: 80px;"/></td>
+                                                <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->feature_image; ?>" style="width: 80px;"/></td>
                                                 <td><?php echo $dat_li->color ." : ". $dat_li->size; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_quantity; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_date; ?></td>
@@ -791,7 +789,7 @@ $color_arr = $this->Custom->inColor();
                                                 <td><?= $ky + 1 ?></td>
                                                 <td><?= h($dat_li->brand->brand_name) ?></td>
                                                 <td><?php echo $dat_li->prd_detl->product_name_one; ?></td>
-                                                <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->prd_detl->feature_image; ?>" style="width: 80px;"/></td>
+                                                <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->feature_image; ?>" style="width: 80px;"/></td>
                                                 <td><?php echo $dat_li->color ." : ". $dat_li->size; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_quantity; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_date; ?></td>
@@ -918,3 +916,8 @@ $color_arr = $this->Custom->inColor();
 
     </div>
 </div>
+<style>
+    option[disabled] {
+        background: #6563637d;
+    }
+</style>
