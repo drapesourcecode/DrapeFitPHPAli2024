@@ -5244,7 +5244,7 @@ class AppadminsController extends AppController {
             // if($post_data['look_type'] == "look_1_summer_sleeveless_top"){
                 // return $this->redirect(HTTP_ROOT.'appadmins/add_variant_product/tab1/'.$gender);                    
             // }
-            echo json_encode(['status'=>'success', 'url'=>HTTP_ROOT.'appadmins/add_variant_product/tab1/'.$gender]);
+            echo json_encode(['status'=>'success', 'url'=>HTTP_ROOT.'appadmins/newBrandPo/tab1/'.$gender]);
             exit;
         }
         echo json_encode(['status'=>'error']);
