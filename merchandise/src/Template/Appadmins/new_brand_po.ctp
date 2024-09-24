@@ -70,7 +70,20 @@ $color_arr = $this->Custom->inColor();
                             <?= $this->Form->create(@$user, array('id' => 'profile_data', 'type' => 'file','url'=>['action'=>'addVariantProduct'])) ?>
                         <?php } ?>
                         <?= $this->Form->input('id', ['value' => @$id, 'type' => 'hidden', 'label' => false]); ?>
-                        <?= $this->Form->input('for_po', ['value' => 1, 'type' => 'hidden', 'label' => false]); ?>
+                        <?php if(empty($this->request->session()->read('new_variant_po_data'))){ ?>
+                            <?= $this->Form->input('for_po', ['value' => 1, 'type' => 'hidden', 'label' => false]); ?>                            
+                        <?php }else{ ?>
+                                <style>.var_qty{ display:none; }</style>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        Product will added for customer
+                                    </div>
+                                    <div class="col-sm-12">
+                                        If you want to add stock <a class="btn btn-info btn-sm" href="<?=HTTP_ROOT;?>appadmins/removePoCustomerSession">Click Here</a>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="one_variant" value="1" >
+                        <?php } ?>
                         <?= $this->Form->input('variant_id', ['value' => !empty($_GET['variant_id'])?$_GET['variant_id']:'', 'type' => 'hidden', 'label' => false]); ?>
                         <?php if(!empty($_GET['variant_id'])){ ?>
                             <script>

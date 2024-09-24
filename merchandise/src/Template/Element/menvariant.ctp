@@ -318,6 +318,10 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                             
                                             <script>
                                                 function addVariants(){
+                                                    if(($('#one_variant').val()==1) && ($('#variant_main_div [id^=variant]').length ==1)){
+                                                        alert('One variant allowed');
+                                                        return false;
+                                                    }
                                                     if($('#prd_sz_typ').val() == null ){
                                                         $('#prd_sz_typ').focus();
                                                         return false;
@@ -352,7 +356,11 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                         $("#color"+inx_numx+" option[value='"+ value.value + "']").attr('disabled', true);
                                                     })
                                                 }
-                                                function showSizeBox(id){                                                    
+                                                function showSizeBox(id){   
+                                                    // if(($('#one_variant').val()==1) && ($('#variant_main_div [id^=variant]').length ==1)){
+                                                    //     alert('One size allowed');
+                                                    //     return false;
+                                                    // }                                                 
                                                     $('#color'+id).css({'cursor': 'not-allowed', 'pointer-events': 'none'});
                                                     let value = $('#color'+id).val();
                                                     
@@ -386,6 +394,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                     
                                                 }
                                                 function showDetailsBox(id,parent_id){
+                                                    
                                                     let value =  $('#var_sizes'+id).val();
                                                     let color_value =  $('#color'+parent_id).val();
                                                     let inx_numx = Math.floor(Math.random() * 899999 + 100000);
@@ -579,7 +588,12 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                             </div>
                                                                 </div> `;
                                                     $('#showSizeDetails'+id).html(new_size_details_html);
-                                                    CKEDITOR.replaceClass = 'ckeditor';
+                                                    if(($('#one_variant').val()==1)){
+                                                        setTimeout(function(){
+                                                            $('button[class^=add_more_btn]').hide();
+                                                        }, 800);
+                                                        
+                                                    }
                                                 }
                                                 function variantDelete(id){
                                                     $('#'+id).remove();

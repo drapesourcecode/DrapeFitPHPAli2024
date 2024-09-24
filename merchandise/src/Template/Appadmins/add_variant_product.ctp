@@ -29,12 +29,12 @@
                                 </script>
                                 <style>.var_qty{ display:none; }</style>
                                 <div class="row">
-                                <div class="col-sm-12">
-                                    Product will added for customer
-                                </div>
-                                <div class="col-sm-12">
-                                    If you want to add stock <a class="btn btn-info btn-sm" href="<?=HTTP_ROOT;?>appadmins/removePoCustomerSession">Click Here</a>
-                                </div>
+                                    <div class="col-sm-12">
+                                        Product will added for customer
+                                    </div>
+                                    <div class="col-sm-12">
+                                        If you want to add stock <a class="btn btn-info btn-sm" href="<?=HTTP_ROOT;?>appadmins/removePoCustomerSession">Click Here</a>
+                                    </div>
                                 </div>
                                 <?php
                             }

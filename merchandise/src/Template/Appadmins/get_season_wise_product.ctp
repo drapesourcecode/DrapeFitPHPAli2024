@@ -94,7 +94,7 @@
 
                 <?php 
             } 
-            if(($getMatchingProducts->count() == 0) && !empty($user_size_col) && !empty($user_size)){
+            if(empty($getMatchingProducts)  && !empty($user_size_col) && !empty($user_size)){
                 ?>
                 <tr>
                     <td></td>
