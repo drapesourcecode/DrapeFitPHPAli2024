@@ -94,7 +94,8 @@
 
                 <?php 
             } 
-            if(empty($getMatchingProducts)  && !empty($user_size_col) && !empty($user_size)){
+            var_dump($getMatchingProducts->count());
+            if(empty($getMatchingProducts->count())  && !empty($user_size_col) && !empty($user_size)){
                 ?>
                 <tr>
                     <td></td>

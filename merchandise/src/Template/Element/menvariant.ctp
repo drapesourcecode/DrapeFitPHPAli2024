@@ -1,7 +1,9 @@
 <?php 
 use Cake\Core\Configure;
-echo $this->Html->script(array('ckeditor/ckeditor'));
 ?>
+<!-- include summernote css/js -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 <div class="tab-content" style="width: 100%;float: left;">
                                     <div class="row new_var_xx">
     <?= $this->Form->input('profile_type', ['value' => '1', 'type' => 'hidden', 'class' => "form-control", 'required' => "required", 'label' => false]); ?>
@@ -71,7 +73,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     </div>  
                                         <div class="row">
 
-                                        <?php if(!empty($get_prv_inv_data)){ ?> 
+                                        <?php if(!empty($get_prv_inv_data) && (empty($_GET['variant_id']) && empty( $this->request->session()->read('new_variant_po_data')))){ ?> 
                                             <div class="col-sm-12">
                                                 <table id="exampleXX" class="table table-bordered table-striped">
                                                     <thead>
@@ -105,7 +107,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                             <td style="text-align: center;">
                                                             <?php if($pdetails->is_po == 0){ ?>
                                                             <button type="button" id="btnshowPo<?=$pdetails->id;?>" onclick="$('#showPo<?= $pdetails->id;?>').toggle();$('#btnshowPo<?= $pdetails->id;?>').toggle()" class="btn btn-sm btn-primary">Add to PO</button>
-                                                            <a href="<?=HTTP_ROOT;?>appadmins/newBrandPo/tab1/<?=$option;?>?ctg=<?=$_GET['ctg'];?>&sub_ctg=<?=$_GET['sub_ctg'];?>&variant_id=<?=$get_pr_vari_list->id;?>" class="btn btn-sm btn-primary">Add New Variant</a>
+                                                            <a target="_blank" href="<?=HTTP_ROOT;?>appadmins/newBrandPo/tab1/<?=$option;?>?ctg=<?=$_GET['ctg'];?>&sub_ctg=<?=$_GET['sub_ctg'];?>&variant_id=<?=$get_pr_vari_list->id;?>" class="btn btn-sm btn-primary">Add New Variant</a>
                                                             <div id="showPo<?=$pdetails->id;?>" style="display:none;">
                                                                 <?= $this->Form->create('',['type'=>'post','id'=>'updateVarPoFrom'.$pdetails->id ,'url'=>['action'=>'addVariantPoRequest']]);?>
                                                                 <input type="text" step="1" name="qty" min="1" placeholder="Quantity" style="width:100px;" value="1"  required>
@@ -577,13 +579,13 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="exampleInputPassword1">Material details</label>
-                                                    <textarea name="variant_data[${color_value}][${value}][material_details]" class = "form-control ckeditor" ></textarea>
+                                                    <textarea name="variant_data[${color_value}][${value}][material_details]" class = "form-control ckeditor${inx_numx}" ></textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="exampleInputPassword1">Product details</label>
-                                                        <textarea name="variant_data[${color_value}][${value}][product_details]" class = "form-control ckeditor" ></textarea>
+                                                        <textarea name="variant_data[${color_value}][${value}][product_details]" class = "form-control ckeditor${inx_numx}" ></textarea>
                                                 </div>
                                             </div>
                                                                 </div> `;
@@ -594,6 +596,7 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                         }, 800);
                                                         
                                                     }
+                                                    $('.ckeditor'+inx_numx).summernote();
                                                 }
                                                 function variantDelete(id){
                                                     $('#'+id).remove();
@@ -672,9 +675,9 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                                         // Insert a special "Select all matches" item at the start of the 
                                                         // list of matched items.
                                                         return [        
-                                                            ...matches,
                                                             {id: 'selectAll', text: 'Select all', matchIds: matches.map(match => match.id)},
-                                                            {id: 'deSelectAll', text: 'Deselect all', matchIds: matches.map(match => match.id)},
+                                                            {id: 'deSelectAll', text: 'Deselect all', matchIds: matches.map(match => match.id)},        
+                                                            ...matches,
                                                         ];
                                                         }
                                                     };
@@ -1380,8 +1383,8 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
 
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>Display status</label>
-                                            <select name="display_status" class="form-control">
+                                            <label>Display status <sup style="color:red;">*</sup></label>
+                                            <select name="display_status" class="form-control" required>
                                                 <option <?php if (@$editproduct->display_status == '') { ?> selected="" <?php } ?> value="">--</option>
                                                 <option <?php if (@$editproduct->display_status == '1') { ?> selected="" <?php } ?> value="1">Display</option>                                
                                                 <option <?php if (@$editproduct->display_status == '2') { ?> selected="" <?php } ?> value="2">Non Display</option>
@@ -1391,8 +1394,8 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
                                     
                                     <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="exampleInputPassword1">Product status</label>
-                                                <select name="product_status" class="form-control">
+                                                <label for="exampleInputPassword1">Product status <sup style="color:red;">*</sup></label>
+                                                <select name="product_status" class="form-control" required>
                                                     <option <?php if (@$editproduct->product_status == '') { ?> selected="" <?php } ?> value="">--</option>
                                                     <option <?php if (@$editproduct->product_status == 'S') { ?> selected="" <?php } ?> value="S"><?=Configure::read('S');?></option>                                
                                                     <option <?php if (@$editproduct->product_status == 'O') { ?> selected="" <?php } ?> value="O"><?=Configure::read('O');?></option>                                
@@ -1451,3 +1454,16 @@ echo $this->Html->script(array('ckeditor/ckeditor'));
 
     });
     </script>
+    <style>
+        .note-editor.note-airframe .note-editing-area, .note-editor.note-frame .note-editing-area {
+            overflow: visible !important;
+            float: left;
+            width: 100%;
+        }
+        .modal-backdrop.in {
+            display: none !important;
+        }
+        button[data-original-title=Help]{
+            display: none;
+        }        
+    </style>
