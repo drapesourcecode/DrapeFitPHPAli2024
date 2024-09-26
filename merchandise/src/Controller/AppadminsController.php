@@ -1615,7 +1615,7 @@ class AppadminsController extends AppController {
         $this->loadModel('InProductVariantList');
         $this->loadModel('InProductVariants');
 
-        $all_sizes = $this->InSizes->find('all')->where(['is_active' => 1]);
+        $all_sizes = $this->InSizes->find('all')->where(['is_active' => 1, 'product_ctg LIKE'=>'%"'.$_GET['ctg'].'"%' ]);
         $all_colors = $this->InColors->find('all')->where(['is_active' => 1]);
 
         $this->InProductVariantList->belongsTo('brand', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
@@ -3656,7 +3656,9 @@ class AppadminsController extends AppController {
     public function inSize($id = null, $option = null) {
         
         $this->loadModel('InSizes');
+        $this->loadModel('InProductType');
         $all_data = $this->InSizes->find('all');
+        $all_prd_ctg = $this->InProductType->find('all');
 
         $editData = [];
 
@@ -3682,6 +3684,10 @@ class AppadminsController extends AppController {
 
                 $data['id'] = $id;
             }
+            
+
+            $data['product_ctg'] = json_encode($data['product_ctg']);
+            
 
 
 
@@ -3706,7 +3712,7 @@ class AppadminsController extends AppController {
 
 
 
-        $this->set(compact('editData', 'all_data'));
+        $this->set(compact('editData', 'all_data','all_prd_ctg'));
     }
 
     public function missingFields() {
@@ -4255,7 +4261,7 @@ class AppadminsController extends AppController {
         $this->loadModel('InProductVariants');
         $this->loadModel('InProductVariantList');
 
-        $all_sizes = $this->InSizes->find('all')->where(['is_active' => 1]);
+        $all_sizes = $this->InSizes->find('all')->where(['is_active' => 1, 'product_ctg LIKE'=>'%"'.$_GET['ctg'].'"%' ]);
         $all_colors = $this->InColors->find('all')->where(['is_active' => 1]);
 
         $this->PurchaseOrderProducts->belongsTo('brand', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);

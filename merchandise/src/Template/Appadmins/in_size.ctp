@@ -1,3 +1,6 @@
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+                                    
 <div class="content-wrapper">
     <section class="content-header">
         <h1>
@@ -24,12 +27,54 @@
 
                                 <label for="exampleInputEmail">Size<span style="margin-left: 10px;font-size: 11px;font-weight: normal;" id="email_validation_msg"></span></label>
 
-                                <?= $this->Form->input('size', ['placeholder' => "Enter size", 'class' => "form-control", 'label' => false, 'kl_virtual_keyboard_secure_input' => "on", 'value' => !empty($editData) ? $editData->name : '', 'required' => "required", 'data-error' => 'Enter size']); ?>
+                                <?= $this->Form->input('size', ['placeholder' => "Enter size", 'class' => "form-control", 'label' => false, 'kl_virtual_keyboard_secure_input' => "on", 'value' => !empty($editData) ? $editData->size : '', 'required' => "required", 'data-error' => 'Enter size']); ?>
 
                                 <div class="help-block with-errors"></div>
                                 <div id="eloader" style="position: absolute; margin-top: -60px; margin-left: 158px;"></div>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="exampleInputPassword1">Product category</label>
+                                            
+                                            <select name="product_ctg[]" id="product_ctg" class="form-control select3_select" multiple>
+                                                <?php 
+                                                $selected_size = (!empty($editData) && !empty($editData->product_ctg)) ? json_decode($editData->product_ctg, true) : [];
+                                                foreach($all_prd_ctg as $prd_ctg_li){ ?>
+                                                    <option value="<?=$prd_ctg_li->id;?>" <?= in_array($prd_ctg_li->id, $selected_size)?'selected':'' ;?>><?=$prd_ctg_li->product_type;?>-<?=$prd_ctg_li->name;?></option>
+                                                <?php } ?>
+                                            </select>
+                                            
+                                            <script>                                                
+                                                const addSelectAll = matches => {
+                                                        if (matches.length > 0) {
+                                                        // Insert a special "Select all matches" item at the start of the 
+                                                        // list of matched items.
+                                                        return [        
+                                                            {id: 'selectAll', text: 'Select all', matchIds: matches.map(match => match.id)},
+                                                            {id: 'deSelectAll', text: 'Deselect all', matchIds: matches.map(match => match.id)},        
+                                                            ...matches,
+                                                        ];
+                                                        }
+                                                    };
+                                                    const handleSelection = event => {
+                                                        if (event.params.data.id === 'selectAll') {
+                                                            $('#product_ctg').val(event.params.data.matchIds);
+                                                            $('#product_ctg').trigger('change');
+                                                        };
+                                                        if (event.params.data.id === 'deSelectAll') {
+                                                            $('#product_ctg').val('');
+                                                            $('#product_ctg').trigger('change');
+                                                        };
+                                                    };
+                                                    $('#product_ctg').select2({
+                                                        multiple: true,
+                                                        sorter: addSelectAll
+                                                    });
+                                                    $("#product_ctg").on('select2:select', handleSelection);
+                                            </script>
+                                        </div>
+                                    </div>
 
                         <br clear="all" />
 
