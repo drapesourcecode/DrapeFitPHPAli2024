@@ -1258,6 +1258,7 @@ use Cake\Core\Configure;
                                                 <option <?php if (@$editproduct->wo_bottom_style == '5') { ?> selected="" <?php } ?> value="5">Checked Pant</option>
                                                 <option <?php if (@$editproduct->wo_bottom_style == '6') { ?> selected="" <?php } ?> value="6">Palazzo</option>
                                                 <option <?php if (@$editproduct->wo_bottom_style == '7') { ?> selected="" <?php } ?> value="7">Denim Shorts</option>
+                                                <option <?php if (@$editproduct->wo_bottom_style == '8') { ?> selected="" <?php } ?> value="8">Jeans</option>
 
                                             </select>                                         
                                         </div>

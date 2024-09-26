@@ -320,6 +320,17 @@ use Cake\Core\Configure;
                                             
                                             <script>
                                                 function addVariants(){
+                                                    let proceed = 1;
+                                                    $('select[id^=color]').each(function(index, value){
+                                                        valuex = value.value;
+                                                        if(typeof valuex == 'string' && !valuex.trim() || typeof valuex == 'undefined' || valuex === null){                                                            
+                                                            proceed = 0;
+                                                        }
+                                                    });
+                                                    if(proceed == 0){
+                                                        alert('Please select color for all variants');
+                                                        return false;
+                                                    }
                                                     if(($('#one_variant').val()==1) && ($('#variant_main_div [id^=variant]').length ==1)){
                                                         alert('One variant allowed');
                                                         return false;
