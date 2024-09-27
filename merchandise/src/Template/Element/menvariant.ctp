@@ -106,7 +106,8 @@ use Cake\Core\Configure;
                                                             </td>
                                                             <td style="text-align: center;">
                                                             <?php if($pdetails->is_po == 0){ ?>
-                                                            <button type="button" id="btnshowPo<?=$pdetails->id;?>" onclick="$('#showPo<?= $pdetails->id;?>').toggle();$('#btnshowPo<?= $pdetails->id;?>').toggle()" class="btn btn-sm btn-primary">Add to PO</button>
+                                                            <button type="button" id="btnshowPo<?=$pdetails->id;?>" onclick="$('#showPo<?= $pdetails->id;?>').toggle();$('#btnshowPo<?= $pdetails->id;?>').toggle()" class="btn btn-sm btn-primary">Add to PO</button>                                                            
+                                                            <?php }else{ echo "Already in po"; } ?>
                                                             <a target="_blank" href="<?=HTTP_ROOT;?>appadmins/newBrandPo/tab1/<?=$option;?>?ctg=<?=$_GET['ctg'];?>&sub_ctg=<?=$_GET['sub_ctg'];?>&variant_id=<?=$get_pr_vari_list->id;?>" class="btn btn-sm btn-primary">Add New Variant</a>
                                                             <div id="showPo<?=$pdetails->id;?>" style="display:none;">
                                                                 <?= $this->Form->create('',['type'=>'post','id'=>'updateVarPoFrom'.$pdetails->id ,'url'=>['action'=>'addVariantPoRequest']]);?>
@@ -117,7 +118,6 @@ use Cake\Core\Configure;
                                                                 <button type="button" class="btn btn-sm btn-primary" onClick="updateVarPox(<?=$pdetails->id;?>)">Submit</button>
                                                                 <?= $this->Form->end(); ?>
                                                             </div>
-                                                            <?php }else{ echo "Already in po"; } ?>
                                                             </td>
                                                         </tr>                                            
                                                         <?php } 
