@@ -114,7 +114,7 @@ use Cake\Core\Configure;
                                                 <div id="showPo<?=$pdetails->id;?>" style="display:none;">
                                                     <?= $this->Form->create('',['type'=>'post','id'=>'updateVarPoFrom'.$pdetails->id ,'url'=>['action'=>'addVariantPoRequest']]);?>
                                                     <input type="text" step="1" name="qty" min="1" placeholder="Quantity" style="width:100px;" value="1"  required>
-                                                    <input type="hidden"  name="id" value="<?=$pdetails->id;?>">
+                                                    <input type="hidden"  name="variant_list_id" value="<?=$pdetails->id;?>">
                                                     <input type="hidden"  name="user_id" value="<?=$getPaymentGatewayDetails->user_id;?>">
                                                     <input type="hidden"  name="kid_id" value="<?=$getPaymentGatewayDetails->kid_id;?>">
                                                     <button type="button" class="btn btn-sm btn-primary" onClick="updateVarPox(<?=$pdetails->id;?>)">Submit</button>

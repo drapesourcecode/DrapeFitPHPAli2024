@@ -1600,8 +1600,27 @@ class AppadminsController extends AppController {
         // print_r($po_number_list);
         foreach ($prod_list as $po_numb) {
             $this->InProductVariantList->updateAll(['quantity' => ($po_numb->quantity+$po_numb->po_quantity), 'po_status'=>4], ['id' => $po_numb->id]);
-            $this->generateProduct($po_numb->id,'po');            
+            // $product_created = $this->generateProduct($po_numb->id,'po');  
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+            CURLOPT_URL => HTTP_ROOT.'appadmins/generateProduct/'.$po_numb->id.'/po',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            ));
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);  
+            // var_dump($response );
+
         }
+        exit;
         $this->Flash->success(__('Po received.'));
         return $this->redirect(HTTP_ROOT . 'appadmins/new-brand-po/tab4');
     }
@@ -1636,14 +1655,14 @@ class AppadminsController extends AppController {
         }
 
         if (!empty($tab) && ($tab == 'tab2')) {
-            $tab1_brand_list = $this->InProductVariantList->find('all')->where(['InProductVariantList.po_status !=' => 4])->group(['InProductVariantList.brand_id'])->contain(['brand']);
+            $tab1_brand_list = $this->InProductVariantList->find('all')->where(['InProductVariantList.po_status IN' => [2, 3]])->group(['InProductVariantList.brand_id'])->contain(['brand']);
 
             if (!empty($_GET) && !empty($_GET['brand_id'])) {
                 $tab1_data_list = $tab1_data_list->where(['InProductVariantList.po_status IN' => [2, 3], 'InProductVariantList.brand_id' => $_GET['brand_id']]);
             }
         }
         if (!empty($tab) && ($tab == 'tab3')) {
-            $tab1_brand_list = $this->InProductVariantList->find('all')->group(['InProductVariantList.brand_id'])->contain(['brand']);
+            $tab1_brand_list = $this->InProductVariantList->find('all')->where(['InProductVariantList.po_status IN' => [2, 3]])->group(['InProductVariantList.brand_id'])->contain(['brand']);
 
             if (!empty($_GET) && !empty($_GET['brand_id'])) {
                 $tab1_data_list = $tab1_data_list->where(['InProductVariantList.po_status IN' => [2, 3], 'InProductVariantList.brand_id' => $_GET['brand_id']]);
@@ -4710,6 +4729,7 @@ class AppadminsController extends AppController {
     }
 
     public function generateProduct($product_variant_list_id,$req_frm=null) {
+        $this->viewBuilder()->layout('ajax');
         $this->loadModel('InProductVariants');
         $this->loadModel('InProductVariantList');
         $this->loadModel('InProducts');
@@ -4718,7 +4738,7 @@ class AppadminsController extends AppController {
 
         $variant_products_details = $this->InProductVariantList->find('all')->where(['id' => $product_variant_list_id])->first();
         $variant_details = $this->InProductVariants->find('all')->where(['id' => $variant_products_details->in_product_variants_id])->first();
-        echo "<pre>";
+        // echo "<pre>";
         $prd_qnt = (!empty($req_frm) && ($req_frm=="po"))?$variant_products_details->po_quantity:$variant_products_details->quantity;
         if ($prd_qnt > 0) {
             for ($i = 1; $i <= $prd_qnt; $i++) {
@@ -4789,6 +4809,8 @@ class AppadminsController extends AppController {
                 $newRw['clearance_price'] = $variant_products_details->clearance_price;
                 $newRw['quantity'] =  1;
                 $newRw['is_active'] = 1;
+                $newRw['po_status'] = 4;
+                $newRw['is_merchandise'] = 1;
                 $newRw['created'] = date('Y-m-d H:i:s');
 
                 if (!empty($variant_details->profile_type) && ($variant_details->profile_type == '1')) {
@@ -4842,7 +4864,7 @@ class AppadminsController extends AppController {
                 $this->InProductVariantList->updateAll(['is_po'=>0],['id' => $product_variant_list_id]);
             }
         }
-//exit;
+        //exit;
         // print_r($variant_products_details);
         // echo "Variant details";
         // print_r($variant_details);
@@ -4850,10 +4872,11 @@ class AppadminsController extends AppController {
         // echo $product_variant_list_id;
         // echo "Check previously product created Or not as per quantity<br>";
         // echo "If not created then need to create<br>";
+        // return true;
         $this->Flash->success(__("Product Generated successfully"));
         return $this->redirect($this->referer());
 
-        exit;
+        // exit;
     }
 
     
@@ -4897,7 +4920,7 @@ class AppadminsController extends AppController {
             
 //            echo "<pre>";
 //            print_r($postData);
-            exit;
+            // exit;
             // 
 
         }
@@ -5402,7 +5425,7 @@ class AppadminsController extends AppController {
         if ($this->request->is('post')) {
             $postData = $this->request->data;
             $newData = [];
-            $newData['id'] = $postData['id'];
+            $newData['id'] = $postData['variant_list_id'];
             $newData['po_quantity'] = $postData['qty'];
             $newData['is_po'] = 1;            
             $newData['po_status'] = 1;
