@@ -106,17 +106,20 @@ use Cake\Core\Configure;
                                                 <td style="text-align: center;">
                                                 <?php if($pdetails->is_po == 0){ ?>
                                                 <button type="button" id="btnshowPo<?=$pdetails->id;?>" onclick="$('#showPo<?= $pdetails->id;?>').toggle();$('#btnshowPo<?= $pdetails->id;?>').toggle()" class="btn btn-sm btn-primary">Add to PO</button>
-                                                <a target="_blank" href="<?=HTTP_ROOT;?>appadmins/newBrandPo/tab1/<?=$option;?>?ctg=<?=$_GET['ctg'];?>&sub_ctg=<?=$_GET['sub_ctg'];?>&variant_id=<?=$get_pr_vari_list->id;?>" class="btn btn-sm btn-primary">Add New Variant</a>
-                                                <div id="showPo<?=$pdetails->id;?>" style="display:none;">
-                                                    <?= $this->Form->create('',['type'=>'post','id'=>'updateVarPoFrom'.$pdetails->id ,'url'=>['action'=>'addVariantPoRequest']]);?>
-                                                    <input type="text" step="1" name="qty" min="1" placeholder="Quantity" style="width:100px;" value="1"  required>
-                                                    <input type="hidden"  name="variant_list_id" value="<?=$pdetails->id;?>">
-                                                    <input type="hidden"  name="user_id" value="<?=$getPaymentGatewayDetails->user_id;?>">
-                                                    <input type="hidden"  name="kid_id" value="<?=$getPaymentGatewayDetails->kid_id;?>">
-                                                    <button type="button" class="btn btn-sm btn-primary" onClick="updateVarPox(<?=$pdetails->id;?>)">Submit</button>
-                                                    <?= $this->Form->end(); ?>
-                                                </div>
-                                                <?php }else{ echo "Already in po"; } ?>
+                                                
+                                                <?php }else{ 
+                                                    echo "Already in po"; 
+                                                    } ?>
+                                                    <a target="_blank" href="<?=HTTP_ROOT;?>appadmins/newBrandPo/tab1/<?=$option;?>?ctg=<?=$_GET['ctg'];?>&sub_ctg=<?=$_GET['sub_ctg'];?>&variant_id=<?=$get_pr_vari_list->id;?>" class="btn btn-sm btn-primary">Add New Variant</a>
+                                                    <div id="showPo<?=$pdetails->id;?>" style="display:none;">
+                                                        <?= $this->Form->create('',['type'=>'post','id'=>'updateVarPoFrom'.$pdetails->id ,'url'=>['action'=>'addVariantPoRequest']]);?>
+                                                        <input type="text" step="1" name="qty" min="1" placeholder="Quantity" style="width:100px;" value="1"  required>
+                                                        <input type="hidden"  name="variant_list_id" value="<?=$pdetails->id;?>">
+                                                        <input type="hidden"  name="user_id" value="<?=$getPaymentGatewayDetails->user_id;?>">
+                                                        <input type="hidden"  name="kid_id" value="<?=$getPaymentGatewayDetails->kid_id;?>">
+                                                        <button type="button" class="btn btn-sm btn-primary" onClick="updateVarPox(<?=$pdetails->id;?>)">Submit</button>
+                                                        <?= $this->Form->end(); ?>
+                                                    </div>
                                                 </td>
                                             </tr>                                            
                                             <?php } 
@@ -760,6 +763,7 @@ use Cake\Core\Configure;
                                         </div>    
                                                                 </div>
                                                                 <div class="row">
+                                    <?php if(!in_array($product_ctg_nme,["A5", "A7", "A8"])){ ?>                            
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Shoulders?</label>
@@ -788,6 +792,7 @@ use Cake\Core\Configure;
                                             </select>                                         
                                         </div>
                                     </div>
+                                    <?php } ?>
 
                                     <?php if(in_array($product_ctg_nme,["A3", "A4", "A5", "A6", "A7", "A8"]) || in_array($product_sub_ctg_nme, ["A41", "A42", "A47"]) ){ ?>
                                     <div class="col-md-6">
@@ -1137,7 +1142,7 @@ use Cake\Core\Configure;
                                     </div>
                                     <?php } ?>
                                     
-                                    <?php // if(in_array($product_ctg_nme,["A2", "A6"/*, "A9", "A10", "A11", "A12"*/])){ ?>
+                                    <?php if(!in_array($product_ctg_nme,["A5", "A7", "A8"])){ ?> 
                                     <div class="col-md-6"  >
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Dress length  <?php if(in_array($product_ctg_nme,["A2", "A6"])){ ?><sup style="color:red;">*</sup><?php } ?></label>
@@ -1152,7 +1157,7 @@ use Cake\Core\Configure;
                                             </select>                                         
                                         </div>
                                     </div>
-                                    <?php // } ?>
+                                    <?php  } ?>
                                 </div>
 
                                 <div class="row new_var_xx">

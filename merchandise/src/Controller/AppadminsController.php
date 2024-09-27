@@ -1521,6 +1521,12 @@ class AppadminsController extends AppController {
             // print_r([$prd_detials['id'], $prd_detials['style_number'], $style_number, $explode_arr, $raw_style_number]);
             // exit;
             $data['id'] = '';
+            if(!empty($po_prd_detials->user_id)){
+                $data['allocate_to_user_id'] = $po_prd_detials->user_id;
+            }
+            if(!empty($po_prd_detials->kid_id)){
+                $data['allocate_to_kid_id'] = $po_prd_detials->kid_id;
+            }
             $data['style_number'] = '';
             $data['bar_code_img'] = '';
             $data['dtls'] = '';
