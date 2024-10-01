@@ -460,7 +460,7 @@ use Cake\Core\Configure;
                                         </div> 
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label for="exampleInputPassword1">Product Image <sup style="color:red;">*</sup>  <span style="color:red;font-weight: 400;">(20 KB PNG, JPG ,JPEG)</span></label>
+                                                <label for="exampleInputPassword1">Product Image <sup style="color:red;">*</sup>  <span style="color:red;font-weight: 400;">(2MB PNG, JPG ,JPEG)</span></label>
 
                                                     <div class="form-group">
                                                         <input name='variant_data[${color_value}][${value}][product_image]' type='file'  id ='image${inx_numx}' required onchange="readURL(this);">
