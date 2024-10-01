@@ -4747,6 +4747,7 @@ class AppadminsController extends AppController {
         // echo "<pre>";
         $prd_qnt = (!empty($req_frm) && ($req_frm=="po"))?$variant_products_details->po_quantity:$variant_products_details->quantity;
         if ($prd_qnt > 0) {
+            $rnd_data = rand(1111,9999);
             for ($i = 1; $i <= $prd_qnt; $i++) {
                 $newRw = [];
 
@@ -4835,7 +4836,7 @@ class AppadminsController extends AppController {
 
                 $dtls = $this->Custom->dtls($nw_profile, $variant_details->brand_id, $variant_details->rack, $variant_details->product_type, $variant_products_details->size);
 
-                $newRw['prod_id'] = $dtls;
+                $newRw['prod_id'] = $dtls.'-'.$rnd_data;
 
                 $newRwInsert = $this->InProducts->newEntity();
                 $newRwInsert = $this->InProducts->patchEntity($newRwInsert, $newRw);
@@ -4859,7 +4860,8 @@ class AppadminsController extends AppController {
                 file_put_contents($file_path1 . BARCODE . $br_name, $dataImg);
                 file_put_contents($file_path2 . BARCODE . $br_name, $dataImg);
 
-                $this->InProducts->updateAll(['bar_code_img' => $br_name, 'style_number' => $style_number, 'dtls' => $barcode_value], ['id' => $last_insert_id]);
+                // $this->InProducts->updateAll(['bar_code_img' => $br_name, 'style_number' => $style_number, 'dtls' => $barcode_value], ['id' => $last_insert_id]);
+                $this->InProducts->updateAll([/*'bar_code_img' => $br_name, */'style_number' => $style_number/*, 'dtls' => $barcode_value*/], ['id' => $last_insert_id]);
 
                
 

@@ -147,17 +147,7 @@ use Cake\Core\Configure;
 
                                 <div class="row">
 
-                                <?php if(in_array($product_ctg_nme,["A14"]) && in_array($product_sub_ctg_nme, ["A141", "A142", "A143", "A144", "A145", "A146", "A147", "A148", "A149", "A1410", "A1412", "A1413"])){ ?>
-                                    <div class="col-md-6 "    >
-                                        <div class="form-group" style="margin-top: 35px;">
-
-                                            <label for="free_size_wo">
-                                                <input type="radio" name="primary_size" value="free_size" <?= (!empty($editproduct) && ($editproduct->primary_size == 'free_size')) ? 'checked' : 'checked'; ?> id="free_size_wo" required/>
-                                                Free Size  <sup style="color:red;">*</sup>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <?php } ?>
+                                
 
                                     <div class="col-md-6 women-size-prefer">
                                         <div class="form-group">
@@ -222,12 +212,22 @@ use Cake\Core\Configure;
                                                                 <?php if(in_array($product_ctg_nme,["G1"])){ ?>
                                                                     <option value="shoe_size"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'shoe_size')) ? 'selected' : ''; ?> >Shoe Size</option>
                                                                 <?php } ?>
+                                                                <?php if(in_array($product_ctg_nme,["A14"]) && in_array($product_sub_ctg_nme, ["A141", "A142", "A143", "A144", "A145", "A146", "A147", "A148", "A149", "A1410", "A1412", "A1413"])){ ?>
+                                                                    <option value="free_size"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'free_size')) ? 'selected' : ''; ?> >Free Size</option>
+                                                                <?php } ?>
                                                                     
                                                             </select>
                                                         </div>
                                                         <div class="col-sm-6"   id="prd_sz_typ_div"  <?=(!empty($editproduct))?'style="pointer-events: none;" readonly':'' ;?>>
                                                             
                                                         </div>
+                                                        <?php if(!empty($editproduct) && ($editproduct->primary_size == 'free_size')){ ?>
+                                                            <script>
+                                                                $(document).ready(function(){
+                                                                    prdsztyp('<?=$editproduct->primary_size;?>');
+                                                                })
+                                                            </script>
+                                                        <?php } ?>
                                                         <?php if(!empty($editproduct) && ($editproduct->primary_size == 'pantsr1')){ ?>
                                                             <script>
                                                                 $(document).ready(function(){
@@ -311,12 +311,12 @@ use Cake\Core\Configure;
                                                                 let selectSizeAcc = ``;
                                                                 if(data == 'jeans' ){
                                                                     selectSizeAcc = `<div>
-                                                            <label>JEANS SIZE  <sup style="color:red;">*</sup></label>
-                                                            <div class="col-md-1">
-                                                                <input type="radio" name="primary_size" value="jeans"  checked required/>
-                                                            </div>
-                                                           
-                                                        </div>`;
+                                                                        <label>JEANS SIZE  <sup style="color:red;">*</sup></label>
+                                                                        <div class="col-md-1">
+                                                                            <input type="radio" name="primary_size" value="jeans"  checked required/>
+                                                                        </div>
+                                                                    
+                                                                    </div>`;
                                                                 }
                                                                 
                                                                 if(data == 'shoe_size' ){
@@ -356,7 +356,7 @@ use Cake\Core\Configure;
                                                                             </select>
                                                                         </div>
                                                                     </div>
-                                                                </div>`;
+                                                                    </div>`;
                                                                 }
                                                                 
                                                                 if(data == 'skirt' ){
@@ -383,7 +383,16 @@ use Cake\Core\Configure;
                                                                         <input type="radio" name="primary_size" value="paints"  checked required />
                                                                 
                                                                     
-                                                                </div>`;
+                                                                    </div>`;
+                                                                }
+                                                                if(data == 'free_size' ){
+                                                                    selectSizeAcc = `<div>
+                                                                    <label>Free Size  <sup style="color:red;">*</sup></label>
+        
+                                                                        <input type="radio" name="primary_size" value="free_size"  checked required />
+                                                                
+                                                                    
+                                                                    </div>`;
                                                                 }
                                                                 if(data == 'shirt_blouse' ){
                                                                     selectSizeAcc = `
@@ -897,7 +906,7 @@ use Cake\Core\Configure;
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label for="exampleInputPassword1">Product Image <sup style="color:red;">*</sup>  <span style="color:red;font-weight: 400;">(20 KB PNG, JPG ,JPEG)</span></label>
+                                                <label for="exampleInputPassword1">Product Image <sup style="color:red;">*</sup>  <span style="color:red;font-weight: 400;">(2MB PNG, JPG ,JPEG)</span></label>
 
                                                     <div class="form-group">
                                                         <input name='variant_data[${color_value}][${value}][product_image]' type='file'  id ='image${inx_numx}' required onchange="readURL(this);">
