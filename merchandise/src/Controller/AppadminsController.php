@@ -1564,14 +1564,27 @@ class AppadminsController extends AppController {
         $this->loadModel('InProducts');
         $this->loadModel('InProductLogs');
         $this->loadModel('InProductVariantList');
+        $this->loadModel('InProductVariantListPoReceived');
         // print_r([$product_id, $po_number]);
         // exit;
 
         $po_prd_detials = $this->InProductVariantList->find('all')->where(['id' => $product_id, 'po_number' => $po_number])->first();
         //        pj([$product_id, $po_number]);
         //        pj($prd_detials);
-        //        pj($po_prd_detials);          
+        //        pj($po_prd_detials);   
+             
         $this->InProductVariantList->updateAll(['po_status' => 3], ['id' => $po_prd_detials->id]);
+            
+        $newDataRwX = !empty($po_prd_detials)?$po_prd_detials->toArray():[];
+        $newDataRwX['in_product_variant_list_id']=$newDataRwX['id'];
+        unset($newDataRwX['id']);
+        $newDataRwX['po_status']=3;
+        $newRw = $this->InProductVariantListPoReceived->newEntity();
+        $newRw = $this->InProductVariantListPoReceived->patchEntity($newRw, $newDataRwX);
+        $this->InProductVariantListPoReceived->save($newRw); 
+        // echo "<pre>";
+        // print_r($newDataRwX); 
+        // exit;
         $this->Flash->success(__('Po received.'));
         return $this->redirect($this->referer());
     }
@@ -1599,7 +1612,9 @@ class AppadminsController extends AppController {
         $this->loadModel('InProducts');
         $this->loadModel('PurchaseOrders');
         $this->loadModel('InProductVariantList');
+        $this->loadModel('InProductVariantListPoReceived');
         $prod_list = $this->InProductVariantList->find('all')->where([ 'InProductVariantList.po_status' => 3, 'InProductVariantList.brand_id' => $brand_id])->group(['InProductVariantList.po_number']);
+        $this->InProductVariantListPoReceived->updateAll(['po_status'=>4],['po_status' => 3, 'brand_id' => $brand_id]);
 
         $po_number_list = !empty($prod_list) ? Hash::extract($prod_list->toArray(), '{n}.po_number') : [];
 
@@ -1639,19 +1654,21 @@ class AppadminsController extends AppController {
         $this->loadModel('InColors');
         $this->loadModel('InProductVariantList');
         $this->loadModel('InProductVariants');
+        $this->loadModel('InProductVariantListPoReceived');
 
         $all_sizes = $this->InSizes->find('all')->where(['is_active' => 1, 'product_ctg LIKE'=>'%"'.$_GET['ctg'].'"%' ]);
         $all_colors = $this->InColors->find('all')->where(['is_active' => 1]);
 
         $this->InProductVariantList->belongsTo('brand', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
 
+        $this->InProductVariantList->belongsTo('user_dtl', ['className' => 'UserDetails', 'foreignKey' => 'allocate_user_id', 'bindingKey'=>'user_id']);
         $this->InProductVariantList->belongsTo('user', ['className' => 'Users', 'foreignKey' => 'allocate_user_id']);
         $this->InProductVariantList->belongsTo('kid_dt', ['className' => 'KidsDetails', 'foreignKey' => 'allocate_kid_id']);
 
         $tab1_brand_list = $this->InProductVariantList->find('all')->where(['InProductVariantList.po_status' => 1])->group(['InProductVariantList.brand_id'])->contain(['brand']);
 
         $this->InProductVariantList->belongsTo('prd_detl', ['className' => 'InProductVariants',  'foreignKey' => 'in_product_variants_id']);
-        $tab1_data_list = $this->InProductVariantList->find('all')->contain(['prd_detl', 'brand','user','kid_dt']);
+        $tab1_data_list = $this->InProductVariantList->find('all')->contain(['prd_detl', 'brand','user','kid_dt','user_dtl']);
 
         if (empty($tab) || ($tab == 'tab1')) {
             $tab1_data_list = $tab1_data_list->where(['InProductVariantList.po_status' => 1]);
@@ -1675,10 +1692,16 @@ class AppadminsController extends AppController {
             }
         }
         if (!empty($tab) && ($tab == 'tab4')) {
-            $tab1_brand_list = $this->InProductVariantList->find('all')->where(['InProductVariantList.po_status >' => 3])->group(['InProductVariantList.brand_id'])->contain(['brand']);
+            $this->InProductVariantListPoReceived->belongsTo('brand', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
+
+            $this->InProductVariantListPoReceived->belongsTo('user_dtl', ['className' => 'UserDetails', 'foreignKey' => 'allocate_user_id', 'bindingKey'=>'user_id']);
+            $this->InProductVariantListPoReceived->belongsTo('user', ['className' => 'Users', 'foreignKey' => 'allocate_user_id']);
+            $this->InProductVariantListPoReceived->belongsTo('kid_dt', ['className' => 'KidsDetails', 'foreignKey' => 'allocate_kid_id']);
+            $this->InProductVariantListPoReceived->belongsTo('prd_detl', ['className' => 'InProductVariants',  'foreignKey' => 'in_product_variants_id']);
+            $tab1_brand_list = $this->InProductVariantListPoReceived->find('all')->where(['InProductVariantListPoReceived.po_status >' => 3])->group(['InProductVariantListPoReceived.brand_id'])->contain(['brand']);
 
             if (!empty($_GET) && !empty($_GET['brand_id'])) {
-                $tab1_data_list = $tab1_data_list->where(['InProductVariantList.po_status >' => 3, 'InProductVariantList.brand_id' => $_GET['brand_id']]);
+                $tab1_data_list = $this->InProductVariantListPoReceived->find('all')->contain(['prd_detl', 'brand','user','kid_dt', 'user_dtl'])->where(['InProductVariantListPoReceived.po_status >' => 3, 'InProductVariantListPoReceived.brand_id' => $_GET['brand_id']]);
             }
         }
 
@@ -1809,7 +1832,7 @@ class AppadminsController extends AppController {
 
             if (!empty($data['product_image']['tmp_name'])) {
 
-                if ($data['product_image']['size'] <= 20000) {
+                if ($data['product_image']['size'] <= 2100) {
 
                     $file_path = str_replace('merchandise', 'inventory/webroot/', ROOT);
                     $avatarName = $this->Custom->uploadAvatarImage($data['product_image']['tmp_name'], $data['product_image']['name'], $file_path . PRODUCT_IMAGES, 500);
@@ -4509,7 +4532,7 @@ class AppadminsController extends AppController {
                     $var_prd_rw['skin_tone'] = !empty($variant_list_list['skin_tone'])?json_encode($variant_list_list['skin_tone']):NULL ;   
 
                     if (!empty($variant_list_list['product_image']['tmp_name'])) {
-                        if ($variant_list_list['product_image']['size'] <= 20000) {
+                        if ($variant_list_list['product_image']['size'] <= 2100) {
                             $new_name = time().rand(1111,9999);
                             $file_path = str_replace('merchandise', 'webroot/', ROOT);
                             $avatarName = $this->Custom->uploadAvatarImage($variant_list_list['product_image']['tmp_name'], $variant_list_list['product_image']['name'], $file_path . PRODUCT_IMAGES, 500, $new_name);
@@ -5443,7 +5466,7 @@ class AppadminsController extends AppController {
             $newRw = $this->InProductVariantList->newEntity();
             $newRw = $this->InProductVariantList->patchEntity($newRw, $newData);
             $this->InProductVariantList->save($newRw);
-            echo json_encode(['status'=>'success','msg'=>'Added to PO.']);            
+            echo json_encode(['status'=>'success','msg'=>'Added to PO.',$newData]);            
         }
         exit;
     }
