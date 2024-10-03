@@ -630,7 +630,7 @@ $color_arr = $this->Custom->inColor();
                                                         if (!empty($dat_li->allocate_kid_id) && ($dat_li->allocate_kid_id != 0)) {
                                                             echo $dat_li->kid_dt->kids_first_name . " (kid)";
                                                         } else if (!empty($dat_li->allocate_user_id)) {
-                                                            echo $dat_li->user->name;
+                                                            echo $dat_li->user_dtl->first_name.' '.$dat_li->user_dtl->last_name;
                                                         } else {
                                                             echo "";
                                                         }
@@ -716,7 +716,7 @@ $color_arr = $this->Custom->inColor();
                                                         if (!empty($dat_li->allocate_kid_id) && ($dat_li->allocate_kid_id != 0)) {
                                                             echo $dat_li->kid_dt->kids_first_name . " (kid)";
                                                         } else if (!empty($dat_li->allocate_user_id)) {
-                                                            echo $dat_li->user->name;
+                                                            echo $dat_li->user_dtl->first_name.' '.$dat_li->user_dtl->last_name;
                                                         } else {
                                                             echo "";
                                                         }
@@ -814,7 +814,7 @@ $color_arr = $this->Custom->inColor();
                                                         if (!empty($dat_li->allocate_kid_id) && ($dat_li->allocate_kid_id != 0)) {
                                                             echo $dat_li->kid_dt->kids_first_name . " (kid)";
                                                         } else if (!empty($dat_li->allocate_user_id)) {
-                                                            echo $dat_li->user->name;
+                                                            echo $dat_li->user_dtl->first_name.' '.$dat_li->user_dtl->last_name;
                                                         } else {
                                                             echo "";
                                                         }

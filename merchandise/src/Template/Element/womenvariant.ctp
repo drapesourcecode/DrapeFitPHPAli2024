@@ -112,13 +112,13 @@ use Cake\Core\Configure;
                                                     } ?>
                                                     <a target="_blank" href="<?=HTTP_ROOT;?>appadmins/newBrandPo/tab1/<?=$option;?>?ctg=<?=$_GET['ctg'];?>&sub_ctg=<?=$_GET['sub_ctg'];?>&variant_id=<?=$get_pr_vari_list->id;?>" class="btn btn-sm btn-primary">Add New Variant</a>
                                                     <div id="showPo<?=$pdetails->id;?>" style="display:none;">
-                                                        <?= $this->Form->create('',['type'=>'post','id'=>'updateVarPoFrom'.$pdetails->id ,'url'=>['action'=>'addVariantPoRequest']]);?>
+                                                        <div id='updateVarPoFrom<?=$pdetails->id;?>' >
                                                         <input type="text" step="1" name="qty" min="1" placeholder="Quantity" style="width:100px;" value="1"  required>
                                                         <input type="hidden"  name="variant_list_id" value="<?=$pdetails->id;?>">
                                                         <input type="hidden"  name="user_id" value="<?=$getPaymentGatewayDetails->user_id;?>">
                                                         <input type="hidden"  name="kid_id" value="<?=$getPaymentGatewayDetails->kid_id;?>">
                                                         <button type="button" class="btn btn-sm btn-primary" onClick="updateVarPox(<?=$pdetails->id;?>)">Submit</button>
-                                                        <?= $this->Form->end(); ?>
+                                                        </div>
                                                     </div>
                                                 </td>
                                             </tr>                                            
@@ -131,7 +131,11 @@ use Cake\Core\Configure;
                                             $.ajax({
                                                 type: "POST",
                                                 url: "<?= HTTP_ROOT; ?>appadmins/updateVarPoFrom",
-                                                data: $("#updateVarPoFrom"+id).serialize(),
+                                                data: {'qty' : $("#updateVarPoFrom"+id+" [name=qty]").val(),
+                                                    'variant_list_id' : $("#updateVarPoFrom"+id+" [name=variant_list_id]").val(),
+                                                    'user_id' : $("#updateVarPoFrom"+id+" [name=user_id]").val(),
+                                                    'kid_id' : $("#updateVarPoFrom"+id+" [name=kid_id]").val()
+                                                },
                                                 dataType: 'html',
                                                 success: function(result) {                                                    
                                                     $('#btnshowPo'+id).hide();
