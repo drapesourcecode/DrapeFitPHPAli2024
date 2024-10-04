@@ -100,7 +100,7 @@
                                                         if (!empty($dat_li->kid_id) && ($dat_li->kid_id != 0)) {
                                                             echo $dat_li->kid_dt->kids_first_name . " (kid)";
                                                         } else if (!empty($dat_li->user_id)) {
-                                                            echo $dat_li->user->name;
+                                                            echo $dat_li->user_dtl->first_name.' '.$dat_li->user_dtl->last_name;
                                                         } else {
                                                             echo "";
                                                         }
@@ -203,7 +203,7 @@
                                                         if (!empty($dat_li->kid_id) && ($dat_li->kid_id != 0)) {
                                                             echo $dat_li->kid_dt->kids_first_name . " (kid)";
                                                         } else if (!empty($dat_li->user_id)) {
-                                                            echo $dat_li->user->name;
+                                                            echo $dat_li->user_dtl->first_name.' '.$dat_li->user_dtl->last_name;
                                                         } else {
                                                             echo "";
                                                         }
@@ -329,7 +329,7 @@
                                                         if (!empty($dat_li->kid_id) && ($dat_li->kid_id != 0)) {
                                                             echo $dat_li->kid_dt->kids_first_name . " (kid)";
                                                         } else if (!empty($dat_li->user_id)) {
-                                                            echo $dat_li->user->name;
+                                                            echo $dat_li->user_dtl->first_name.' '.$dat_li->user_dtl->last_name;
                                                         } else {
                                                             echo "";
                                                         }

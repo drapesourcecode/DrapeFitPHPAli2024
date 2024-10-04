@@ -1137,10 +1137,11 @@ class AppadminsController extends AppController {
 
         $tab1_brand_list = $this->PurchaseOrderProducts->find('all')->where(['PurchaseOrderProducts.status' => 1, 'PurchaseOrderProducts.is_new_brand' => 0])->group(['PurchaseOrderProducts.brand_id'])->contain(['brand']);
 
+        $this->PurchaseOrderProducts->belongsTo('user_dtl', ['className' => 'UserDetails', 'foreignKey' => 'user_id', 'bindingKey'=>'user_id']);
         $this->PurchaseOrderProducts->belongsTo('user', ['className' => 'Users', 'foreignKey' => 'user_id']);
         $this->PurchaseOrderProducts->belongsTo('kid_dt', ['className' => 'KidsDetails', 'foreignKey' => 'kid_id']);
         $this->PurchaseOrderProducts->hasMany('prd_detl', ['className' => 'InProducts', 'foreignKey' => 'prod_id', 'bindingKey' => 'product_id']);
-        $tab1_data_list = $this->PurchaseOrderProducts->find('all')->contain(['prd_detl', 'brand', 'user', 'kid_dt']);
+        $tab1_data_list = $this->PurchaseOrderProducts->find('all')->contain(['prd_detl', 'brand', 'user', 'user_dtl', 'kid_dt']);
         if (empty($tab) || ($tab == 'tab1')) {
             $tab1_data_list = $tab1_data_list->where(['PurchaseOrderProducts.status' => 1]);
             if (!empty($_GET) && !empty($_GET['brand_id'])) {
@@ -1832,7 +1833,7 @@ class AppadminsController extends AppController {
 
             if (!empty($data['product_image']['tmp_name'])) {
 
-                if ($data['product_image']['size'] <= 2100) {
+                if ($data['product_image']['size'] <= 2100000) {
 
                     $file_path = str_replace('merchandise', 'inventory/webroot/', ROOT);
                     $avatarName = $this->Custom->uploadAvatarImage($data['product_image']['tmp_name'], $data['product_image']['name'], $file_path . PRODUCT_IMAGES, 500);
@@ -4532,7 +4533,7 @@ class AppadminsController extends AppController {
                     $var_prd_rw['skin_tone'] = !empty($variant_list_list['skin_tone'])?json_encode($variant_list_list['skin_tone']):NULL ;   
 
                     if (!empty($variant_list_list['product_image']['tmp_name'])) {
-                        if ($variant_list_list['product_image']['size'] <= 2100) {
+                        if ($variant_list_list['product_image']['size'] <= 2100000) {
                             $new_name = time().rand(1111,9999);
                             $file_path = str_replace('merchandise', 'webroot/', ROOT);
                             $avatarName = $this->Custom->uploadAvatarImage($variant_list_list['product_image']['tmp_name'], $variant_list_list['product_image']['name'], $file_path . PRODUCT_IMAGES, 500, $new_name);
@@ -4567,7 +4568,7 @@ class AppadminsController extends AppController {
                         $var_prd_rw['po_date'] = date('Y-m-d');                        
                     }
                     // echo "<pre>";
-                    // var_dump(($variant_list_list['product_image']['size'] <= 20000) );
+                    // print_r($variant_list_list);
                     // print_r($var_prd_rw);
                     // echo "</pre>";
                     // exit;
@@ -4884,7 +4885,7 @@ class AppadminsController extends AppController {
                 file_put_contents($file_path2 . BARCODE . $br_name, $dataImg);
 
                 // $this->InProducts->updateAll(['bar_code_img' => $br_name, 'style_number' => $style_number, 'dtls' => $barcode_value], ['id' => $last_insert_id]);
-                $this->InProducts->updateAll([/*'bar_code_img' => $br_name, */'style_number' => $style_number/*, 'dtls' => $barcode_value*/], ['id' => $last_insert_id]);
+                $this->InProducts->updateAll([/*'bar_code_img' => $br_name, */'style_number' => $style_number, 'dtls' => $barcode_value], ['id' => $last_insert_id]);
 
                
 
