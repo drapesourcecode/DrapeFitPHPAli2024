@@ -152,7 +152,7 @@ class CronjobsController extends AppController {
 
             $from = $this->Settings->find('all')->where(['Settings.name' => 'FROM_EMAIL'])->first()->value;
 
-            $toSupport = $this->Settings->find('all')->where(['name' => 'TO_BATCH_HELP'])->first()->value;
+            $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
 
             //            $emailMessageSupport = $this->Settings->find('all')->where(['Settings.name' => 'GIFTCARD_EMAIL_SUPPORT'])->first();
 
@@ -262,7 +262,7 @@ class CronjobsController extends AppController {
 
         $mail_msg = "Complete your profile";
 
-        $toSupport = $this->Settings->find('all')->where(['name' => 'TO_BATCH_HELP'])->first()->value;
+        $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
 
         foreach ($all_clients as $key => $client) {
 
@@ -399,7 +399,7 @@ class CronjobsController extends AppController {
 
                 $subjectSupport = $emailMessageSupport->display;
 
-                $toSupport = $this->Settings->find('all')->where(['name' => 'TO_BATCH_HELP'])->first()->value;
+                $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
 
                 $this->mailLogEntry('notPaidOnce', $from, $subjectSupport, $toSupport, $messageSupport);
 
@@ -490,7 +490,7 @@ class CronjobsController extends AppController {
 
         $fromMail = $this->Settings->find('all')->where(['Settings.name' => 'FROM_EMAIL'])->first();
 
-        $toSupport = $this->Settings->find('all')->where(['name' => 'TO_BATCH_HELP'])->first()->value;
+        $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
 
         foreach ($all_clients as $client) {
 
@@ -640,7 +640,7 @@ class CronjobsController extends AppController {
 
             $email_message = $this->Custom->checkoutBetweenDays($emailMessage->value, $name, $email, $sitename);
 
-            $toSupport = $this->Settings->find('all')->where(['name' => 'TO_BATCH_HELP'])->first()->value;
+            $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
 
             $this->mailLogEntry('autocheckoutmailByEmail', $from, $subject, $toSupport, $email_message);
             // $this->Custom->sendEmail($toSupport, $from, $subject, $email_message);
@@ -668,7 +668,7 @@ class CronjobsController extends AppController {
 
           $kid_id = 0;
 
-          $toSupport = $this->Settings->find('all')->where(['name' => 'TO_BATCH_HELP'])->first()->value;
+          $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
 
           foreach ($notpaid_users as $notcheckout) {
 
@@ -838,7 +838,7 @@ class CronjobsController extends AppController {
 
           $subject = $emailMessage->display;
 
-          $toSupport = $this->Settings->find('all')->where(['name' => 'TO_BATCH_HELP'])->first()->value;
+          $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
 
           $email_message = $this->Custom->paymentFaild($emailMessage->value, $name, $getErrorMeg, $sitename);
 
@@ -1236,7 +1236,7 @@ class CronjobsController extends AppController {
 
 
 
-          $toSupport = $this->Settings->find('all')->where(['name' => 'TO_BATCH_HELP'])->first()->value;
+          $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
 
 
 
@@ -1350,7 +1350,7 @@ class CronjobsController extends AppController {
 
 
 
-          $toSupport = $this->Settings->find('all')->where(['name' => 'TO_BATCH_HELP'])->first()->value;
+          $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
 
           if ($this->Custom->sendEmail($toSupport, $from, $subject, $email_message)) {
 
@@ -1430,7 +1430,7 @@ class CronjobsController extends AppController {
 
           $email_message = $this->Custom->paymentFaild($emailMessage->value, $name, $getErrorMeg, $sitename);
 
-          $toSupport = $this->Settings->find('all')->where(['name' => 'TO_BATCH_HELP'])->first()->value;
+          $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
 
           if ($this->Custom->sendEmail($toSupport, $from, $subject, $email_message)) {
 
@@ -1599,7 +1599,7 @@ class CronjobsController extends AppController {
 
                 $email_message = $this->Custom->checkoutBetweenDays($emailMessage->value, $name, $email, $sitename);
 
-                $toSupport = $this->Settings->find('all')->where(['name' => 'TO_BATCH_HELP'])->first()->value;
+                $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
 
                 $this->mailLogEntry('autocheckoutmail', $from, $subject, $toSupport, $email_message);
 
@@ -1833,7 +1833,7 @@ class CronjobsController extends AppController {
                 $subject = $emailTemplatesSubcritionsPmt->display;
                 $sitename = "DrapeFit.com";
                 $email_message_no_add = $this->Custom->paymentFailedSucritpions($emailTemplatesSubcritionsPmt->value, $name, $sitename);
-                $toSupport = $this->Settings->find('all')->where(['Settings.name' => 'TO_BATCH_HELP'])->first()->value;
+                $toSupport = $this->Settings->find('all')->where(['Settings.name' => 'TO_HELP'])->first()->value;
                 $emailtemplatesAdminPayment = $this->Settings->find('all')->where(['Settings.name' => 'paymentFaildSubcritions'])->first();
                 $subjectSupportPayment = $emailtemplatesAdminPayment->display . ' ' . $email;
                 $messageSupportPayment = $this->Custom->paymentFailedSucritpionsAdmin($emailtemplatesAdminPayment->value, $name, $email, $sitename, $sitename);
@@ -2044,7 +2044,7 @@ class CronjobsController extends AppController {
                         $last_4_digit = substr($cardDetails->card_number, -4);
                         $email_message = $this->Custom->paymentEmail($emailMessage->value, $name, $usermessage, $sitename, $message['TransId'], $paid_amount, $sumitted_date, $cardDetails->card_type, $last_4_digit, $usr_name, $full_address, $feeprice);
                         $getUsreDetails->email;
-                        $toSupport = $this->Settings->find('all')->where(['name' => 'TO_BATCH_HELP'])->first()->value;
+                        $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
 
                         $this->mailLogEntry('autoMentions', $from, $subject, $toSupport, $email_message);
                         /*if ($this->Custom->sendEmail($toSupport, $from, $subject, $email_message)) {
@@ -2089,7 +2089,7 @@ class CronjobsController extends AppController {
                         $subjectProfile = $emailMessageProfile->display . ' #DFPYMID' . $updateId;
 
                         $email_message_profile = $this->Custom->paymentEmailCount($emailMessageProfile->value, $name, $usermessage, $sitename, $this->Custom->ToOrdinal($paymentCount));
-                        $toSupport = $this->Settings->find('all')->where(['name' => 'TO_BATCH_HELP'])->first()->value;
+                        $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
 
                         $this->mailLogEntry('autoMentions', $from, $subjectProfile, $toSupport, $email_message);
                         /*if ($this->Custom->sendEmail($toSupport, $from, $subjectProfile, $email_message)) {
@@ -2164,7 +2164,7 @@ class CronjobsController extends AppController {
                         $subject = $emailTemplatesSubcritionsPmt->display . ' ' . $email;
                         $sitename = "DrapeFit.com";
                         $email_message_no_add = $this->Custom->paymentFailedSucritpions($emailTemplatesSubcritionsPmt->value, $name, $sitename);
-                        $toSupport = $this->Settings->find('all')->where(['Settings.name' => 'TO_BATCH_HELP'])->first()->value;
+                        $toSupport = $this->Settings->find('all')->where(['Settings.name' => 'TO_HELP'])->first()->value;
                         $emailtemplatesAdminPayment = $this->Settings->find('all')->where(['Settings.name' => 'paymentFaildSubcritions'])->first();
                         $subjectSupportPayment = $emailtemplatesAdminPayment->display . '  ' . $email;
                         $messageSupportPayment = $this->Custom->paymentFailedSucritpionsAdmin($emailtemplatesAdminPayment->value, $name, $email, $sitename, $sitename);
@@ -2328,7 +2328,7 @@ class CronjobsController extends AppController {
                         $kidsname = $kidsdetails->kids_first_name;
                     }
                     $email_message_no_add = $this->Custom->paymentFailedSucritpionsKids($emailTemplatesSubcritionsPmt->value, $name, $kidsname, $sitename);
-                    $toSupport = $this->Settings->find('all')->where(['Settings.name' => 'TO_BATCH_HELP'])->first()->value;
+                    $toSupport = $this->Settings->find('all')->where(['Settings.name' => 'TO_HELP'])->first()->value;
                     $emailtemplatesAdminPayment = $this->Settings->find('all')->where(['Settings.name' => 'kidPaymentFaildSubcritions'])->first();
                     $subjectSupportPayment = $emailtemplatesAdminPayment->display . ' kid: ' . $email;
                     $messageSupportPayment = $this->Custom->paymentFailedSucritpionsAdmin($emailtemplatesAdminPayment->value, $name, $email, $sitename, $sitename);
@@ -2497,7 +2497,7 @@ class CronjobsController extends AppController {
                             $kidsname = $kidsdetails->kids_first_name;
                         }
 
-                        $toSupport = $this->Settings->find('all')->where(['name' => 'TO_BATCH_HELP'])->first()->value;
+                        $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
 
                         $this->mailLogEntry('autoMentionsKid', $from, $subject, $toSupport, $email_message);
                         /*if ($this->Custom->sendEmail($toSupport, $from, $subject, $email_message)) {
@@ -2540,7 +2540,7 @@ class CronjobsController extends AppController {
                             $this->Custom->batchprocessPayment($fitnumber, $payment_message, $transctions_id, $supportstatus, $upportemail, $support_subject, $client, $process, $userId, $name, $kidId, $kidName, $email, $subject, $status);
                         }
 
-                        $toSupport = $this->Settings->find('all')->where(['name' => 'TO_BATCH_HELP'])->first()->value;
+                        $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
 
                         $this->mailLogEntry('autoMentionsKid', $from, $subjectProfile, $toSupport, $email_message);
                         /*if ($this->Custom->sendEmail($toSupport, $from, $subjectProfile, $email_message)) {
@@ -2627,7 +2627,7 @@ class CronjobsController extends AppController {
                             $sitename = "DrapeFit.com";
                             $email_message_no_add = $this->Custom->paymentFailedSucritpionsKids($emailTemplatesSubcritionsPmt->value, $name, $kidsname, $sitename);
 
-                            $toSupport = $this->Settings->find('all')->where(['Settings.name' => 'TO_BATCH_HELP'])->first()->value;
+                            $toSupport = $this->Settings->find('all')->where(['Settings.name' => 'TO_HELP'])->first()->value;
                             $emailtemplatesAdminPayment = $this->Settings->find('all')->where(['Settings.name' => 'kidPaymentFaildSubcritions'])->first();
                             $subjectSupportPayment = $emailtemplatesAdminPayment->display . ' kid: ' . $email;
                             $messageSupportPayment = $this->Custom->paymentFailedSucritpionsAdmin($emailtemplatesAdminPayment->value, $name, $email, $sitename, $sitename);
@@ -2697,7 +2697,7 @@ class CronjobsController extends AppController {
 
         $subjectSupport = $emailMessageSupport->display;
 
-        $toSupport = $this->Settings->find('all')->where(['name' => 'TO_BATCH_HELP'])->first()->value;
+        $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
 
         foreach ($all_kidss as $kid) {
 
@@ -4148,7 +4148,7 @@ class CronjobsController extends AppController {
 
         $emailMessage = $this->Settings->find('all')->where(['Settings.name' => 'BIRTHDAY_MAIL'])->first();
 
-        $toSupport = $this->Settings->find('all')->where(['name' => 'TO_BATCH_HELP'])->first()->value;
+        $toSupport = $this->Settings->find('all')->where(['name' => 'TO_HELP'])->first()->value;
 
         $toMail = $this->Settings->find('all')->where(['name' => 'TO_EMAIL'])->first()->value;
 

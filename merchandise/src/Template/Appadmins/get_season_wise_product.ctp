@@ -75,6 +75,7 @@
                                     <input type="hidden"  name="kid_id" value="<?=$getPaymentGatewayDetails->kid_id;?>">
                                     <button type="submit" class="btn btn-sm btn-primary">Submit</button>
                                     <?= $this->Form->end(); ?>
+                                    <button type="button"  onclick="$('#showPo<?= $where_to_show.$get_match_prd->id;?>').toggle();$('#btnshowPo<?= $where_to_show.$get_match_prd->id;?>').toggle()" class="btn btn-sm btn-success">Cancel PO</button>
                                 </div>
                             <?php } ?>
                         <?php } ?>
