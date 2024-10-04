@@ -149,7 +149,17 @@
                                             <td><?php echo $pdetails->sale_price; ?></td>
                                             <td><?php echo $this->Custom->productQuantityM($pdetails->prod_id); ?></td>
                                             <td><?php echo (empty($pdetails->style_number)) ? $pdetails->dtls : $pdetails->style_number; ?></td>
-                                            <td><?php echo (!empty($pdetails->po_dt)) ? date('Y-m-d', strtotime($pdetails->po_dt->created_at)) : ''; ?></td>
+                                            <td>
+                                                <?php if(!empty($pdetails->po_dt)) {
+                                                    $prd_dt = date('Y-m-d', strtotime($pdetails->po_dt->created_at));                                                    
+                                                    echo $prd_dt;
+                                                }else{
+                                                    if(!empty($pdetails->variant_prd_list)){
+                                                        $prd_dt = date('Y-m-d', strtotime($pdetails->variant_prd_list->po_date));                                                    
+                                                        echo $prd_dt;
+                                                    }
+                                                } ?>
+                                             </td>
                                             
                                             <td style="text-align: center;">
                                                 <?php if($pdetails->is_deleted !=1){ ?>
@@ -1129,7 +1139,15 @@
                                             <td><?php echo $pdetails->sale_price; ?></td>
                                             <td><?php echo $this->Custom->productQuantityM($pdetails->prod_id); ?></td>
                                             <td><?php echo (empty($pdetails->style_number)) ? $pdetails->dtls : $pdetails->style_number; ?></td>
-                                            <td><?php echo (!empty($pdetails->po_dt)) ? date('Y-m-d', strtotime($pdetails->po_dt->created_at)) : ''; ?></td>
+                                            <td><?php if(!empty($pdetails->po_dt)) {
+                                                    $prd_dt = date('Y-m-d', strtotime($pdetails->po_dt->created_at));                                                    
+                                                    echo $prd_dt;
+                                                }else{
+                                                    if(!empty($pdetails->variant_prd_list)){
+                                                        $prd_dt = date('Y-m-d', strtotime($pdetails->variant_prd_list->po_date));                                                    
+                                                        echo $prd_dt;
+                                                    }
+                                                } ?></td>
                                            
                                             <td style="text-align: center;">
                                                 <?php if($pdetails->is_deleted !=1){ ?>
@@ -1769,7 +1787,15 @@
                                             <td><?php echo $pdetails->sale_price; ?></td>
                                             <td><?php echo $this->Custom->productQuantityM($pdetails->prod_id); ?></td>
                                             <td><?php echo (empty($pdetails->style_number)) ? $pdetails->dtls : $pdetails->style_number; ?></td>
-                                            <td><?php echo (!empty($pdetails->po_dt)) ? date('Y-m-d', strtotime($pdetails->po_dt->created_at)) : ''; ?></td>
+                                            <td><?php if(!empty($pdetails->po_dt)) {
+                                                    $prd_dt = date('Y-m-d', strtotime($pdetails->po_dt->created_at));                                                    
+                                                    echo $prd_dt;
+                                                }else{
+                                                    if(!empty($pdetails->variant_prd_list)){
+                                                        $prd_dt = date('Y-m-d', strtotime($pdetails->variant_prd_list->po_date));                                                    
+                                                        echo $prd_dt;
+                                                    }
+                                                } ?></td>
                                             
                                             <td style="text-align: center;">
                                                 <?php if($pdetails->is_deleted !=1){ ?>
@@ -1987,7 +2013,15 @@
                                             <td><?php echo $pdetails->sale_price; ?></td>
                                             <td><?php echo $this->Custom->productQuantityM($pdetails->prod_id); ?></td>
                                             <td><?php echo (empty($pdetails->style_number)) ? $pdetails->dtls : $pdetails->style_number; ?></td>
-                                            <td><?php echo (!empty($pdetails->po_dt)) ? date('Y-m-d', strtotime($pdetails->po_dt->created_at)) : ''; ?></td>
+                                            <td><?php if(!empty($pdetails->po_dt)) {
+                                                    $prd_dt = date('Y-m-d', strtotime($pdetails->po_dt->created_at));                                                    
+                                                    echo $prd_dt;
+                                                }else{
+                                                    if(!empty($pdetails->variant_prd_list)){
+                                                        $prd_dt = date('Y-m-d', strtotime($pdetails->variant_prd_list->po_date));                                                    
+                                                        echo $prd_dt;
+                                                    }
+                                                } ?></td>
                                             
                                             <td style="text-align: center;">
                                                 <?php if($pdetails->is_deleted !=1){ ?>

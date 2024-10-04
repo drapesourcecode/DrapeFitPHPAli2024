@@ -19,7 +19,7 @@
     <section class="content">
         <div class="row">
             <div class="col-xs-6"></div>
-            <div  class="col-sm-6">
+            <div  class="col-sm-6" style="display: none;;">
                 <?= $this->Form->create('', array('id' => 'search_frm', 'type' => 'GET', "autocomplete" => "off")); ?>
                 <div class="form-group">
                     <select name="search_for" required>

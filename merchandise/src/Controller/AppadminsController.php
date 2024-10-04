@@ -1113,6 +1113,11 @@ class AppadminsController extends AppController {
         if ($this->request->is('post')) {
             $postData = $this->request->data;
             //For existing brand need to enter product in PurchaseOrderProducts and also need to insert in In_product List
+            $chk_prd = $this->PurchaseOrderProducts->find('all')->where(['product_id'=>$postData['product_id'],' status <'=>4 ])->count();
+            if($chk_prd > 0){
+                $this->Flash->error(__('Product already in PO'));
+                return $this->redirect($this->referer());
+            }
             $newData = [];
             $newData['product_id'] = $postData['product_id'];
             $newData['qty'] = $postData['qty'];
