@@ -1533,6 +1533,9 @@ class AppadminsController extends AppController {
             if(!empty($po_prd_detials->kid_id)){
                 $data['allocate_to_kid_id'] = $po_prd_detials->kid_id;
             }
+            if(!empty($po_prd_detials->user_id) || !empty($po_prd_detials->kid_id)){
+                $data['match_status'] = 1;
+            }
             $data['style_number'] = '';
             $data['bar_code_img'] = '';
             $data['dtls'] = '';
@@ -4846,6 +4849,7 @@ class AppadminsController extends AppController {
                 $newRw['quantity'] =  1;
                 $newRw['is_active'] = 1;
                 $newRw['po_status'] = 4;
+                $newRw['match_status'] = (!empty($variant_products_details->allocate_user_id) || !empty($variant_products_details->allocate_kid_id))? 1 : 2 ;
                 $newRw['is_merchandise'] = 1;
                 $newRw['created'] = date('Y-m-d H:i:s');
 
@@ -5083,6 +5087,7 @@ class AppadminsController extends AppController {
                 'InProducts.tall_feet <=' => $stats->tell_in_feet, 'InProducts.tall_feet2 >=' => $stats->tell_in_feet,
                 'InProducts.best_fit_for_weight <=' => $stats->weight_lbs, 'InProducts.best_fit_for_weight2 >=' => $stats->weight_lbs,
                 'InProducts.better_body_shape LIKE' => '%"' . $womenInformationsData->body_type . '"%',
+                'InProducts.is_merchandise' => 0,
                 // 'available_status' => 1, 'match_status' => 2
                 ])
                 // ->where([
@@ -5320,7 +5325,16 @@ class AppadminsController extends AppController {
     public function poProductFileUpload(){
         $this->loadModel('PoAttachments');
         if ($this->request->is('post')) {
-            $post_data = $this->request->getData();            
+            $post_data = $this->request->getData();  
+            
+            if(!empty($post_data['descp'])){
+                $newData = [];
+                $newData['purchase_order_products_id'] = $post_data['po_product_id'];
+                $newData['descp'] = $post_data['descp'];
+                $newRw = $this->PoAttachments->newEntity();
+                $newRw = $this->PoAttachments->patchEntity($newRw, $newData);
+                $this->PoAttachments->save($newRw);
+            }          
             if (!empty($post_data['doc_file'])) {
                 $imagePath = "files/product_img/";
                 $filePaths = [];
@@ -5333,7 +5347,7 @@ class AppadminsController extends AppController {
                         $custom_name = time() . '_' . uniqid() . '.' . $ext;
                         move_uploaded_file($filename, $imagePath . $custom_name);
                         $filePaths = $imagePath . $custom_name;
-                        
+                        $newData = [];
                         $newData['purchase_order_products_id'] = $post_data['po_product_id'];
                         $newData['file'] = $filePaths;
                         $newRw = $this->PoAttachments->newEntity();
@@ -5355,7 +5369,13 @@ class AppadminsController extends AppController {
             $all_data = $this->PoAttachments->find('all')->where(['purchase_order_products_id'=>$post_data['po_product_id']]);
             if(!empty($all_data->count())){
                 foreach($all_data as $ky => $dat){
-                    $html .= '<div id="file_'.$dat->id.'"><a href="'.HTTP_ROOT.$dat->file.'" target="_blank">Attachment'.($ky+1).'</a>  <button onclick="deleteFile('.$dat->id.')">Delete</button></div>';
+                    if(!empty($dat->file)){
+                        $html .= '<div id="file_'.$dat->id.'"><a href="'.HTTP_ROOT.$dat->file.'" target="_blank">Attachment'.($ky+1).'</a>  <button onclick="deleteFile('.$dat->id.')">Delete</button></div>';
+                    }
+                    if(!empty($dat->descp)){
+                        $html .= '<div id="file_'.$dat->id.'">'.$dat->descp.'  <button onclick="deleteFile('.$dat->id.')">Delete</button></div>';
+                    }
+                    
                 }                
             }
             echo $html;
@@ -5402,7 +5422,15 @@ class AppadminsController extends AppController {
     public function poNewProductFileUpload(){
         $this->loadModel('PoNewAttachments');
         if ($this->request->is('post')) {
-            $post_data = $this->request->getData();            
+            $post_data = $this->request->getData();  
+            if(!empty($post_data['descp'])){
+                $newData = [];
+                $newData['variant_products_id'] = $post_data['po_product_id'];
+                $newData['descp'] = $post_data['descp'];
+                $newRw = $this->PoNewAttachments->newEntity();
+                $newRw = $this->PoNewAttachments->patchEntity($newRw, $newData);
+                $this->PoNewAttachments->save($newRw);
+            }            
             if (!empty($post_data['doc_file'])) {
                 $imagePath = "files/product_img/";
                 $filePaths = [];
@@ -5415,7 +5443,7 @@ class AppadminsController extends AppController {
                         $custom_name = time() . '_' . uniqid() . '.' . $ext;
                         move_uploaded_file($filename, $imagePath . $custom_name);
                         $filePaths = $imagePath . $custom_name;
-                        
+                        $newData = [];
                         $newData['variant_products_id'] = $post_data['po_product_id'];
                         $newData['file'] = $filePaths;
                         $newRw = $this->PoNewAttachments->newEntity();
@@ -5437,7 +5465,12 @@ class AppadminsController extends AppController {
             $all_data = $this->PoNewAttachments->find('all')->where(['variant_products_id'=>$post_data['po_product_id']]);
             if(!empty($all_data->count())){
                 foreach($all_data as $ky => $dat){
-                    $html .= '<div id="file_'.$dat->id.'"><a href="'.HTTP_ROOT.$dat->file.'" target="_blank">Attachment'.($ky+1).'</a>  <button onclick="deleteFile('.$dat->id.')">Delete</button></div>';
+                    if(!empty($dat->file)){
+                        $html .= '<div id="file_'.$dat->id.'"><a href="'.HTTP_ROOT.$dat->file.'" target="_blank">Attachment'.($ky+1).'</a>  <button onclick="deleteFile('.$dat->id.')">Delete</button></div>';
+                    }
+                    if(!empty($dat->descp)){
+                        $html .= '<div id="file_'.$dat->id.'">'.$dat->descp.'  <button onclick="deleteFile('.$dat->id.')">Delete</button></div>';
+                    }
                 }                
             }
             echo $html;

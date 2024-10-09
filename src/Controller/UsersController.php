@@ -4433,7 +4433,7 @@ class UsersController extends AppController {
                     'email' => $this->Auth->user('email'),
                     //'amount' => $paymentGetwayAmount,
                     'amount' => $data['total'],
-                    'invice' => @$paymentId,
+                    'invice' => $lastPymentg->id,//@$paymentId,
                     'refId' => 32,
                     'companyName' => 'Drapefit',
                     'stripeToken' => $data['stripeToken'],
