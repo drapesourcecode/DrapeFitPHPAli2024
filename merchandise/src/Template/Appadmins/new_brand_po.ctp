@@ -893,6 +893,8 @@ $color_arr = $this->Custom->inColor();
                     $('#attach_list').html('');
                     $('#file_atach_grp').html('');
                     $('#doc_file1').val(''); 
+                    $('#descpxx').val(''); 
+                    $('#descpxx').text(''); 
                     getAttachDoc(po_product_id);
                 }
             });
@@ -913,7 +915,8 @@ $color_arr = $this->Custom->inColor();
             <div class="modal-body">
                 <div class="cmt-frm">
                     <?= $this->Form->create('',['type'=>'POST', 'enctype'=>"multipart/form-data"]); ?>
-                    <input type="hidden" id="po_product_id" name="po_product_id" />                   
+                    <input type="hidden" id="po_product_id" name="po_product_id" />  
+                    <textarea name="descp"  id="descpxx" rows="2" style="width: 100%;"></textarea>                  
                     <input type="file" name="doc_file[]"  id='doc_file1'/> 
                     <div id="file_atach_grp"></div>   
                     <button class="add_more">Add More Files</button>               

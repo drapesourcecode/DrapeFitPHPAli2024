@@ -1738,15 +1738,20 @@ class AjaxsController extends AppController
     {
         $userDetails = $this->Users->find('all')->contain('UserDetails')->where(['Users.id' => $user_id])->first();
         $savecard = $this->PaymentCardDetails->find('all')->where(['PaymentCardDetails.user_id' => $user_id, 'PaymentCardDetails.is_save' => 1]);
-        if (empty($this->request->session()->read('KID_ID'))) {
-            if (!empty($kid_id)) {
-                $this->request->session()->write('KID_ID', $kid_id);
+        if($kid_id == 0){
+            $this->request->session()->write('KID_ID', '');
+            $this->request->session()->delete('KID_ID');
+        }else{
+            if (empty($this->request->session()->read('KID_ID'))) {
+                if (!empty($kid_id)) {
+                    $this->request->session()->write('KID_ID', $kid_id);
+                }
+            } else {
+                if (empty($kid_id)) {
+                    $kid_id = !empty($this->request->session()->read('KID_ID')) ? $this->request->session()->read('KID_ID') : '';
+                }
             }
-        } else {
-            if (empty($kid_id)) {
-                $kid_id = !empty($this->request->session()->read('KID_ID')) ? $this->request->session()->read('KID_ID') : '';
             }
-        }
         if ($userDetails->is_influencer == 1) {
             $main_style_fee = 1;
         } else {
