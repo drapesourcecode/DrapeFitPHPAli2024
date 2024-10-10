@@ -1594,8 +1594,9 @@ class AppadminsController extends AppController {
         // echo "<pre>";
         // print_r($newDataRwX); 
         // exit;
+        
         $this->Flash->success(__('Po received.'));
-        return $this->redirect($this->referer());
+        return $this->redirect(HTTP_ROOT.'appadmins/generateProduct/'.$product_id.'/po');
     }
 
     public function processPoReceived($brand_id) {
@@ -1628,7 +1629,7 @@ class AppadminsController extends AppController {
         $po_number_list = !empty($prod_list) ? Hash::extract($prod_list->toArray(), '{n}.po_number') : [];
 
         // print_r($po_number_list);
-        foreach ($prod_list as $po_numb) {
+        /*foreach ($prod_list as $po_numb) {
             $this->InProductVariantList->updateAll(['quantity' => ($po_numb->quantity+$po_numb->po_quantity), 'po_status'=>4], ['id' => $po_numb->id]);
             // $product_created = $this->generateProduct($po_numb->id,'po');  
             $curl = curl_init();
@@ -1650,7 +1651,7 @@ class AppadminsController extends AppController {
             // var_dump($response );
 
         }
-        exit;
+        exit;*/
         $this->Flash->success(__('Po received.'));
         return $this->redirect(HTTP_ROOT . 'appadmins/new-brand-po/tab4');
     }
@@ -4914,8 +4915,9 @@ class AppadminsController extends AppController {
         // echo "Check previously product created Or not as per quantity<br>";
         // echo "If not created then need to create<br>";
         // return true;
+        $brand_id = $variant_products_details->brand_id;
         $this->Flash->success(__("Product Generated successfully"));
-        return $this->redirect($this->referer());
+        return $this->redirect(HTTP_ROOT.'appadmins/new-brand-po/tab2?brand_id='.$brand_id);
 
         // exit;
     }
@@ -5492,20 +5494,38 @@ class AppadminsController extends AppController {
 
     public function updateVarPoFrom(){
         $this->loadModel('InProductVariantList');
+        $this->loadModel('InProducts');
+        $this->loadModel('PurchaseOrderProducts');
         if ($this->request->is('post')) {
             $postData = $this->request->data;
-            $newData = [];
-            $newData['id'] = $postData['variant_list_id'];
-            $newData['po_quantity'] = $postData['qty'];
-            $newData['is_po'] = 1;            
-            $newData['po_status'] = 1;
-            $newData['user_id'] = $postData['user_id'];
-            $newData['kid_id'] = $postData['kid_id'];
-            $newData['po_date'] = date('Y-m-d');
-            $newRw = $this->InProductVariantList->newEntity();
-            $newRw = $this->InProductVariantList->patchEntity($newRw, $newData);
-            $this->InProductVariantList->save($newRw);
-            echo json_encode(['status'=>'success','msg'=>'Added to PO.',$newData]);            
+            $getProductDetails = $this->InProducts->find('all')->where(['in_product_variant_list_id'=>$postData['variant_list_id']])->first();
+            if(!empty($getProductDetails )){
+                $newData = [];
+                $newData['product_id'] = $getProductDetails->prod_id;
+                $newData['qty'] = $postData['qty'];
+                $newData['brand_id'] = $getProductDetails->brand_id;
+                $newData['user_id'] = $postData['user_id'];
+                $newData['kid_id'] = $postData['kid_id'];
+                $newData['po_date'] = date('Y-m-d');
+                $newRw = $this->PurchaseOrderProducts->newEntity();
+                $newRw = $this->PurchaseOrderProducts->patchEntity($newRw, $newData);
+                $this->PurchaseOrderProducts->save($newRw);
+                echo json_encode(['status'=>'success','msg'=>'Added to Existing Customer Po.',$newData]); 
+                exit;
+            }
+            // $newData = [];
+            // $newData['id'] = $postData['variant_list_id'];
+            // $newData['po_quantity'] = $postData['qty'];
+            // $newData['is_po'] = 1;            
+            // $newData['po_status'] = 1;
+            // $newData['user_id'] = $postData['user_id'];
+            // $newData['kid_id'] = $postData['kid_id'];
+            // $newData['po_date'] = date('Y-m-d');
+            // $newRw = $this->InProductVariantList->newEntity();
+            // $newRw = $this->InProductVariantList->patchEntity($newRw, $newData);
+            // $this->InProductVariantList->save($newRw);
+            // echo json_encode(['status'=>'success','msg'=>'Added to PO.',$newData]); 
+            echo json_encode(['status'=>'error','msg'=>'Not added to PO.',$newData]);            
         }
         exit;
     }
