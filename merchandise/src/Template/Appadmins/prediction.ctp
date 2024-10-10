@@ -803,20 +803,20 @@
     }
     
     function editComment(commentId) {
-      console.log('commentId:',commentId);
-    $.ajax({
-        type: "POST",
-        url: "<?=HTTP_ROOT;?>appadmins/editMerchandisePredictionComment",
-        data: {commentId: commentId},
-         dataType:'JSON',
-        success: function (result) {
-            $('#id').val(commentId); 
-            $('#cmt_payment_id').val(result.payment_id);
-            $('#cmt_detail').val(result.comment); 
-            $('#comment_modal').modal('show'); 
-        }
-    });
-}
+        console.log('commentId:',commentId);
+        $.ajax({
+            type: "POST",
+            url: "<?=HTTP_ROOT;?>appadmins/editMerchandisePredictionComment",
+            data: {commentId: commentId},
+            dataType:'JSON',
+            success: function (result) {
+                $('#id').val(commentId); 
+                $('#cmt_payment_id').val(result.payment_id);
+                $('#cmt_detail').val(result.comment); 
+                $('#comment_modal').modal('show'); 
+            }
+        });
+    }
 
 
     function deleteComment(commentId) {

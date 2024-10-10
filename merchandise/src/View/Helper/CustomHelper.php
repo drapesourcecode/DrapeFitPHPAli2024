@@ -27,7 +27,7 @@ class CustomHelper extends Helper
     function productQuantity($prod_id)
     {
         $table = TableRegistry::get('InProducts');
-        $query = $table->find('all')->where(['prod_id' => $prod_id, 'match_status' => 2, 'allocate_to_user_id IS' => NULL, 'allocate_to_kid_id IS' => NULL])->count();
+        $query = $table->find('all')->where(['is_merchandise' => 0 ,'prod_id' => $prod_id, 'match_status' => 2, 'OR'=>['allocate_to_user_id IS' => NULL, 'allocate_to_user_id' => 0], 'OR' =>['allocate_to_kid_id IS' => NULL, 'allocate_to_kid_id' => 0]])->count();
         return $query;
     }
 

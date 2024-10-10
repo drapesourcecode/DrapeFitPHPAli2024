@@ -22,7 +22,7 @@
       * Development Mode:
       * true: Errors and warnings shown.
       */
-     'debug' => filter_var(env('DEBUG',false), FILTER_VALIDATE_BOOLEAN),
+     'debug' => filter_var(env('DEBUG',true), FILTER_VALIDATE_BOOLEAN),
      /**
       * Configure basic information about the application.
       *
@@ -303,8 +303,8 @@
            'className' => 'Cake\Database\Connection',
            'driver' => 'Cake\Database\Driver\Mysql',
            'persistent' => false,
-             'host' =>  ($domain == "142.93.58.236")?'167.71.244.74': '104.131.0.179',
-         //   'host' => '108.167.139.168',
+         //   'host' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'104.131.0.179',
+           'host' => '108.167.139.168',
            /**
             * CakePHP will use the default DB port based on the driver selected
             * MySQL on MAMP uses port 8889, MAMP users will want to uncomment
@@ -316,9 +316,9 @@
         //   'password' => 'lJ?I04elWC#M',
         //   'database' => 'drapefit_invateroy',
 
-           'username' => ($domain == "142.93.58.236")?'drapefit':'drapefit_test12',
-           'password' => 'g_G-=EVqW^TO',
-           'database' => ($domain == "142.93.58.236")?'drapefit_latest_db1':'drapefit_test12',
+           'username' => ($domain == "142.93.58.236")?'drapefit':'drapefittest_test12',
+           'password' => 'Houston@Aug2024',
+           'database' => ($domain == "142.93.58.236")?'drapefit_latest_db1':'drapefittest_new',
            'encoding' => 'utf8',
            'timezone' => 'UTC',
            'flags' => [],
