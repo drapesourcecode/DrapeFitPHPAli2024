@@ -86,7 +86,9 @@
                                 <button type="button" class="btn btn-sm btn-primary">Allocation</button>
                             </a>
                     <?php }
+                    if (!empty($get_match_prd->allocate_to_user_id)) {
                         echo " Already allocated";
+                    }                        
                     } else { ?>                       
                     <!--<a href="<?= HTTP_ROOT . 'appadmins/release/' .  $get_match_prd->id . '/' . $getPaymentGatewayDetails->user_id . '/' . $getPaymentGatewayDetails->kid_id; ?>">-->
                     <!--    <button type="button" class="btn btn-sm btn-primary">Release</button>-->
