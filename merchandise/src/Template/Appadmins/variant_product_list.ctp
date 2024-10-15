@@ -104,7 +104,7 @@
                 <!-- <td><?php echo $pdetails->user_id ?></td> -->
                                             <td><?php echo $pdetails->product_name_one; ?></td>
                                             <td>                                                
-                                                <img src="<?php echo HTTP_ROOT_BASE . PRODUCT_IMAGES; ?><?php echo $pdetails->feature_image; ?>" style="width: 50px;"/>                                               
+                                                <img src="<?php echo HTTP_ROOT_BASE . PRODUCT_IMAGES; ?><?php echo !empty($pdetails->feature_image)?$pdetails->feature_image:$pdetails->in_prd_var[0]['feature_image']; ?>" style="width: 50px;"/>                                               
                                             </td>
                                             <td>
                                                 <?php
@@ -191,7 +191,7 @@
                 <!-- <td><?php echo $pdetails->user_id ?></td> -->
                                             <td><?php echo $pdetails->product_name_one; ?></td>
                                             <td>                                                
-                                                <img src="<?php echo HTTP_ROOT_BASE . PRODUCT_IMAGES; ?><?php echo $pdetails->feature_image; ?>" style="width: 50px;"/>                                               
+                                            <img src="<?php echo HTTP_ROOT_BASE . PRODUCT_IMAGES; ?><?php echo !empty($pdetails->feature_image)?$pdetails->feature_image:$pdetails->in_prd_var[0]['feature_image']; ?>" style="width: 50px;"/>                                                 
                                             </td>
                                             <td>
                                                 <?php
@@ -276,7 +276,7 @@
                 <!-- <td><?php echo $pdetails->user_id ?></td> -->
                                             <td><?php echo $pdetails->product_name_one; ?></td>
                                             <td>                                                
-                                                <img src="<?php echo HTTP_ROOT_BASE . PRODUCT_IMAGES; ?><?php echo $pdetails->feature_image; ?>" style="width: 50px;"/>                                               
+                                            <img src="<?php echo HTTP_ROOT_BASE . PRODUCT_IMAGES; ?><?php echo !empty($pdetails->feature_image)?$pdetails->feature_image:$pdetails->in_prd_var[0]['feature_image']; ?>" style="width: 50px;"/>                                                 
                                             </td>
                                             <td>
                                                 <?php
@@ -363,7 +363,7 @@
                 <!-- <td><?php echo $pdetails->user_id ?></td> -->
                                             <td><?php echo $pdetails->product_name_one; ?></td>
                                             <td>                                                
-                                                <img src="<?php echo HTTP_ROOT_BASE . PRODUCT_IMAGES; ?><?php echo $pdetails->feature_image; ?>" style="width: 50px;"/>                                               
+                                            <img src="<?php echo HTTP_ROOT_BASE . PRODUCT_IMAGES; ?><?php echo !empty($pdetails->feature_image)?$pdetails->feature_image:$pdetails->in_prd_var[0]['feature_image']; ?>" style="width: 50px;"/>                                               
                                             </td>
                                             <td>
                                                 <?php
