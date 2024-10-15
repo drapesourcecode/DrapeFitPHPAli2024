@@ -1113,7 +1113,14 @@ class AppadminsController extends AppController {
         if ($this->request->is('post')) {
             $postData = $this->request->data;
             //For existing brand need to enter product in PurchaseOrderProducts and also need to insert in In_product List
-            $chk_prd = $this->PurchaseOrderProducts->find('all')->where(['product_id'=>$postData['product_id'],' status <'=>4 ])->count();
+            $chk_prd = $this->PurchaseOrderProducts->find('all')->where(['product_id'=>$postData['product_id'],' status <'=>3 ]);
+            if(!empty($postData['user_id'])){
+                $chk_prd =  $chk_prd->where(['user_id' => $postData['user_id']]);
+            }
+            if(!empty($postData['kid_id'])){
+                $chk_prd =  $chk_prd->where(['kid_id' => $postData['kid_id']]);
+            }
+            $chk_prd =  $chk_prd->count();
             if($chk_prd > 0){
                 $this->Flash->error(__('Product already in PO'));
                 return $this->redirect($this->referer());
@@ -4657,18 +4664,19 @@ class AppadminsController extends AppController {
 
 
         $this->InProductVariants->belongsTo('InUsers', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
+        $this->InProductVariants->hasMany('in_prd_var', ['className' => 'InProductVariantList', 'foreignKey' => 'in_product_variants_id']);
 
         /* $menproductdetails */
-        $menproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '1', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers']);
+        $menproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '1', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers','in_prd_var']);
 
         /* $womenproductdetails */
-        $womenproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '2', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers']);
+        $womenproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '2', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers','in_prd_var']);
 
         /* $boyskidsproductdetails */
-        $boyskidsproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '3', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers']);
+        $boyskidsproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '3', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers','in_prd_var']);
 
         /* $girlkidsproductdetails */
-        $girlkidsproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '4', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers']);
+        $girlkidsproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '4', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers','in_prd_var']);
 
         if (!empty($where_arr)) {
 

@@ -96,7 +96,7 @@ use Cake\Core\Configure;
                                                 <!-- <td><?php echo $pdetails->user_id ?></td> -->
                                                 <td><?php echo $get_pr_vari_list->product_name_one; ?></td>
                                                 <td>                                                
-                                                    <img src="<?php echo HTTP_ROOT_BASE . PRODUCT_IMAGES; ?><?php echo $get_pr_vari_list->feature_image; ?>" style="width: 50px;"/>                                               
+                                                <img src="<?php echo HTTP_ROOT_BASE . PRODUCT_IMAGES; ?><?php echo !empty($get_pr_vari_list->feature_image)?$get_pr_vari_list->feature_image:$pdetails->feature_image; ?>" style="width: 50px;"/>                                                    
                                                 </td>
                                                 <td>
                                                     <?php
