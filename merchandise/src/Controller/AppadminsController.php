@@ -1518,7 +1518,7 @@ class AppadminsController extends AppController {
         $this->loadModel('InProductLogs');
 
         $prd_detials = $this->InProducts->find('all')->where(['prod_id' => $product_id])->first()->toArray();
-        $po_prd_detials = $this->PurchaseOrderProducts->find('all')->where(['product_id' => $product_id, 'po_number' => $po_number])->first();
+        $po_prd_detials = $this->PurchaseOrderProducts->find('all')->where(['product_id' => $product_id, 'po_number' => $po_number,'status <'=>3])->first();
 
         //        pj([$product_id, $po_number]);
         //        pj($prd_detials);
@@ -1540,6 +1540,7 @@ class AppadminsController extends AppController {
             if(!empty($po_prd_detials->kid_id)){
                 $data['allocate_to_kid_id'] = $po_prd_detials->kid_id;
             }
+            $data['match_status'] = 2;
             if(!empty($po_prd_detials->user_id) || !empty($po_prd_detials->kid_id)){
                 $data['match_status'] = 1;
             }
