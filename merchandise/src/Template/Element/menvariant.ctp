@@ -163,9 +163,9 @@ use Cake\Core\Configure;
                                                                 <option value="shirt_size" <?= (!empty($editproduct) && ($editproduct->primary_size == 'shirt_size')) ? 'selected' : ''; ?>> Shirt size </option>
                                                                 <?php } ?>
                                                                 
-                                                                <?php if(in_array($product_ctg_nme,["B14","B12"])){ ?>
+                                                                <?php //if(in_array($product_ctg_nme,["B14","B12"])){ ?>
                                                                 <option value="free_size" <?= (!empty($editproduct) && ($editproduct->primary_size == 'free_size')) ? 'selected' : ''; ?>> Free size </option>
-                                                                <?php } ?>
+                                                                <?php //} ?>
                                                                 
                                                             </select>
                                                         </div>

@@ -9,6 +9,11 @@ use Cake\ORM\TableRegistry;
 
 class CustomHelper extends Helper
 {
+    public function dateDisplayTime($date)
+    {
+        // Add your date formatting logic here, e.g.:
+        return date('Y-m-d H:i:s', strtotime($date));
+    }
 
     function brandName($id)
     {

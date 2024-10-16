@@ -169,9 +169,9 @@ use Cake\Core\Configure;
                                                         <option value="shoe_size"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'shoe_size')) ? 'selected' : ''; ?> >Shoe size</option>
                                                         <?php } ?>
                                                         
-                                                        <?php if (!in_array($product_ctg_nme, ["C12"])) { ?>
+                                                        <?php //if (!in_array($product_ctg_nme, ["C12"])) { ?>
                                                         <option value="free_size"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'free_size')) ? 'selected' : ''; ?> >Free size</option>
-                                                        <?php } ?>
+                                                        <?php //} ?>
 
                                                     </select>
                                                 </div>

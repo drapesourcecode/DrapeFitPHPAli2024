@@ -4608,7 +4608,7 @@ class AppadminsController extends AppController
             $this->Flash->error(__('All bar code not generated.'));
             return $this->redirect($this->referer());
         }
-        $this->InProducts->updateAll(['quantity' => 1, 'is_active' => 1, 'available_status' => 1, 'match_status' => 2, 'is_merchandise' => 0, 'po_status' => 4, /*'is_clearance' => null,*/ 'inventory_move_date'=>date('Y-m-d H:i:s')], ['prod_id' => $prod_id, 'is_merchandise' => 1]);
+        $this->InProducts->updateAll(['quantity' => 1, 'is_active' => 1, 'available_status' => 1/*, 'match_status' => 2*/, 'is_merchandise' => 0, 'po_status' => 4, /*'is_clearance' => null,*/ 'inventory_move_date'=>date('Y-m-d H:i:s')], ['prod_id' => $prod_id, 'is_merchandise' => 1]);
         $this->Flash->success(__('Successfuly move to inventory.'));
 
         return $this->redirect($this->referer());

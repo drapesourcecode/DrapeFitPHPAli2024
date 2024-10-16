@@ -216,9 +216,9 @@ use Cake\Core\Configure;
                                                                 <?php if(in_array($product_ctg_nme,["G1"])){ ?>
                                                                     <option value="shoe_size"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'shoe_size')) ? 'selected' : ''; ?> >Shoe Size</option>
                                                                 <?php } ?>
-                                                                <?php if(in_array($product_ctg_nme,["A14"]) && in_array($product_sub_ctg_nme, ["A141", "A142", "A143", "A144", "A145", "A146", "A147", "A148", "A149", "A1410", "A1412", "A1413"])){ ?>
+                                                                <?php //if(in_array($product_ctg_nme,["A14"]) && in_array($product_sub_ctg_nme, ["A141", "A142", "A143", "A144", "A145", "A146", "A147", "A148", "A149", "A1410", "A1412", "A1413"])){ ?>
                                                                     <option value="free_size"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'free_size')) ? 'selected' : ''; ?> >Free Size</option>
-                                                                <?php } ?>
+                                                                <?php //} ?>
                                                                     
                                                             </select>
                                                         </div>

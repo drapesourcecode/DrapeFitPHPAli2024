@@ -160,9 +160,9 @@ use Cake\Core\Configure;
                                             <?php if (in_array($product_ctg_nme, ["D11", "D4", "D5", "D6"])) { ?>
                                             <option value="bottom_size"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'bottom_size')) ? 'selected' : ''; ?> > Bottom size </option>
                                             <?php } ?>
-                                            <?php if(in_array($product_ctg_nme,["D12","D10"])){ ?>
+                                            <?php //if(in_array($product_ctg_nme,["D12","D10"])){ ?>
                                             <option value="free_size"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'free_size')) ? 'selected' : ''; ?> > Free size </option>
-                                            <?php } ?>
+                                            <?php //} ?>
                                             <?php if(!in_array($product_ctg_nme,["D11"])){ ?>
                                             <option value="shoe_size"  <?= (!empty($editproduct) && ($editproduct->primary_size == 'shoe_size')) ? 'selected' : ''; ?> > Shoe size </option>
                                             <?php } ?>
