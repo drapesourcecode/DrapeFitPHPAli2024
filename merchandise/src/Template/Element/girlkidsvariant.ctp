@@ -74,56 +74,67 @@ use Cake\Core\Configure;
                                 <?php if(!empty($get_prv_inv_data) && (empty($_GET['variant_id']) && empty( $this->request->session()->read('new_variant_po_data')))){ ?> 
                                 <div class="row">
                                     <div class="col-sm-12">
-                                    <table id="exampleXX" class="table table-bordered table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Brand Name</th>
-                                                <th>Product Name 1</th>
-                                                <th>Product Image</th>
-                                                <th>Color : Size</th>  
-                                                <th style="text-align: center;">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php foreach($get_prv_inv_data as $get_pr_vari_list){
-                                                    foreach($get_pr_vari_list->vari_prd_li as $pdetails){
-           
-                                            ?>
-                                            <tr id="<?php echo $pdetails->id; ?>" class="message_box">
+                                    <a href="#demo" class="btn btn-default related_prd_li collapsed" data-toggle="collapse" style="width: 100%;text-align: left;"><i class="fa fa-chevron-right" aria-hidden="true"></i> Related Products</a>
+                                    <div id="demo" class="collapse">
+                                        <table id="example134" class="table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Brand Name</th>
+                                                    <th>Product Name 1</th>
+                                                    <th>Product Image</th>
+                                                    <th>Color : Size</th>  
+                                                    <th style="text-align: center;">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php foreach($get_prv_inv_data as $get_pr_vari_list){
+                                                        foreach($get_pr_vari_list->vari_prd_li as $pdetails){
+            
+                                                ?>
+                                                <tr id="<?php echo $pdetails->id; ?>" class="message_box">
 
-                                                <td><?php echo $this->Custom->brandNamex(@$pdetails->brand_id); ?> </td>
+                                                    <td><?php echo $this->Custom->brandNamex(@$pdetails->brand_id); ?> </td>
 
-                                                <!-- <td><?php echo $pdetails->user_id ?></td> -->
-                                                <td><?php echo $get_pr_vari_list->product_name_one; ?></td>
-                                                <td>                                                
-                                                <img src="<?php echo HTTP_ROOT_BASE . PRODUCT_IMAGES; ?><?php echo !empty($get_pr_vari_list->feature_image)?$get_pr_vari_list->feature_image:$pdetails->feature_image; ?>" style="width: 50px;"/>                                                    
-                                                </td>
-                                                <td>
-                                                    <?php
-                                                        echo $pdetails->color.' : '.$pdetails->size;
-                                                    ?>
-                                                </td>
-                                                <td style="text-align: center;">
-                                                <?php if($pdetails->is_po == 0){ ?>
-                                                <button type="button" id="btnshowPo<?=$pdetails->id;?>" onclick="$('#showPo<?= $pdetails->id;?>').toggle();$('#btnshowPo<?= $pdetails->id;?>').toggle()" class="btn btn-sm btn-primary">Add to PO</button>                                                
-                                                <?php }else{ echo "Already in po"; } ?>
-                                                <a target="_blank" href="<?=HTTP_ROOT;?>appadmins/newBrandPo/tab1/<?=$option;?>?ctg=<?=$_GET['ctg'];?>&sub_ctg=<?=$_GET['sub_ctg'];?>&variant_id=<?=$get_pr_vari_list->id;?>" class="btn btn-sm btn-primary">Add New Variant</a>
-                                                <div id="showPo<?=$pdetails->id;?>" style="display:none;">
-                                                    <div id='updateVarPoFrom<?=$pdetails->id;?>' >
-                                                    <input type="text" step="1" name="qty" min="1" placeholder="Quantity" style="width:100px;" value="1"  required>
-                                                    <input type="hidden"  name="variant_list_id" value="<?=$pdetails->id;?>">
-                                                    <input type="hidden"  name="user_id" value="<?=$getPaymentGatewayDetails->user_id;?>">
-                                                    <input type="hidden"  name="kid_id" value="<?=$getPaymentGatewayDetails->kid_id;?>">
-                                                    <button type="button" class="btn btn-sm btn-primary" onClick="updateVarPox(<?=$pdetails->id;?>)">Submit</button>
+                                                    <!-- <td><?php echo $pdetails->user_id ?></td> -->
+                                                    <td><?php echo $get_pr_vari_list->product_name_one; ?></td>
+                                                    <td>                                                
+                                                    <img src="<?php echo HTTP_ROOT_BASE . PRODUCT_IMAGES; ?><?php echo !empty($get_pr_vari_list->feature_image)?$get_pr_vari_list->feature_image:$pdetails->feature_image; ?>" style="width: 50px;"/>                                                    
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                            echo $pdetails->color.' : '.$pdetails->size;
+                                                        ?>
+                                                    </td>
+                                                    <td style="text-align: center;">
+                                                    <?php if($pdetails->is_po == 0){ ?>
+                                                    <button type="button" id="btnshowPo<?=$pdetails->id;?>" onclick="$('#showPo<?= $pdetails->id;?>').toggle();$('#btnshowPo<?= $pdetails->id;?>').toggle()" class="btn btn-sm btn-primary">Add to PO</button>                                                
+                                                    <?php }else{ echo "Already in po"; } ?>
+                                                    <a target="_blank" href="<?=HTTP_ROOT;?>appadmins/newBrandPo/tab1/<?=$option;?>?ctg=<?=$_GET['ctg'];?>&sub_ctg=<?=$_GET['sub_ctg'];?>&variant_id=<?=$get_pr_vari_list->id;?>" class="btn btn-sm btn-primary">Add New Variant</a>
+                                                    <div id="showPo<?=$pdetails->id;?>" style="display:none;">
+                                                        <div id='updateVarPoFrom<?=$pdetails->id;?>' >
+                                                        <input type="text" step="1" name="qty" min="1" placeholder="Quantity" style="width:100px;" value="1"  required>
+                                                        <input type="hidden"  name="variant_list_id" value="<?=$pdetails->id;?>">
+                                                        <input type="hidden"  name="user_id" value="<?=$getPaymentGatewayDetails->user_id;?>">
+                                                        <input type="hidden"  name="kid_id" value="<?=$getPaymentGatewayDetails->kid_id;?>">
+                                                        <button type="button" class="btn btn-sm btn-primary" onClick="updateVarPox(<?=$pdetails->id;?>)">Submit</button>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                </td>
-                                            </tr>                                            
-                                            <?php } 
-                                            } ?>
-                                        </tbody>
-                                    </table>
+                                                    </td>
+                                                </tr>                                            
+                                                <?php } 
+                                                } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                     <script>
+                                         $('.related_prd_li[data-toggle="collapse"]').on('click', function() {
+                                            let icon = $(this).find('i');
+                                            if ($(this).hasClass('collapsed')) {
+                                                icon.removeClass('fa-chevron-right').addClass('fa-chevron-down');
+                                            } else {
+                                                icon.removeClass('fa-chevron-down').addClass('fa-chevron-right');                                                
+                                            }
+                                        });
                                         function updateVarPox(id){
                                             $.ajax({
                                                 type: "POST",
@@ -664,5 +675,12 @@ use Cake\Core\Configure;
         }
         button[data-original-title=Help]{
             display: none;
-        }        
+        }
+        .note-editor.note-frame.panel.panel-default.fullscreen {
+            padding-left: 400px;
+        }
+        
+        .note-editing-area .note-editable {
+            padding-left: 20px !important;
+        }
     </style>
