@@ -5683,10 +5683,11 @@ class UsersController extends AppController {
         exit;
     }
 
-    public function ajaxChangeshipthisAddress() {
+    public function ajaxChangeshipthisAddress($user_id = null) {
         $this->viewBuilder()->setLayout('ajax');
         $data = $this->request->data;
-        $this->ShippingAddress->updateAll(['default_set' => 0], ['user_id' => $this->Auth->user('id')]);
+        $user_id = !empty($user_id)?$user_id:$this->Auth->user('id');
+        $this->ShippingAddress->updateAll(['default_set' => 0], ['user_id' => $user_id]);
         $this->ShippingAddress->updateAll(['default_set' => 1], ['id' => $data['default_set']]);
         $this->request->session()->write('user_shipping_address', $data['default_set']);
         echo json_encode('1');
