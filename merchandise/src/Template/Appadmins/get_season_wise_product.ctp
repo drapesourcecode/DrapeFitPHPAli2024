@@ -1,3 +1,7 @@
+<!-- <link rel="stylesheet" href="<?php //echo HTTP_ROOT; ?>bootstrap/css/bootstrap.min.css">
+<script src="<?php //echo HTTP_ROOT; ?>plugins/jQuery/jQuery-2.1.4.min.js"></script>
+<script src="<?php //echo HTTP_ROOT; ?>bootstrap/js/bootstrap.min.js"></script> -->
+<?php //echo $this->Html->script('jquery.min.js'); ?>
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
@@ -52,32 +56,41 @@
                         ?></td>
                     <td>
                         
+                    <button type="button" onclick="openCmt(<?= $get_match_prd->id; ?>,<?=$payment_id;?>)" class="btn btn-primary">Comments</button>
 
 
                         <?php //echo $this->Html->link($this->Html->tag('i', '', array('class' => 'fa fa-eye')), ['action' => '#'], ['escape' => false, "data-placement" => "top", "data-hint" => "View product details", 'data-toggle' => 'modal', 'data-target' => '#myModalproductgk-' . $get_match_prd->id, "title" => "View Product Details", 'class' => 'btn btn-info hint--top  hint', 'style' => 'padding: 0 7px!important;']); ?>                                            
                         <?php 
-                        if(!empty($ap_li->pop)){
+                        if(!empty($get_match_prd->pop)){
                             echo "Already added in po";
                         }else{
-                    //    if($prd_ttQ <= 1){ ?>
-                        <button type="button" id="btnshowPo<?=$prod_idd;?>" onclick="$('#showPo<?=$prod_idd;?>').toggle();$('#btnshowPo<?=$prod_idd;?>').toggle()" class="btn btn-sm btn-primary">Add to PO</button>
-                        <div id="showPo<?=$prod_idd;?>" style="display:none;">
-                            <?= $this->Form->create('',['type'=>'post', 'url'=>['action'=>'addPoRequest']]);?>
-                            <input type="number" step="1" name="qty" min="1" placeholder="Quantity" style="width:100px;" required>
-                            <input type="hidden"  name="product_id" value="<?=$prod_idd;?>">
-                            <input type="hidden"  name="brand_id" value="<?=$ap_li->brand_id;?>">
-                            <input type="hidden"  name="user_id" value="<?=$getData->user_id;?>">
-                            <input type="hidden"  name="kid_id" value="<?=$getData->kid_id;?>">
-                            <button type="submit" class="btn btn-sm btn-primary">Submit</button>
-                            <?= $this->Form->end(); ?>
-                        </div>
+                            if($prd_ttQ < 1){ ?>
+                                <button type="button" id="btnshowPo<?=$where_to_show.$get_match_prd->id;?>" onclick="$('#showPo<?= $where_to_show.$get_match_prd->id;?>').toggle();$('#btnshowPo<?= $where_to_show.$get_match_prd->id;?>').toggle()" class="btn btn-sm btn-primary">Add to PO</button>
+                                <div id="showPo<?=$where_to_show.$get_match_prd->id;?>" style="display:none;">
+                                    <?= $this->Form->create('',['type'=>'post', 'url'=>['action'=>'addPoRequest']]);?>
+                                    <input type="text" step="1" name="qty" min="1" placeholder="Quantity" style="width:100px;" value="1" readonly required>
+                                    <input type="hidden"  name="product_id" value="<?=$prod_idd;?>">
+                                    <input type="hidden"  name="brand_id" value="<?=$get_match_prd->brand_id;?>">
+                                    <input type="hidden"  name="user_id" value="<?=$getPaymentGatewayDetails->user_id;?>">
+                                    <input type="hidden"  name="kid_id" value="<?=$getPaymentGatewayDetails->kid_id;?>">
+                                    <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+                                    <?= $this->Form->end(); ?>
+                                    <button type="button"  onclick="$('#showPo<?= $where_to_show.$get_match_prd->id;?>').toggle();$('#btnshowPo<?= $where_to_show.$get_match_prd->id;?>').toggle()" class="btn btn-sm btn-success">Cancel PO</button>
+                                </div>
+                            <?php } ?>
                         <?php } ?>
-                        <?php if (empty($ap_li->allocate_to_user_id)) { ?>
-                    <a href="<?= HTTP_ROOT . 'appadmins/allocate/' . $ap_li->id . '/' . $getData->user_id . '/' . $getData->kid_id; ?>">
-                        <button type="button" class="btn btn-sm btn-primary">Allocation</button>
-                    </a>
-                    <?php } else { ?>
-                    <!--<a href="<?= HTTP_ROOT . 'appadmins/release/' .  $ap_li->id . '/' . $getData->user_id . '/' . $getData->kid_id; ?>">-->
+                        <?php 
+                        if($prd_ttQ >= 1){ 
+                        if (empty($get_match_prd->allocate_to_user_id)) { ?>
+                            <a href="<?= HTTP_ROOT . 'appadmins/allocate/' . $get_match_prd->id . '/' . $getPaymentGatewayDetails->user_id . '/' . $getPaymentGatewayDetails->kid_id; ?>">
+                                <button type="button" class="btn btn-sm btn-primary">Allocation</button>
+                            </a>
+                    <?php }
+                    if (!empty($get_match_prd->allocate_to_user_id)) {
+                        echo " Already allocated";
+                    }                        
+                    } else { ?>                       
+                    <!--<a href="<?= HTTP_ROOT . 'appadmins/release/' .  $get_match_prd->id . '/' . $getPaymentGatewayDetails->user_id . '/' . $getPaymentGatewayDetails->kid_id; ?>">-->
                     <!--    <button type="button" class="btn btn-sm btn-primary">Release</button>-->
                     <!--</a>-->
                     <?php } ?>
@@ -86,6 +99,27 @@
 
                 <?php 
             } 
+            // var_dump($getMatchingProducts->count());
+            if(empty($getMatchingProducts->count())  && !empty($user_size_col) && !empty($user_size)){
+                ?>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><?=$user_size_col;?></td>
+                    <td><?=$user_size;?></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                    <button type="button" onclick="openSuggCmt('<?=$where_to_show;?>','<?=$user_size_col;?>','<?=$user_size;?>',<?=$getPaymentGatewayDetails->user_id;?>,<?=$getPaymentGatewayDetails->kid_id;?>,<?=  $payment_id;?>)" class="btn btn-primary">Comments</button>
+                    <button class="btn btn-primary" onclick="addVariantForPoRequest('<?=$where_to_show;?>','<?=$user_size_col;?>','<?=$user_size;?>',<?=$getPaymentGatewayDetails->user_id;?>,<?=$getPaymentGatewayDetails->kid_id;?>,<?=  $payment_id;?>)" >Add to PO</button>
+                    
+                    </td>
+                </tr>
+                <?php
+            }
         ?>
     </tbody>
 </table>

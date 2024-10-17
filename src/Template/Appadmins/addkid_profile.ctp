@@ -463,7 +463,7 @@
                                                                     <?php } else { ?>
                                                                         <img width="100" height="20"  src="<?php echo HTTP_ROOT . 'inventory/files/barcode/' . $list->barcode_image; ?>"/> 
                                                                     <?php } ?>
-                                                                    <br> <?php// echo $list->barcode_value; ?>  <?= $list->is_verified == 1 ? "<span><i style='color:green'class='fa fa-check'></i></span>" : ""; ?>
+                                                                    <br> <?php // echo $list->barcode_value; ?>  <?= $list->is_verified == 1 ? "<span><i style='color:green'class='fa fa-check'></i></span>" : ""; ?>
                                                                 </td>
 
                                                                 <td style="text-align:  left;"> <?php

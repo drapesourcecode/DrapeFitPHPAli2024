@@ -247,11 +247,11 @@
     
        'mailjet'=> [
                     'host' => 'ssl://smtp.gmail.com',
-                    'port' => 465,
-                    'username' =>'support@drapefit.com', // id
-                    'password' =>'ftwu upnp leky cirb',//'encqsnxyqufqnbca',//'Kolkata@8906', // password
+                    'port' =>465, 
+                    'username' =>'support@drapefittest.com', // id
+                    'password' =>'Kolkata@5',//'hsde gmcc miso aitu',//app password added 12-08-2023//'encqsnxyqufqnbca',//'Kolkata@8906', // password
                     'timeout' => 3000,
-                    'secure' => 'ssl',
+                    'secure' =>'ssl',
                     'tls' =>false,
                     'className' => 'Smtp',
                     'keepAlive'=>false
@@ -303,8 +303,8 @@
            'className' => 'Cake\Database\Connection',
            'driver' => 'Cake\Database\Driver\Mysql',
            'persistent' => false,
-           'host' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'104.131.0.179',
-         //   'host' => '108.167.139.168',
+         //   'host' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'104.131.0.179',
+           'host' => '108.167.139.168',
            /**
             * CakePHP will use the default DB port based on the driver selected
             * MySQL on MAMP uses port 8889, MAMP users will want to uncomment
@@ -315,9 +315,9 @@
         //     'username' => 'drapefit_invuser',
         //   'password' => 'lJ?I04elWC#M',
         //   'database' => 'drapefit_invateroy',
-           'username' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'drapefit_test12',
-           'password' => 'g_G-=EVqW^TO',
-           'database' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'drapefit_test12',       
+           'username' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'drapefittest_test12',
+           'password' => 'Houston@Aug2024',
+           'database' => /*($domain == "142.93.58.236")?'167.71.244.74':*/'drapefittest_new',       
            'encoding' => 'utf8',
            'timezone' => 'UTC',
            'flags' => [],

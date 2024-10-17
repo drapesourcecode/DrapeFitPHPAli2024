@@ -4888,7 +4888,8 @@ class CustomComponent extends Component {
             $dataDate = $users->created_dt;
         }
 
-        return date('Y-m-d h:i:s', strtotime($dataDate));
+        // return date('Y-m-d h:i:s', strtotime($dataDate));
+        return $dataDate;
     }
 
     function batchprocess($supportstatus, $upportemail, $support_subject, $client, $process, $userId, $name, $kidId, $kidName, $email, $subject, $status) {

@@ -68,6 +68,9 @@
   $("#example1").DataTable({
        "order": [[0,'desc']]
   });
+  $("#example134").DataTable({
+    pageLength: 10
+  });
   $('#example2').DataTable({
    "paging": true,
    "lengthChange": false,

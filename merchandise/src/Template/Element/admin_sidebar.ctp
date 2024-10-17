@@ -52,8 +52,8 @@ $paramAction = $this->request->params['action'];
             <li class="treeview <?php if ($paramController == 'Appadmins' && (in_array($paramAction, ['existingBrandPo','newBrandPo']))) { ?> active <?php } ?>">
                 <a href="javascript:void(0);"><i class="fa  fa-money"></i><span>Merchandise PO</span> <i class="fa fa-angle-left pull-right"></i></a>
                 <ul class="treeview-menu">
-                    <li class="<?php if ($paramController == 'Appadmins' && $paramAction == 'existingBrandPo') { ?> active <?php } ?>"><a href="<?= h(HTTP_ROOT) ?>appadmins/existingBrandPo"><i class="fa  fa-genderless"></i>Existing brand PO</a></li>
-                    <li class="<?php if ($paramController == 'Appadmins' && $paramAction == 'newBrandPo') { ?> active <?php } ?>"><a href="<?= h(HTTP_ROOT) ?>appadmins/newBrandPo"><i class="fa  fa-genderless"></i>New Brand PO</a></li>
+                    <li class="<?php if ($paramController == 'Appadmins' && $paramAction == 'existingBrandPo') { ?> active <?php } ?>"><a href="<?= h(HTTP_ROOT) ?>appadmins/existingBrandPo"><i class="fa  fa-genderless"></i>Existing Customer PO</a></li>
+                    <li class="<?php if ($paramController == 'Appadmins' && $paramAction == 'newBrandPo') { ?> active <?php } ?>"><a href="<?= h(HTTP_ROOT) ?>appadmins/newBrandPo"><i class="fa  fa-genderless"></i>Customer PO</a></li>
                 </ul>
             </li>
 
