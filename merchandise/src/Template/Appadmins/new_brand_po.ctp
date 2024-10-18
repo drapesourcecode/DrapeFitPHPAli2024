@@ -1,9 +1,9 @@
 <div class="content-wrapper">
     <section class="content-header">
-        <h1> New Brand Po</h1>
+        <h1> Customer Po</h1>
         <ol class="breadcrumb">
             <li><a href="<?php echo HTTP_ROOT . 'appadmins' ?>"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li class="active"><a class="active-color" href="#">   <i class="fa  fa-user-plus"></i> New Brand Po </a></li>
+            <li class="active"><a class="active-color" href="#">   <i class="fa  fa-user-plus"></i> Customer Po </a></li>
         </ol>
     </section>
     <section class="content">
@@ -16,11 +16,11 @@
                         <ul class="nav nav-tabs">
                             <li class="<?= (empty($tab) || ($tab=='tab1'))?'active':''; ?>" >
                                 <!--<a data-toggle="tab" href="<?=HTTP_ROOT;?>/appadmins/newBrandPo/tab1">Place PO</a>-->
-                                <a  href="<?=HTTP_ROOT;?>/appadmins/newBrandPo/tab1">Place PO</a>
+                                <a  href="<?=HTTP_ROOT;?>appadmins/newBrandPo/tab1">Place PO</a>
                             </li>
-                            <li class="<?= (!empty($tab) && ($tab=='tab2'))?'active':''; ?>"><a  href="<?=HTTP_ROOT;?>/appadmins/newBrandPo/tab2">PO Received</a></li>
+                            <li class="<?= (!empty($tab) && ($tab=='tab2'))?'active':''; ?>"><a  href="<?=HTTP_ROOT;?>appadmins/newBrandPo/tab2">PO Received</a></li>
                            
-                            <li class="<?= (!empty($tab) && ($tab=='tab4'))?'active':''; ?>"><a  href="<?=HTTP_ROOT;?>/appadmins/newBrandPo/tab4">PO Paid </a></li>
+                            <li class="<?= (!empty($tab) && ($tab=='tab4'))?'active':''; ?>"><a  href="<?=HTTP_ROOT;?>appadmins/newBrandPo/tab4">PO Paid </a></li>
                         </ul>
 
                         <div class="tab-content">
@@ -51,7 +51,7 @@ $color_arr = $this->Custom->inColor();
         <h1><?= !empty($id) ? 'Edit' : 'Add'; ?> Product For <?php echo @$profile; ?></h1>        
     </section>
     <section class="content">
-        <div class="row">
+    <div class="row">
             <div class="col-xs-12">
                 <div class="box box-primary">
                     <div class="box-body">
@@ -67,10 +67,33 @@ $color_arr = $this->Custom->inColor();
                             
                         } else {
                             ?>
-                            <?= $this->Form->create(@$user, array('id' => 'profile_data', 'type' => 'file','url'=>['action'=>'addPoProduct'])) ?>
+                            <?= $this->Form->create(@$user, array('id' => 'profile_data', 'type' => 'file','url'=>['action'=>'addVariantProduct'])) ?>
                         <?php } ?>
-<?= $this->Form->input('id', ['value' => @$id, 'type' => 'hidden', 'label' => false]); ?>
-
+                        <?= $this->Form->input('id', ['value' => @$id, 'type' => 'hidden', 'label' => false]); ?>
+                        <?php if(empty($this->request->session()->read('new_variant_po_data'))){ ?>
+                            <?= $this->Form->input('for_po', ['value' => 1, 'type' => 'hidden', 'label' => false]); ?>                            
+                        <?php }else{ 
+                            $new_variant_po_data = json_decode($this->request->session()->read('new_variant_po_data'), true);
+                            ?>
+                                <style>.var_qty{ display:none; }</style>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        Product will added for customer  <b><?=$new_variant_po_data['usr_nm'];?></b>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        If you want to add stock <a class="btn btn-info btn-sm" href="<?=HTTP_ROOT;?>appadmins/removePoCustomerSession">Click Here</a>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="one_variant" value="1" >
+                        <?php } ?>
+                        <?= $this->Form->input('variant_id', ['value' => !empty($_GET['variant_id'])?$_GET['variant_id']:'', 'type' => 'hidden', 'label' => false]); ?>
+                        <?php if(!empty($_GET['variant_id'])){ ?>
+                            <script>
+                                $(document).ready(function(){
+                                    $('.new_var_xx').remove();
+                                });
+                            </script>
+                        <?php } ?>
                         <div class="nav-tabs-custom">
                             <select id="profile_type" class="form-control" onchange="return getChanges(this.value)">
                                 <option <?php if (@$profile == 'Men') { ?> selected="" <?php } ?> value="Men">Men</option>
@@ -85,31 +108,31 @@ $color_arr = $this->Custom->inColor();
                             }
                             ?>
 
-<?php if (@$profile == 'Men' || @$profile == '') { ?>
+                            <?php if (@$profile == 'Men' || @$profile == '') { ?>
 
-                                <?=  $this->element('men', compact('color_arr','editproduct','product_ctg_nme','product_sub_ctg_nme')); ?>
+                                <?=  $this->element('menvariant', compact('color_arr','editproduct','product_ctg_nme','product_sub_ctg_nme','all_colors','all_sizes')); ?>
                                 
                                 <?php
                                 if ($editproduct->is_deleted == 1) {
                                     echo "<h1 style='color:red;'>Deleted</h1>";
                                 } else {
                                     ?>
-                                    <div class="form-group">
+                                    <!-- <div class="form-group">
                                         <div class="col-sm-10">
-        <?= $this->Form->submit('Save', ['type' => 'submit', 'class' => 'btn btn-success', 'style' => 'margin-left:15px;']) ?>
+                            <?= $this->Form->submit('Save', ['type' => 'submit', 'class' => 'btn btn-success', 'style' => 'margin-left:15px;']) ?>
                                         </div>
-                                    </div>
-    <?php } ?>
+                                    </div> -->
+                        <?php } ?>
                             </div>
 
-    <?php if (empty($id)) { ?>
+                        <?php if (empty($id)) { ?>
                                 <script>
                                     $(document).ready(function () {
                                         $("input[name^=better_body_shape]").prop("checked", false);
                                     })
                                 </script>
                             <?php } ?>
-    <?php if (($editproduct->better_body_shape == NULL) || empty(count(json_decode($editproduct->better_body_shape, true)))) { ?>
+                    <?php if (($editproduct->better_body_shape == NULL) || empty(count(json_decode($editproduct->better_body_shape, true)))) { ?>
                                 <script>
                                     $(document).ready(function () {
                                         $("input[name^=better_body_shape]").prop("checked", false);
@@ -119,7 +142,7 @@ $color_arr = $this->Custom->inColor();
                         <?php } ?>
                             <?php if (@$profile == 'Women') { ?>
                             
-                                <?=  $this->element('women', compact('color_arr','editproduct','product_ctg_nme','product_sub_ctg_nme')); ?>
+                                <?=  $this->element('womenvariant', compact('color_arr','editproduct','product_ctg_nme','product_sub_ctg_nme','all_colors','all_sizes')); ?>
                                 
     <?php if (empty($id)) { ?>
                                 <script>
@@ -138,12 +161,12 @@ $color_arr = $this->Custom->inColor();
                         <?php } ?>
                             <?php if (@$profile == 'BoyKids') { ?>
                                 
-                                <?=  $this->element('boykids', compact('color_arr','editproduct','product_ctg_nme','product_sub_ctg_nme')); ?>
+                                <?=  $this->element('boykidsvariant', compact('color_arr','editproduct','product_ctg_nme','product_sub_ctg_nme','all_colors','all_sizes')); ?>
                             
                         <?php } ?>
                             <?php if (@$profile == 'GirlKids') { ?>
                                 
-                                <?=  $this->element('girlkids', compact('color_arr','editproduct','product_ctg_nme','product_sub_ctg_nme')); ?>
+                                <?=  $this->element('girlkidsvariant', compact('color_arr','editproduct','product_ctg_nme','product_sub_ctg_nme','all_colors','all_sizes')); ?>
                             
                     <?php } ?>
                     </div>
@@ -156,6 +179,7 @@ $color_arr = $this->Custom->inColor();
                 </div>
             </div>
         </div>
+    
         
 </div>
 </section>
@@ -184,6 +208,9 @@ $color_arr = $this->Custom->inColor();
             success: function (res) {
                 let htmll = "<option value='' selected disabled>--</option>";
                 $('select[name=rack]').html(htmll+res);
+                setTimeout(function (){
+                    $("[name=rack]").val('<?=!empty($_GET['sub_ctg'])?$_GET['sub_ctg']:'';?>');
+                },1000);
             },
             error: function (err) {
                 $('select[name=rack]').html('<option value="" selected disabled>No data found</option>');
@@ -199,16 +226,19 @@ $color_arr = $this->Custom->inColor();
     $(document).ready(function(){
         setTimeout(function (){
             $("[name=rack]").val('<?=$_GET['sub_ctg'];?>');
-        },1000);
+        },5000);
     });
 </script>    
 <?php } ?>
 <script type="text/javascript">
     function readURL(input) {
+        let idx = input.id;
+        let digits = idx.replace(/\D/g, ''); // Extract only digits
+        console.log(digits);
         if (input.files && input.files[0]) {
             var sizeKB = input.files[0].size / 1000;
             //alert(sizeKB);
-            if (parseFloat(sizeKB) <= 20) {
+            if (parseFloat(sizeKB) <= 2100) {
                 var reader = new FileReader();
                 reader.onload = function (e) {
                     var img = $('<img />', {
@@ -216,7 +246,7 @@ $color_arr = $this->Custom->inColor();
                         alt: 'MyAlt',
                         width: '200'
                     });
-                    $('#imagePreview').html(img);
+                    $('#imagePreview'+digits).html(img);
 
                 }
                 reader.readAsDataURL(input.files[0]);
@@ -227,16 +257,11 @@ $color_arr = $this->Custom->inColor();
                     text: 'Image not supported',
                     background: '#fff url(https://sweetalert2.github.io/images/trees.png)'
                 })
-                $("#image").val('');
-                $('#imagePreview').html('');
+                $("#image"+digits).val('');
+                $('#imagePreview'+digits).html('');
             }
         }
     }
-
-    $("#image").change(function () {
-        readURL(this);
-
-    });
     
     function setSubCatg(id){
         let user_type = $('#profile_type').val();
@@ -294,6 +319,10 @@ $color_arr = $this->Custom->inColor();
         });
 
         $("#seson input[type=checkbox]").click(function () {
+            let  checkedCount = $("#seson input[type=checkbox]:checked").length;
+            if(checkedCount>=4){
+                $("#seson #selectAllseson").prop("checked", true);
+            }
             $("#seson input[type=checkbox]").removeAttr('required');
             if (!$(this).prop("checked")) {
                 $("#seson #selectAllseson").prop("checked", false);
@@ -331,10 +360,10 @@ $color_arr = $this->Custom->inColor();
         display: inline-block;
     }
     .women-select1 {
-    width: 21.9%;
-    display: inline-block;
-    vertical-align: top;
-}
+        width: 21.9%;
+        display: inline-block;
+        vertical-align: top;
+    }
     .women-select1 label {
         display: inline-block;
         width: auto;
@@ -352,8 +381,8 @@ $color_arr = $this->Custom->inColor();
         color: #ce2f2f !important;
     }
     span.error {
-    color:red;
-}
+        color:red;
+    }
     .type-box ul li {
         display: inline-block;
         width: 17%;
@@ -363,12 +392,12 @@ $color_arr = $this->Custom->inColor();
         vertical-align: top;
         position: relative;
     }
-.type-box ul li span.error {
-    position: absolute;
-    bottom: -27px;
-    left: 0;
-    line-height: 16px;
-}
+    .type-box ul li span.error {
+        position: absolute;
+        bottom: -27px;
+        left: 0;
+        line-height: 16px;
+    }
     .type-box ul {
         float: left;
         width: 100%;
@@ -421,10 +450,10 @@ $color_arr = $this->Custom->inColor();
         position:relative;
     }
     .skin ul li span.error {
-    position: absolute;
-    width: 151px;
-    bottom: -6px;
-}
+        position: absolute;
+        width: 151px;
+        bottom: -6px;
+    }
     .skin ul li label{
         width: 50px;
         height: 50px;
@@ -435,21 +464,21 @@ $color_arr = $this->Custom->inColor();
         border:4px solid #fff;
     }
     .women-select-boxes {
-    vertical-align: top;
-    display: inline-flex;
-}
-.women-select-boxes span {
-    margin: 9px 4px;
-}
-.list-inline>li{
-    position: relative;
-}
-.list-inline>li span.error {
-    position: absolute;
-    bottom: -11px;
-    left: 0;
-    width: 162px;
-}
+        vertical-align: top;
+        display: inline-flex;
+    }
+    .women-select-boxes span {
+        margin: 9px 4px;
+    }
+    .list-inline>li{
+        position: relative;
+    }
+    .list-inline>li span.error {
+        position: absolute;
+        bottom: -11px;
+        left: 0;
+        width: 162px;
+    }
     .skin ul li input{
         /*display: none;*/
     }
@@ -488,63 +517,63 @@ $color_arr = $this->Custom->inColor();
         border:4px solid #ff6c00;
     }
     
-.skin ul li {
-    display: inline-flex;
-    align-items: center;
-    margin-right: 22px;
-    position: relative;
-}
-.note-label ul li {
-    position: relative;
-}
-.note-label ul li span.error{
-        position: absolute;
-    width: 150px;
-    bottom: -14px;
-    left: 0;
-}
-.women-select1 {
-    display: inline-flex;
-}
-span.error {
-    display: none !important;
-}
-.error {
-    border: 1px solid red !important;
-}
-.skin ul li input.error {
-    outline: 1px solid red;
-    height: 13px;
-    border: none !important;
-    margin-right: 3px;
-}
+    .skin ul li {
+        display: inline-flex;
+        align-items: center;
+        margin-right: 22px;
+        position: relative;
+    }
+    .note-label ul li {
+        position: relative;
+    }
+    .note-label ul li span.error{
+            position: absolute;
+        width: 150px;
+        bottom: -14px;
+        left: 0;
+    }
+    .women-select1 {
+        display: inline-flex;
+    }
+    span.error {
+        display: none !important;
+    }
+    .error {
+        border: 1px solid red !important;
+    }
+    .skin ul li input.error {
+        outline: 1px solid red;
+        height: 13px;
+        border: none !important;
+        margin-right: 3px;
+    }
 
-.list-inline>li input.error {
-    outline: 1px solid red;
-    height: 13px;
-    border: none !important;
-    margin-right: 3px;
-}
+    .list-inline>li input.error {
+        outline: 1px solid red;
+        height: 13px;
+        border: none !important;
+        margin-right: 3px;
+    }
 
-.note-label ul li input.error {
-    outline: 1px solid red;
-    height: 13px;
-    border: none !important;
-    margin-right: 3px;
-}
-.list-inline>li {
-    position: relative;
-    display: inline-flex;
-    vertical-align: top;
-    align-items: center;
-}
+    .note-label ul li input.error {
+        outline: 1px solid red;
+        height: 13px;
+        border: none !important;
+        margin-right: 3px;
+    }
+    .list-inline>li {
+        position: relative;
+        display: inline-flex;
+        vertical-align: top;
+        align-items: center;
+    }
 
-sub, sup {
-    position: relative;
-    font-size: 100%;
-    line-height: 0;
-    vertical-align: baseline;
-}
+    sub, sup {
+        position: relative;
+        font-size: 100%;
+        line-height: 0;
+        vertical-align: baseline;
+    }
 
 </style>                           
                                 </div>
@@ -579,8 +608,10 @@ sub, sup {
                                             <th>Brands Name</th>
                                             <th>Name</th>
                                             <th>Photo</th>
+                                            <th>Color : Size</th>
                                             <th style="width: 10%;text-align: center;">Quantity</th>
                                             <th style="width: 10%;text-align: center;">Po date</th>
+                                            <th style="width: 10%;text-align: center;">Po customer</th>
                                             <th style="text-align: center;"></th>
                                         </tr>
                                     </thead>
@@ -594,13 +625,26 @@ sub, sup {
                                             <tr  class="message_box">
                                                 <td><?= $ky + 1 ?></td>
                                                 <td><?= h($dat_li->brand->brand_name) ?></td>
-                                                <td><?php echo $dat_li->prd_detl[0]['product_name_one']; ?></td>
-                                                <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->prd_detl[0]['product_image']; ?>" style="width: 80px;"/></td>
+                                                <td><?php echo $dat_li->prd_detl->product_name_one; ?></td>
+                                                <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->feature_image; ?>" style="width: 80px;"/></td>
+                                                <td><?php echo $dat_li->color ." : ". $dat_li->size; ?></td>
 
-                                                <td style="text-align: center;"><?php echo $dat_li->qty; ?></td>
+                                                <td style="text-align: center;"><?php echo $dat_li->po_quantity; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_date; ?></td>
                                                 <td style="text-align: center;">
-
+                                                        <?php
+                                                        if (!empty($dat_li->allocate_kid_id) && ($dat_li->allocate_kid_id != 0)) {
+                                                            echo $dat_li->kid_dt->kids_first_name . " (kid)";
+                                                        } else if (!empty($dat_li->allocate_user_id)) {
+                                                            echo $dat_li->user_dtl->first_name.' '.$dat_li->user_dtl->last_name;
+                                                        } else {
+                                                            echo "";
+                                                        }
+                                                        ?>
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    <a href="<?=HTTP_ROOT;?>appadmins/new_po_cancel/<?php echo $dat_li->id; ?>" class="btn btn-success">Cancel</a>
+                                                    <button onclick="attachDoc(<?php echo $dat_li->id; ?>)" type="button">Attach DOC</button>
                                                 </td>
                                             </tr>
                                         <?php } } ?>
@@ -644,9 +688,12 @@ sub, sup {
                                             <th>Brands Name</th>
                                             <th>Name</th>
                                             <th>Photo</th>
+                                            <th>Color : Size</th>
                                             <th style="width: 10%;text-align: center;">Quantity</th>
                                             <th style="width: 10%;text-align: center;">Po date</th>
                                             <th style="text-align: center;">Po number</th>
+                                            <th style="text-align: center;">Po customer</th>
+                                            <th style="text-align: center;"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -662,24 +709,38 @@ sub, sup {
                                             <tr  class="message_box">
                                                 <td><?= $ky + 1 ?></td>
                                                 <td><?= h($dat_li->brand->brand_name) ?></td>
-                                                <td><?php echo $dat_li->prd_detl[0]['product_name_one']; ?></td>
-                                                <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->prd_detl[0]['product_image']; ?>" style="width: 80px;"/></td>
-
-                                                <td style="text-align: center;"><?php echo $dat_li->qty; ?></td>
+                                                <td><?php echo $dat_li->prd_detl->product_name_one; ?></td>
+                                                <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->feature_image; ?>" style="width: 80px;"/></td>
+                                                <td><?php echo $dat_li->color ." : ". $dat_li->size; ?></td>
+                                                <td style="text-align: center;"><?php echo $dat_li->po_quantity; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_date; ?></td>
                                                 <td style="text-align: center;">
                                                     <?php echo $dat_li->po_number; ?>
                                                 </td>
                                                 <td style="text-align: center;">
+                                                        <?php
+                                                        if (!empty($dat_li->allocate_kid_id) && ($dat_li->allocate_kid_id != 0)) {
+                                                            echo $dat_li->kid_dt->kids_first_name . " (kid)";
+                                                        } else if (!empty($dat_li->allocate_user_id)) {
+                                                            echo $dat_li->user_dtl->first_name.' '.$dat_li->user_dtl->last_name;
+                                                        } else {
+                                                            echo "";
+                                                        }
+                                                        ?>
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    <a href="<?=HTTP_ROOT;?>appadmins/new_po_edit/<?php echo $dat_li->id.'/'.$dat_li->po_number; ?>" class="btn btn-primary">Edit</a>
+                                                    <a href="<?=HTTP_ROOT;?>appadmins/new_po_cancel/<?php echo $dat_li->id; ?>" class="btn btn-success">Cancel</a>
+                                                      
                                                     <?php 
                                                     if(!empty($dat_li->po_number)){
-                                                    if($dat_li->status == 2){
+                                                    if($dat_li->po_status == 2){
                                                       ?>
-                                                    <a href="<?=HTTP_ROOT;?>appadmins/complete_new_brand_receive/<?php echo $dat_li->product_id.'/'.$dat_li->po_number; ?>" class="btn btn-primary">Click to Receive</a>
+                                                    <a href="<?=HTTP_ROOT;?>appadmins/complete_new_brand_receive/<?php echo $dat_li->id.'/'.$dat_li->po_number; ?>" class="btn btn-primary">Click to Receive</a>
                                                       <?php  
                                                     } 
-                                                     if($dat_li->status == 3){ 
-                                                         $received +=1;
+                                                     if($dat_li->po_status == 3){ 
+                                                        $received +=1;
                                                          ?>
                                                             <b style="color:olive;">Product Received</b>
                                                       <?php
@@ -729,9 +790,11 @@ sub, sup {
                                             <th>Brands Name</th>
                                             <th>Name</th>
                                             <th>Photo</th>
+                                            <th>Color : Size</th>
                                             <th style="width: 10%;text-align: center;">Quantity</th>
                                             <th style="width: 10%;text-align: center;">Po date</th>
                                             <th style="text-align: center;">Po number</th>
+                                            <th style="text-align: center;">Po customer</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -744,13 +807,24 @@ sub, sup {
                                             <tr  class="message_box">
                                                 <td><?= $ky + 1 ?></td>
                                                 <td><?= h($dat_li->brand->brand_name) ?></td>
-                                                <td><?php echo $dat_li->prd_detl[0]['product_name_one']; ?></td>
-                                                <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->prd_detl[0]['product_image']; ?>" style="width: 80px;"/></td>
-
-                                                <td style="text-align: center;"><?php echo $dat_li->qty; ?></td>
+                                                <td><?php echo $dat_li->prd_detl->product_name_one; ?></td>
+                                                <td><img src="<?php echo HTTP_ROOT_INV . 'files/product_img/' ?><?php echo $dat_li->feature_image; ?>" style="width: 80px;"/></td>
+                                                <td><?php echo $dat_li->color ." : ". $dat_li->size; ?></td>
+                                                <td style="text-align: center;"><?php echo $dat_li->po_quantity; ?></td>
                                                 <td style="text-align: center;"><?php echo $dat_li->po_date; ?></td>
                                                 <td style="text-align: center;">
                                                     <?php echo $dat_li->po_number; ?>
+                                                </td>
+                                                <td style="text-align: center;">
+                                                        <?php
+                                                        if (!empty($dat_li->allocate_kid_id) && ($dat_li->allocate_kid_id != 0)) {
+                                                            echo $dat_li->kid_dt->kids_first_name . " (kid)";
+                                                        } else if (!empty($dat_li->allocate_user_id)) {
+                                                            echo $dat_li->user_dtl->first_name.' '.$dat_li->user_dtl->last_name;
+                                                        } else {
+                                                            echo "";
+                                                        }
+                                                        ?>
                                                 </td>
                                             </tr>
                                         <?php } } ?>
@@ -770,4 +844,102 @@ sub, sup {
 <script>
     $('#filter_brand').find(":selected").val(); 
     $('#filter_brand').find(":selected").text(); 
+    function attachDoc(po_product_id){
+        // alert(po_product_id);
+        $('#po_product_id').val(po_product_id);
+        getAttachDoc(po_product_id);
+        $('#po_file_modal').modal('show');
+    }
+    function getAttachDoc(po_product_id){        
+        $('#attach_list').html('');
+        $('#file_atach_grp').html('');
+        $('#doc_file1').val(''); 
+        $('#po_product_id').val(po_product_id);
+        $('#po_file_modal').modal('show');
+        $.ajax({
+                url: "<?= HTTP_ROOT; ?>appadmins/get_po_new_product_file",
+                type: 'POST',              
+                data: {po_product_id:po_product_id},
+                dataType: 'html',         
+                success: function (res) {
+                    $('#attach_list').html(res);
+                }
+            });        
+    }
+    function deleteFile(id){
+        $.ajax({
+                url: "<?= HTTP_ROOT; ?>appadmins/delete_new_po_product_file",
+                type: 'POST',              
+                data: {id:id},
+                dataType: 'html',         
+                success: function (res) {
+                }
+            });
+        $('#file_'+id).remove();
+    }
+    $(document).ready(function(){
+        $('.add_more').click(function(e){
+            e.preventDefault();
+            $('#file_atach_grp').append("<input name='doc_file[]' type='file'/>");
+        });
+        $('#po_file_upload').click(function(e){
+            // alert('asas');
+            e.preventDefault();
+            var formData = new FormData($(this).parents('form')[0]);
+            let po_product_id = $('#po_product_id').val();
+
+            $.ajax({
+                url: "<?= HTTP_ROOT; ?>appadmins/po_new_product_file_upload",
+                type: 'POST',              
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,          
+                success: function (data) {
+                    $('#attach_list').html('');
+                    $('#file_atach_grp').html('');
+                    $('#doc_file1').val(''); 
+                    $('#descpxx').val(''); 
+                    $('#descpxx').text(''); 
+                    getAttachDoc(po_product_id);
+                }
+            });
+            return false;
+        });
+    });
 </script>
+
+<div id="po_file_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg" style="width: 100%;">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Attach Doc</h4>
+            </div>
+            <div class="modal-body">
+                <div class="cmt-frm">
+                    <?= $this->Form->create('',['type'=>'POST', 'enctype'=>"multipart/form-data"]); ?>
+                    <input type="hidden" id="po_product_id" name="po_product_id" />  
+                    <textarea name="descp"  id="descpxx" rows="2" style="width: 100%;"></textarea>                  
+                    <input type="file" name="doc_file[]"  id='doc_file1'/> 
+                    <div id="file_atach_grp"></div>   
+                    <button class="add_more">Add More Files</button>               
+                    <button type="button" class="btn btn-success" id="po_file_upload">Upload</button>
+                    <?=$this->Form->end();?>
+                </div>
+                <div id="attach_list"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<style>
+    option[disabled] {
+        background: #6563637d;
+    }
+</style>

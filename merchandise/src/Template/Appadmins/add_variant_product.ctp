@@ -1,3 +1,7 @@
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+                                    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+                                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
+
 <div class="content-wrapper">
     <section class="content-header">
         <h1> Add variant products</h1>
@@ -11,17 +15,34 @@
             <div class="col-xs-12">
                 <div class="box">
 
-                    <div class="box-body">
-
-                        
-
+                    <div class="box-body"> 
                         <div >
+                        <?php
+                            if(!empty( $this->request->session()->read('new_variant_po_data'))){
+                                $new_variant_po_data = json_decode($this->request->session()->read('new_variant_po_data'),true);
+                                // print_r($new_variant_po_data );
+                                ?>
+                                <script>
+                                    $(document).ready(function(){
+                                        // addVariants();
+                                    });
+                                </script>
+                                <style>.var_qty{ display:none; }</style>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        Product will added for customer <b><?=$new_variant_po_data['usr_nm'];?></b>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        If you want to add stock <a class="btn btn-info btn-sm" href="<?=HTTP_ROOT;?>appadmins/removePoCustomerSession">Click Here</a>
+                                    </div>
+                                </div>
+                                <?php
+                            }
+                            ?>
                             <div>
                                 <div id="add_product">
                                     
-                                    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-                                    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-                                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
+                                    
                                     <script>
                                         function getChanges(value) {
                                             if (value) {
@@ -61,7 +82,7 @@ $color_arr = $this->Custom->inColor();
                             ?>
                             <?= $this->Form->create(@$user, array('id' => 'profile_data', 'type' => 'file'/*,'url'=>['action'=>'addPoProduct']*/)) ?>
                         <?php } ?>
-<?= $this->Form->input('id', ['value' => @$id, 'type' => 'hidden', 'label' => false]); ?>
+                        <?= $this->Form->input('id', ['value' => @$id, 'type' => 'hidden', 'label' => false]); ?>
 
                         <div class="nav-tabs-custom">
                             <select id="profile_type" class="form-control" onchange="return getChanges(this.value)">
@@ -77,7 +98,7 @@ $color_arr = $this->Custom->inColor();
                             }
                             ?>
 
-<?php if (@$profile == 'Men' || @$profile == '') { ?>
+                            <?php if (@$profile == 'Men' || @$profile == '') { ?>
 
                                 <?=  $this->element('menvariant', compact('color_arr','editproduct','product_ctg_nme','product_sub_ctg_nme','all_colors','all_sizes')); ?>
                                 
@@ -86,22 +107,22 @@ $color_arr = $this->Custom->inColor();
                                     echo "<h1 style='color:red;'>Deleted</h1>";
                                 } else {
                                     ?>
-                                    <div class="form-group">
+                                    <!-- <div class="form-group">
                                         <div class="col-sm-10">
-        <?= $this->Form->submit('Save', ['type' => 'submit', 'class' => 'btn btn-success', 'style' => 'margin-left:15px;']) ?>
+                            <?= $this->Form->submit('Save', ['type' => 'submit', 'class' => 'btn btn-success', 'style' => 'margin-left:15px;']) ?>
                                         </div>
-                                    </div>
-    <?php } ?>
+                                    </div> -->
+                        <?php } ?>
                             </div>
 
-    <?php if (empty($id)) { ?>
+                        <?php if (empty($id)) { ?>
                                 <script>
                                     $(document).ready(function () {
                                         $("input[name^=better_body_shape]").prop("checked", false);
                                     })
                                 </script>
                             <?php } ?>
-    <?php if (($editproduct->better_body_shape == NULL) || empty(count(json_decode($editproduct->better_body_shape, true)))) { ?>
+                    <?php if (($editproduct->better_body_shape == NULL) || empty(count(json_decode($editproduct->better_body_shape, true)))) { ?>
                                 <script>
                                     $(document).ready(function () {
                                         $("input[name^=better_body_shape]").prop("checked", false);
@@ -148,6 +169,7 @@ $color_arr = $this->Custom->inColor();
                 </div>
             </div>
         </div>
+    
         
 </div>
 </section>
@@ -176,6 +198,9 @@ $color_arr = $this->Custom->inColor();
             success: function (res) {
                 let htmll = "<option value='' selected disabled>--</option>";
                 $('select[name=rack]').html(htmll+res);
+                setTimeout(function (){
+                    $("[name=rack]").val('<?=!empty($_GET['sub_ctg'])?$_GET['sub_ctg']:'';?>');
+                },1000);
             },
             error: function (err) {
                 $('select[name=rack]').html('<option value="" selected disabled>No data found</option>');
@@ -191,7 +216,7 @@ $color_arr = $this->Custom->inColor();
     $(document).ready(function(){
         setTimeout(function (){
             $("[name=rack]").val('<?=$_GET['sub_ctg'];?>');
-        },1000);
+        },5000);
     });
 </script>    
 <?php } ?>
@@ -212,10 +237,13 @@ $color_arr = $this->Custom->inColor();
 
 <script type="text/javascript">
     function readURL(input) {
+        let idx = input.id;
+        let digits = idx.replace(/\D/g, ''); // Extract only digits
+        console.log(digits);
         if (input.files && input.files[0]) {
             var sizeKB = input.files[0].size / 1000;
             //alert(sizeKB);
-            if (parseFloat(sizeKB) <= 20) {
+            if (parseFloat(sizeKB) <= 2100) {
                 var reader = new FileReader();
                 reader.onload = function (e) {
                     var img = $('<img />', {
@@ -223,7 +251,7 @@ $color_arr = $this->Custom->inColor();
                         alt: 'MyAlt',
                         width: '200'
                     });
-                    $('#imagePreview').html(img);
+                    $('#imagePreview'+digits).html(img);
 
                 }
                 reader.readAsDataURL(input.files[0]);
@@ -234,16 +262,17 @@ $color_arr = $this->Custom->inColor();
                     text: 'Image not supported',
                     background: '#fff url(https://sweetalert2.github.io/images/trees.png)'
                 })
-                $("#image").val('');
-                $('#imagePreview').html('');
+                $("#image"+digits).val('');
+                $('#imagePreview'+digits).html('');
             }
         }
     }
 
-    $("#image").change(function () {
-        readURL(this);
+    // $("input[id^=image]").change(function () {
+    //     alert($(this).attr('id'));
+    //     readURL(this);
 
-    });
+    // });
     
     function setSubCatg(id){
         let user_type = $('#profile_type').val();
@@ -277,6 +306,7 @@ $color_arr = $this->Custom->inColor();
     }
 
     $(document).ready(function () {
+        
         $('.select2_select').select2();
         $('.select2_select').on('select2:closing', function (e) {
             let id = $(this).attr('id');
@@ -293,6 +323,8 @@ $color_arr = $this->Custom->inColor();
             }
 //            console.log(val_arr); 
         });
+        
+        
       
        /* $("#seson input[type=checkbox]").attr('required','required');*/
         $("#seson #selectAllseson").click(function () {
@@ -308,6 +340,7 @@ $color_arr = $this->Custom->inColor();
         });
 
     });
+    
     function updateChkbox() {
         $('input[name="style_sphere_selections_v5[]"]').not(this).prop('checked', false);
         let chkbox = $('#mens12300').attr('checked');
@@ -552,7 +585,9 @@ sub, sup {
     line-height: 0;
     vertical-align: baseline;
 }
-
+option[disabled] {
+  background: #6563637d;
+}
 </style> 
 
 

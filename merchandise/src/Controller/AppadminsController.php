@@ -65,7 +65,7 @@ class AppadminsController extends AppController {
 
     public function beforeFilter(Event $event) {
 
-        $this->Auth->allow(['logout', 'generatePoPdf']);
+        $this->Auth->allow(['logout', 'generatePoPdf', 'generateNewBrandPoPdf','generateProduct']);
     }
 
     public $paginate = ['limit' => 50];
@@ -451,9 +451,14 @@ class AppadminsController extends AppController {
     public function predictionMatching($id)
     {
         $this->loadModel('ShippingAddress');
+        $this->loadModel('MatchingCase');
+        $this->loadModel('WomenStyle');
+        $this->loadModel('UserDetails');
+        $this->loadModel('WemenStyleSphereSelections');
 
 
         $getData = $this->PaymentGetways->find('all')->where(['id' => $id])->first();
+        $this->MatchingCase->deleteAll(['payment_id' => $id]);
 
         if (!empty($getData->shipping_address_id)) {
             $shipping_address = $this->ShippingAddress->find('all')->where(['id' => $getData->shipping_address_id])->first();
@@ -463,24 +468,27 @@ class AppadminsController extends AppController {
                 $shipping_address = $this->ShippingAddress->find('all')->where(['ShippingAddress.user_id' => $getData->user_id])->first();
             }
         }
-
-        // $all_productsx = $this->Products->find('all')->where(['user_id' => $getData->user_id]);
-        // //pj($products); exit;
-        // $product_Id = [];
-        // foreach ($all_productsx as $pd) {
-        //     $product_Id[] = $pd->id;
-        // }
-        // $prev_products = !empty($all_productsx) ? Hash::extract($all_productsx->toArray(), '{n}.prod_id') : [];
-        // $prev_products = array_filter($prev_products);
-        // $prv_cnd = '';
-        // if (!empty($prev_products)) {
-        //     $prv_cnd = implode('","', $prev_products);
-        // }
-        // if (!empty($prv_cnd)) {
-        //     $prv_cnd = 'AND `in_products`.`prod_id` NOT IN ("' . $prv_cnd . '")';
-        // }
-
-        //        echo $prv_cnd;exit;
+        $Womenstyle = $style_sphere_selectionsWemen = [];
+        if ($getData->kid_id == 0) {
+            $userDetails = $this->UserDetails->find('all')->where(['user_id' => $getData->user_id])->first();
+            $gender = $userDetails->gender;
+            if($gender == 1){
+                //Men
+            }
+            if($gender == 2){
+                //WoMen
+                $Womenstyle = $this->WomenStyle->find('all')->where(['WomenStyle.user_id' => $getData->user_id])->first();
+                $style_sphere_selectionsWemen = $this->WemenStyleSphereSelections->find('all')->where(['user_id' =>  $getData->user_id])->first();
+            }
+        }else{
+            $userDetails = $this->KidsDetails->find('all')->where(['id' => $getData->kid_id])->first();
+            if ($userDetails->kids_clothing_gender == 'girls') {
+                 $gender = 4; // Girl kid
+            }else{
+                $gender = 3; //Boy kid
+            }
+        }
+        
         $seasons = $this->Custom->getSeason($shipping_address->city);
         //        print_r($seasons);//exit;
         $seasons_arry = !empty($seasons) ? json_decode($seasons, true) : [];
@@ -490,9 +498,9 @@ class AppadminsController extends AppController {
             $final_season_name = "Summer";
         }
         // print_r($seasons_arry);exit;
-        // print_r($final_season);exit;
+        // print_r($final_season_name);exit;
      
-        $this->set(compact('final_season_name', 'id', 'getData'));
+        $this->set(compact('final_season_name', 'id', 'getData', 'Womenstyle', 'style_sphere_selectionsWemen','userDetails','getData'));
     }
 
 //     public function predictionMatching($id)
@@ -1105,6 +1113,18 @@ class AppadminsController extends AppController {
         if ($this->request->is('post')) {
             $postData = $this->request->data;
             //For existing brand need to enter product in PurchaseOrderProducts and also need to insert in In_product List
+            $chk_prd = $this->PurchaseOrderProducts->find('all')->where(['product_id'=>$postData['product_id'],' status <'=>3 ]);
+            if(!empty($postData['user_id'])){
+                $chk_prd =  $chk_prd->where(['user_id' => $postData['user_id']]);
+            }
+            if(!empty($postData['kid_id'])){
+                $chk_prd =  $chk_prd->where(['kid_id' => $postData['kid_id']]);
+            }
+            $chk_prd =  $chk_prd->count();
+            if($chk_prd > 0){
+                $this->Flash->error(__('Product already in PO'));
+                return $this->redirect($this->referer());
+            }
             $newData = [];
             $newData['product_id'] = $postData['product_id'];
             $newData['qty'] = $postData['qty'];
@@ -1129,10 +1149,11 @@ class AppadminsController extends AppController {
 
         $tab1_brand_list = $this->PurchaseOrderProducts->find('all')->where(['PurchaseOrderProducts.status' => 1, 'PurchaseOrderProducts.is_new_brand' => 0])->group(['PurchaseOrderProducts.brand_id'])->contain(['brand']);
 
+        $this->PurchaseOrderProducts->belongsTo('user_dtl', ['className' => 'UserDetails', 'foreignKey' => 'user_id', 'bindingKey'=>'user_id']);
         $this->PurchaseOrderProducts->belongsTo('user', ['className' => 'Users', 'foreignKey' => 'user_id']);
         $this->PurchaseOrderProducts->belongsTo('kid_dt', ['className' => 'KidsDetails', 'foreignKey' => 'kid_id']);
         $this->PurchaseOrderProducts->hasMany('prd_detl', ['className' => 'InProducts', 'foreignKey' => 'prod_id', 'bindingKey' => 'product_id']);
-        $tab1_data_list = $this->PurchaseOrderProducts->find('all')->contain(['prd_detl', 'brand', 'user', 'kid_dt']);
+        $tab1_data_list = $this->PurchaseOrderProducts->find('all')->contain(['prd_detl', 'brand', 'user', 'user_dtl', 'kid_dt']);
         if (empty($tab) || ($tab == 'tab1')) {
             $tab1_data_list = $tab1_data_list->where(['PurchaseOrderProducts.status' => 1]);
             if (!empty($_GET) && !empty($_GET['brand_id'])) {
@@ -1209,6 +1230,7 @@ class AppadminsController extends AppController {
             //            print_r($result);
             // echo $po_number;
             //exit;
+            curl_close($ch);
 
             if ($result) {
                 $filename = 'files/report_pdf/po_' . $po_number . '.pdf';
@@ -1225,30 +1247,30 @@ class AppadminsController extends AppController {
                 //            $to = 'debmicrofinet@gmail.com';
 
                 $email_message = '<div style="float:left; width:100%;">
-    <ul style="font-size: 20px;  line-height: 1.4em;  padding: 0px; list-style: none;">
-        <li><b>Brand name : </b> ' . $brand_details->brand_name . ' </li>
-        <li><b>Contact person name : </b> ' . $brand_details->name . ' ' . $brand_details->last_name . ' </li>
-        <li><b>Email : </b> ' . $brand_details->email . ' </li>
-        <li><b>PO number : </b> ' . $po_number . ' </li>
-    </ul>
-</div>
-<div style="margin-top: 20px; float:left; width:100%;">
-<table id="example1" class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>sl no</th>
-            <th>Brands Name</th>
-            <th>Name</th>
-            <th>Photo</th>
-            <th style="width: 10%;text-align: center;">Quantity</th>
-            <th style="width: 10%;text-align: center;">Po date</th>
-            
-        </tr>
-    </thead>
-    <tbody>' . $msg_body . '</tbody>  
-</table>
+                    <ul style="font-size: 20px;  line-height: 1.4em;  padding: 0px; list-style: none;">
+                        <li><b>Brand name : </b> ' . $brand_details->brand_name . ' </li>
+                        <li><b>Contact person name : </b> ' . $brand_details->name . ' ' . $brand_details->last_name . ' </li>
+                        <li><b>Email : </b> ' . $brand_details->email . ' </li>
+                        <li><b>PO number : </b> ' . $po_number . ' </li>
+                    </ul>
+                </div>
+                <div style="margin-top: 20px; float:left; width:100%;">
+                <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>sl no</th>
+                            <th>Brands Name</th>
+                            <th>Name</th>
+                            <th>Photo</th>
+                            <th style="width: 10%;text-align: center;">Quantity</th>
+                            <th style="width: 10%;text-align: center;">Po date</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>' . $msg_body . '</tbody>  
+                </table>
 
-</div>';
+                </div>';
                 $message = $this->Custom->helpformat($mail_temp->value, '', '', $email_message, '', '');
                 //            echo $email_message;exit;
 
@@ -1289,26 +1311,38 @@ class AppadminsController extends AppController {
         $this->viewBuilder()->layout('');
 
         $this->loadModel('PurchaseOrderProducts');
-        $this->loadModel('PurchaseOrders');
+        $this->loadModel('PurchaseOrders');        
+        $this->loadModel('InSizes');
+        $this->loadModel('InColors');
+        $this->loadModel('InProductVariantList');
+        $this->loadModel('InProductVariants');
 
         if ($this->request->is('post')) {
             $postData = $this->request->data;
+            // echo "<pre>";
+            // print_r($postData);exit;
             if (empty($postData['proceed_id'])) {
                 $this->Flash->success(__('No Product found to proceed'));
                 return $this->redirect($this->referer());
             }
             $prd_id = explode(',', $postData['proceed_id']);
 
-            $this->PurchaseOrderProducts->belongsTo('brand', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
+            $all_sizes = $this->InSizes->find('all')->where(['is_active' => 1]);
+            $all_colors = $this->InColors->find('all')->where(['is_active' => 1]);
 
-            $this->PurchaseOrderProducts->hasMany('prd_detl', ['className' => 'InProducts', 'foreignKey' => 'prod_id', 'bindingKey' => 'product_id']);
-            $data_list = $this->PurchaseOrderProducts->find('all')->where(['PurchaseOrderProducts.status' => 1, 'PurchaseOrderProducts.is_new_brand' => 1, 'PurchaseOrderProducts.id IN' => $prd_id])->contain(['brand', 'prd_detl']);
+            $this->InProductVariantList->belongsTo('brand', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
+
+            $tab1_brand_list = $this->InProductVariantList->find('all')->where(['InProductVariantList.po_status' => 1])->group(['InProductVariantList.brand_id'])->contain(['brand']);
+
+            $this->InProductVariantList->belongsTo('prd_detl', ['className' => 'InProductVariants',  'foreignKey' => 'in_product_variants_id']);
+            $data_list = $this->InProductVariantList->find('all')->where(['InProductVariantList.po_status' => 1, 'InProductVariantList.id IN' => $prd_id])->contain(['prd_detl', 'brand']);
+            
             $brand_details = $this->InUsers->find('all')->where(['id' => $postData['brand_id']])->first();
 
             $msg_body = '';
             foreach ($data_list as $kyx => $dat_li) {
-                $prd_name = $dat_li->prd_detl[0]["product_name_one"];
-                $prd_img = $dat_li->prd_detl[0]['product_image'];
+                $prd_name = $dat_li->prd_detl->product_name_one;
+                $prd_img = $dat_li->prd_detl->feature_image;
                 $msg_body .= '<tr><td>' . ($kyx + 1) . '</td><td>' . $dat_li->brand->brand_name . '</td><td>' . $prd_name . '</td><td><img src="' . HTTP_ROOT_INV . 'files/product_img/' . $prd_img . '" style="width: 80px;"/></td><td style="text-align: center;">' . $dat_li->qty . '</td> <td style="text-align: center;">' . date('Y-m-d') . '</td></tr>';
             }
 
@@ -1317,7 +1351,7 @@ class AppadminsController extends AppController {
             $po_number = rand(111, 999) . uniqid();
 
             // From URL to get webpage contents.
-            $url = HTTP_ROOT . 'appadmins/generatePoPdf/' . json_encode($postData['proceed_id']) . '/' . $postData['brand_id'] . '/' . $po_number;
+            $url = HTTP_ROOT . 'appadmins/generateNewBrandPoPdf/' . json_encode($postData['proceed_id']) . '/' . $postData['brand_id'] . '/' . $po_number;
 
             // Initialize a CURL session.
             $ch = curl_init();
@@ -1329,9 +1363,10 @@ class AppadminsController extends AppController {
             curl_setopt($ch, CURLOPT_URL, $url);
 
             $result = curl_exec($ch);
-            //            print_r($result);
+            // var_dump($result);
             // echo $po_number;
-            //exit;
+            // exit;
+            curl_close($ch);
 
             if ($result) {
                 $filename = 'files/report_pdf/po_' . $po_number . '.pdf';
@@ -1348,30 +1383,30 @@ class AppadminsController extends AppController {
                 //            $to = 'debmicrofinet@gmail.com';
 
                 $email_message = '<div style="float:left; width:100%;">
-    <ul style="font-size: 20px;  line-height: 1.4em;  padding: 0px; list-style: none;">
-        <li><b>Brand name : </b> ' . $brand_details->brand_name . ' </li>
-        <li><b>Contact person name : </b> ' . $brand_details->name . ' ' . $brand_details->last_name . ' </li>
-        <li><b>Email : </b> ' . $brand_details->email . ' </li>
-        <li><b>PO number : </b> ' . $po_number . ' </li>
-    </ul>
-</div>
-<div style="margin-top: 20px; float:left; width:100%;">
-<table id="example1" class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>sl no</th>
-            <th>Brands Name</th>
-            <th>Name</th>
-            <th>Photo</th>
-            <th style="width: 10%;text-align: center;">Quantity</th>
-            <th style="width: 10%;text-align: center;">Po date</th>
-            
-        </tr>
-    </thead>
-    <tbody>' . $msg_body . '</tbody>  
-</table>
+                    <ul style="font-size: 20px;  line-height: 1.4em;  padding: 0px; list-style: none;">
+                        <li><b>Brand name : </b> ' . $brand_details->brand_name . ' </li>
+                        <li><b>Contact person name : </b> ' . $brand_details->name . ' ' . $brand_details->last_name . ' </li>
+                        <li><b>Email : </b> ' . $brand_details->email . ' </li>
+                        <li><b>PO number : </b> ' . $po_number . ' </li>
+                    </ul>
+                </div>
+                <div style="margin-top: 20px; float:left; width:100%;">
+                <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>sl no</th>
+                            <th>Brands Name</th>
+                            <th>Name</th>
+                            <th>Photo</th>
+                            <th style="width: 10%;text-align: center;">Quantity</th>
+                            <th style="width: 10%;text-align: center;">Po date</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>' . $msg_body . '</tbody>  
+                </table>
 
-</div>';
+                </div>';
                 $message = $this->Custom->helpformat($mail_temp->value, '', '', $email_message, '', '');
                 //            echo $email_message;exit;
 
@@ -1383,11 +1418,11 @@ class AppadminsController extends AppController {
                 $newRw = $this->PurchaseOrders->save($newRw);
                 $last_id = $newRw->id;
                 $this->PurchaseOrders->updateAll(['pdf_file' => $filename], ['id' => $last_id]);
-                $this->PurchaseOrderProducts->updateAll(['po_id' => $last_id, 'po_number' => $po_number, 'status' => 2, 'po_date' => date('Y-m-d')], ['id IN' => $prd_id]);
+                $this->InProductVariantList->updateAll(['po_id' => $last_id, 'po_number' => $po_number, 'po_status' => 2, 'po_date' => date('Y-m-d')], ['id IN' => $prd_id]);
 
-                foreach ($data_list as $kyx => $dat_li) {
-                    $this->InProducts->updateAll(['po_id' => $last_id, 'po_number' => $po_number, 'po_status' => 2], ['prod_id' => $dat_li->product_id]);
-                }
+                // foreach ($data_list as $kyx => $dat_li) {
+                //     $this->InProducts->updateAll(['po_id' => $last_id, 'po_number' => $po_number, 'po_status' => 2], ['prod_id' => $dat_li->product_id]);
+                // }
 
                 $this->Custom->sendEmail($to, $from, $subject, $message, 1, 1, $attachment);
                 $this->Custom->sendEmail($toSupport, $from, $subject, $message, 1, 1, $attachment);
@@ -1408,6 +1443,44 @@ class AppadminsController extends AppController {
                 return $this->redirect(HTTP_ROOT . 'appadmins/new-brand-po/tab1');
                 //            
             }
+        }
+        exit;
+    }
+
+    public function generateNewBrandPoPdf($product_id, $brand_id, $po_number) {
+        $this->viewBuilder()->layout('');
+
+        $this->loadModel('PurchaseOrderProducts');
+        $this->loadModel('PurchaseOrders');
+        $this->loadModel('InSizes');
+        $this->loadModel('InColors');
+        $this->loadModel('InProductVariantList');
+        $this->loadModel('InProductVariants');
+        $product_id_arr = json_decode($product_id, true);
+        $prd_id = explode(',', $product_id_arr);
+
+        $all_sizes = $this->InSizes->find('all')->where(['is_active' => 1]);
+        $all_colors = $this->InColors->find('all')->where(['is_active' => 1]);
+
+        $this->InProductVariantList->belongsTo('brand', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
+
+        
+        $this->InProductVariantList->belongsTo('prd_detl', ['className' => 'InProductVariants',  'foreignKey' => 'in_product_variants_id']);
+        $data_list = $this->InProductVariantList->find('all')->where(['InProductVariantList.po_status' => 1,'InProductVariantList.id IN' => $prd_id])->contain(['prd_detl', 'brand']);
+        $brand_details = $this->InUsers->find('all')->where(['id' => $brand_id])->first();
+        $filename = 'files/report_pdf/po_' . $po_number . '.pdf';
+        $this->set(compact('data_list', 'brand_details', 'po_number'));
+
+        if (true) {
+            // initializing mPDF
+
+            $this->Mpdf->init();
+            // setting filename of output pdf file
+            $this->Mpdf->setFilename($filename);
+            // setting output to I, D, F, S
+            $this->Mpdf->setOutput('F');
+            // you can call any mPDF method via component, for example:
+            $this->Mpdf->SetWatermarkText("Drapefit");
         }
     }
 
@@ -1445,7 +1518,7 @@ class AppadminsController extends AppController {
         $this->loadModel('InProductLogs');
 
         $prd_detials = $this->InProducts->find('all')->where(['prod_id' => $product_id])->first()->toArray();
-        $po_prd_detials = $this->PurchaseOrderProducts->find('all')->where(['product_id' => $product_id, 'po_number' => $po_number])->first();
+        $po_prd_detials = $this->PurchaseOrderProducts->find('all')->where(['product_id' => $product_id, 'po_number' => $po_number,'status <'=>3])->first();
 
         //        pj([$product_id, $po_number]);
         //        pj($prd_detials);
@@ -1461,6 +1534,16 @@ class AppadminsController extends AppController {
             // print_r([$prd_detials['id'], $prd_detials['style_number'], $style_number, $explode_arr, $raw_style_number]);
             // exit;
             $data['id'] = '';
+            if(!empty($po_prd_detials->user_id)){
+                $data['allocate_to_user_id'] = $po_prd_detials->user_id;
+            }
+            if(!empty($po_prd_detials->kid_id)){
+                $data['allocate_to_kid_id'] = $po_prd_detials->kid_id;
+            }
+            $data['match_status'] = 2;
+            if(!empty($po_prd_detials->user_id) || !empty($po_prd_detials->kid_id)){
+                $data['match_status'] = 1;
+            }
             $data['style_number'] = '';
             $data['bar_code_img'] = '';
             $data['dtls'] = '';
@@ -1497,17 +1580,31 @@ class AppadminsController extends AppController {
         $this->loadModel('PurchaseOrderProducts');
         $this->loadModel('InProducts');
         $this->loadModel('InProductLogs');
+        $this->loadModel('InProductVariantList');
+        $this->loadModel('InProductVariantListPoReceived');
         // print_r([$product_id, $po_number]);
         // exit;
-        $prd_detials = $this->InProducts->find('all')->where(['prod_id' => $product_id])->first()->toArray();
-        $po_prd_detials = $this->PurchaseOrderProducts->find('all')->where(['product_id' => $product_id, 'po_number' => $po_number])->first();
+
+        $po_prd_detials = $this->InProductVariantList->find('all')->where(['id' => $product_id, 'po_number' => $po_number])->first();
         //        pj([$product_id, $po_number]);
         //        pj($prd_detials);
-        //        pj($po_prd_detials);          
-        $this->PurchaseOrderProducts->updateAll(['status' => 3], ['id' => $po_prd_detials->id]);
-        $this->InProducts->updateAll(['po_status' => 3], ['prod_id' => $product_id]);
+        //        pj($po_prd_detials);   
+             
+        $this->InProductVariantList->updateAll(['po_status' => 3], ['id' => $po_prd_detials->id]);
+            
+        $newDataRwX = !empty($po_prd_detials)?$po_prd_detials->toArray():[];
+        $newDataRwX['in_product_variant_list_id']=$newDataRwX['id'];
+        unset($newDataRwX['id']);
+        $newDataRwX['po_status']=3;
+        $newRw = $this->InProductVariantListPoReceived->newEntity();
+        $newRw = $this->InProductVariantListPoReceived->patchEntity($newRw, $newDataRwX);
+        $this->InProductVariantListPoReceived->save($newRw); 
+        // echo "<pre>";
+        // print_r($newDataRwX); 
+        // exit;
+        
         $this->Flash->success(__('Po received.'));
-        return $this->redirect($this->referer());
+        return $this->redirect(HTTP_ROOT.'appadmins/generateProduct/'.$product_id.'/po');
     }
 
     public function processPoReceived($brand_id) {
@@ -1532,16 +1629,37 @@ class AppadminsController extends AppController {
         $this->loadModel('PurchaseOrderProducts');
         $this->loadModel('InProducts');
         $this->loadModel('PurchaseOrders');
-        $prod_list = $this->PurchaseOrderProducts->find('all')->where(['PurchaseOrderProducts.is_new_brand' => 1, 'PurchaseOrderProducts.status' => 3, 'PurchaseOrderProducts.brand_id' => $brand_id])->group(['PurchaseOrderProducts.po_number']);
+        $this->loadModel('InProductVariantList');
+        $this->loadModel('InProductVariantListPoReceived');
+        $prod_list = $this->InProductVariantList->find('all')->where([ 'InProductVariantList.po_status' => 3, 'InProductVariantList.brand_id' => $brand_id])->group(['InProductVariantList.po_number']);
+        $this->InProductVariantListPoReceived->updateAll(['po_status'=>4],['po_status' => 3, 'brand_id' => $brand_id]);
 
         $po_number_list = !empty($prod_list) ? Hash::extract($prod_list->toArray(), '{n}.po_number') : [];
 
         // print_r($po_number_list);
-        foreach ($po_number_list as $po_numb) {
-            $this->PurchaseOrderProducts->updateAll(['status' => 4], ['po_number' => $po_numb]);
-            $this->PurchaseOrders->updateAll(['status' => 4], ['po_number' => $po_numb]);
-            $this->InProducts->updateAll(['po_status' => 4], ['po_number' => $po_numb]);
+        /*foreach ($prod_list as $po_numb) {
+            $this->InProductVariantList->updateAll(['quantity' => ($po_numb->quantity+$po_numb->po_quantity), 'po_status'=>4], ['id' => $po_numb->id]);
+            // $product_created = $this->generateProduct($po_numb->id,'po');  
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+            CURLOPT_URL => HTTP_ROOT.'appadmins/generateProduct/'.$po_numb->id.'/po',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            ));
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);  
+            // var_dump($response );
+
         }
+        exit;*/
         $this->Flash->success(__('Po received.'));
         return $this->redirect(HTTP_ROOT . 'appadmins/new-brand-po/tab4');
     }
@@ -1550,39 +1668,58 @@ class AppadminsController extends AppController {
         $this->loadModel('PurchaseOrderProducts');
         $this->loadModel('PurchaseOrders');
         $this->loadModel('InProducts');
-        $this->PurchaseOrderProducts->belongsTo('brand', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
+        $this->loadModel('InSizes');
+        $this->loadModel('InColors');
+        $this->loadModel('InProductVariantList');
+        $this->loadModel('InProductVariants');
+        $this->loadModel('InProductVariantListPoReceived');
 
-        $tab1_brand_list = $this->PurchaseOrderProducts->find('all')->where(['PurchaseOrderProducts.status' => 1, 'PurchaseOrderProducts.is_new_brand' => 1])->group(['PurchaseOrderProducts.brand_id'])->contain(['brand']);
+        $all_sizes = $this->InSizes->find('all')->where(['is_active' => 1, 'product_ctg LIKE'=>'%"'.$_GET['ctg'].'"%' ]);
+        $all_colors = $this->InColors->find('all')->where(['is_active' => 1]);
 
-        $this->PurchaseOrderProducts->hasMany('prd_detl', ['className' => 'InProducts', 'foreignKey' => 'prod_id', 'bindingKey' => 'product_id']);
-        $tab1_data_list = $this->PurchaseOrderProducts->find('all')->contain(['prd_detl', 'brand']);
+        $this->InProductVariantList->belongsTo('brand', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
+
+        $this->InProductVariantList->belongsTo('user_dtl', ['className' => 'UserDetails', 'foreignKey' => 'allocate_user_id', 'bindingKey'=>'user_id']);
+        $this->InProductVariantList->belongsTo('user', ['className' => 'Users', 'foreignKey' => 'allocate_user_id']);
+        $this->InProductVariantList->belongsTo('kid_dt', ['className' => 'KidsDetails', 'foreignKey' => 'allocate_kid_id']);
+
+        $tab1_brand_list = $this->InProductVariantList->find('all')->where(['InProductVariantList.po_status' => 1])->group(['InProductVariantList.brand_id'])->contain(['brand']);
+
+        $this->InProductVariantList->belongsTo('prd_detl', ['className' => 'InProductVariants',  'foreignKey' => 'in_product_variants_id']);
+        $tab1_data_list = $this->InProductVariantList->find('all')->contain(['prd_detl', 'brand','user','kid_dt','user_dtl']);
 
         if (empty($tab) || ($tab == 'tab1')) {
-            $tab1_data_list = $tab1_data_list->where(['PurchaseOrderProducts.status' => 1, 'is_new_brand' => 1]);
+            $tab1_data_list = $tab1_data_list->where(['InProductVariantList.po_status' => 1]);
             if (!empty($_GET) && !empty($_GET['brand_id'])) {
-                $tab1_data_list = $tab1_data_list->where(['PurchaseOrderProducts.brand_id' => $_GET['brand_id']]);
+                $tab1_data_list = $tab1_data_list->where(['InProductVariantList.brand_id' => $_GET['brand_id']]);
             }
         }
 
         if (!empty($tab) && ($tab == 'tab2')) {
-            $tab1_brand_list = $this->PurchaseOrderProducts->find('all')->where(['PurchaseOrderProducts.is_new_brand' => 1, 'PurchaseOrderProducts.status !=' => 4])->group(['PurchaseOrderProducts.brand_id'])->contain(['brand']);
+            $tab1_brand_list = $this->InProductVariantList->find('all')->where(['InProductVariantList.po_status IN' => [2, 3]])->group(['InProductVariantList.brand_id'])->contain(['brand']);
 
             if (!empty($_GET) && !empty($_GET['brand_id'])) {
-                $tab1_data_list = $tab1_data_list->where(['PurchaseOrderProducts.status IN' => [2, 3], 'PurchaseOrderProducts.brand_id' => $_GET['brand_id']]);
+                $tab1_data_list = $tab1_data_list->where(['InProductVariantList.po_status IN' => [2, 3], 'InProductVariantList.brand_id' => $_GET['brand_id']]);
             }
         }
         if (!empty($tab) && ($tab == 'tab3')) {
-            $tab1_brand_list = $this->PurchaseOrderProducts->find('all')->where(['PurchaseOrderProducts.is_new_brand' => 1])->group(['PurchaseOrderProducts.brand_id'])->contain(['brand']);
+            $tab1_brand_list = $this->InProductVariantList->find('all')->where(['InProductVariantList.po_status IN' => [2, 3]])->group(['InProductVariantList.brand_id'])->contain(['brand']);
 
             if (!empty($_GET) && !empty($_GET['brand_id'])) {
-                $tab1_data_list = $tab1_data_list->where(['PurchaseOrderProducts.status IN' => [2, 3], 'PurchaseOrderProducts.brand_id' => $_GET['brand_id']]);
+                $tab1_data_list = $tab1_data_list->where(['InProductVariantList.po_status IN' => [2, 3], 'InProductVariantList.brand_id' => $_GET['brand_id']]);
             }
         }
         if (!empty($tab) && ($tab == 'tab4')) {
-            $tab1_brand_list = $this->PurchaseOrderProducts->find('all')->where(['PurchaseOrderProducts.is_new_brand' => 1])->group(['PurchaseOrderProducts.brand_id'])->contain(['brand']);
+            $this->InProductVariantListPoReceived->belongsTo('brand', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
+
+            $this->InProductVariantListPoReceived->belongsTo('user_dtl', ['className' => 'UserDetails', 'foreignKey' => 'allocate_user_id', 'bindingKey'=>'user_id']);
+            $this->InProductVariantListPoReceived->belongsTo('user', ['className' => 'Users', 'foreignKey' => 'allocate_user_id']);
+            $this->InProductVariantListPoReceived->belongsTo('kid_dt', ['className' => 'KidsDetails', 'foreignKey' => 'allocate_kid_id']);
+            $this->InProductVariantListPoReceived->belongsTo('prd_detl', ['className' => 'InProductVariants',  'foreignKey' => 'in_product_variants_id']);
+            $tab1_brand_list = $this->InProductVariantListPoReceived->find('all')->where(['InProductVariantListPoReceived.po_status >' => 3])->group(['InProductVariantListPoReceived.brand_id'])->contain(['brand']);
 
             if (!empty($_GET) && !empty($_GET['brand_id'])) {
-                $tab1_data_list = $tab1_data_list->where(['PurchaseOrderProducts.status >' => 3, 'PurchaseOrderProducts.brand_id' => $_GET['brand_id']]);
+                $tab1_data_list = $this->InProductVariantListPoReceived->find('all')->contain(['prd_detl', 'brand','user','kid_dt', 'user_dtl'])->where(['InProductVariantListPoReceived.po_status >' => 3, 'InProductVariantListPoReceived.brand_id' => $_GET['brand_id']]);
             }
         }
 
@@ -1596,6 +1733,12 @@ class AppadminsController extends AppController {
         $profile = $option;
         if (empty($profile)) {
             $profile = "Men";
+        }
+
+        $get_prv_inv_data = [];
+        if(!empty($_GET['ctg']) && !empty($_GET['sub_ctg'])){
+            $this->InProductVariants->hasMany('vari_prd_li', ['className' => 'InProductVariantList', 'foreignKey' => 'in_product_variants_id']);
+            $get_prv_inv_data = $this->InProductVariants->find('all')->where(['profile_type' => $user_type_arr[$profile], 'product_type'=>$_GET['ctg'], 'rack'=>$_GET['sub_ctg']])->contain(['vari_prd_li']);
         }
 
         $product_ctg_nme = '';
@@ -1640,7 +1783,7 @@ class AppadminsController extends AppController {
             $product_sub_ctg_nme = $in_rack_name_get->rack_number;
         }
 
-        $this->set(compact('utype', 'in_rack', 'productType', 'id', 'editproduct', 'profile', 'brandsListings', 'product_ctg_nme', 'product_sub_ctg_nme', 'tab', 'option', 'id', 'tab1_brand_list', 'tab1_data_list'));
+        $this->set(compact('utype', 'in_rack', 'productType', 'id', 'editproduct', 'profile', 'brandsListings', 'product_ctg_nme', 'product_sub_ctg_nme', 'tab', 'option', 'id', 'tab1_brand_list', 'tab1_data_list', 'all_sizes', 'all_colors', 'get_prv_inv_data'));
     }
 
     public function addPoProduct() {
@@ -1707,7 +1850,7 @@ class AppadminsController extends AppController {
 
             if (!empty($data['product_image']['tmp_name'])) {
 
-                if ($data['product_image']['size'] <= 20000) {
+                if ($data['product_image']['size'] <= 2100000) {
 
                     $file_path = str_replace('merchandise', 'inventory/webroot/', ROOT);
                     $avatarName = $this->Custom->uploadAvatarImage($data['product_image']['tmp_name'], $data['product_image']['name'], $file_path . PRODUCT_IMAGES, 500);
@@ -3576,6 +3719,68 @@ class AppadminsController extends AppController {
         $this->set(compact('editData', 'all_data'));
     }
 
+    public function inSize($id = null, $option = null) {
+        
+        $this->loadModel('InSizes');
+        $this->loadModel('InProductType');
+        $all_data = $this->InSizes->find('all');
+        $all_prd_ctg = $this->InProductType->find('all');
+
+        $editData = [];
+
+        if (!empty($id)) {
+
+            $editData = $this->InSizes->find('all')->where(['id' => $id])->first();
+        }
+
+        if (!empty($option) && ($option == "delete")) {
+
+            $editData = $this->InSizes->deleteAll(['id' => $id]);
+
+            $this->Flash->success(__('Size has been deleted successfully.'));
+
+            $this->redirect(HTTP_ROOT . 'appadmins/in_size');
+        }
+
+        if ($this->request->is('post')) {
+
+            $data = $this->request->data;
+
+            if (!empty($id)) {
+
+                $data['id'] = $id;
+            }
+            
+
+            $data['product_ctg'] = json_encode($data['product_ctg']);
+            
+
+
+
+            $dataEntity = $this->InSizes->newEntity();
+
+            $dataEntity = $this->InSizes->patchEntity($dataEntity, $data);
+
+            $this->InSizes->save($dataEntity);
+
+            if (!empty($id)) {
+
+                $this->Flash->success(__('Size has been updated successfully.'));
+
+                $this->redirect(HTTP_ROOT . 'appadmins/in_size/' . $id . '/edit');
+            } else {
+
+                $this->Flash->success(__('Size has been added successfully.'));
+
+                $this->redirect(HTTP_ROOT . 'appadmins/in_size');
+            }
+        }
+
+
+
+        $this->set(compact('editData', 'all_data','all_prd_ctg'));
+    }
+
     public function missingFields() {
 
         $inv_user = $this->Users->find('all')->where(['type' => 7]);
@@ -4113,7 +4318,7 @@ class AppadminsController extends AppController {
         return $this->response;
     }
 
-    public function addVariantProduct($tab = null, $option = null, $id = null) {
+    public function addVariantProduct($tab = null, $option = null, $id = null) {        
         $this->loadModel('PurchaseOrderProducts');
         $this->loadModel('PurchaseOrders');
         $this->loadModel('InProducts');
@@ -4122,7 +4327,7 @@ class AppadminsController extends AppController {
         $this->loadModel('InProductVariants');
         $this->loadModel('InProductVariantList');
 
-        $all_sizes = $this->InSizes->find('all')->where(['is_active' => 1]);
+        $all_sizes = $this->InSizes->find('all')->where(['is_active' => 1, 'product_ctg LIKE'=>'%"'.$_GET['ctg'].'"%' ]);
         $all_colors = $this->InColors->find('all')->where(['is_active' => 1]);
 
         $this->PurchaseOrderProducts->belongsTo('brand', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
@@ -4218,11 +4423,88 @@ class AppadminsController extends AppController {
 
         if ($this->request->is('post')) {
             $postData = $this->request->data;
-//            echo "<pre>";
-//            print_r($postData);
-//            echo "</pre>";
-//            exit;
-            
+        //    echo "<pre>";
+        //    print_r($this->request->session()->read('new_variant_po_data'));
+        //    print_r($postData);
+        //    echo "</pre>";
+        //    exit;
+        
+           //add new variant data to existing 
+           if(!empty($postData['variant_id'])){
+                $main_variant_data = $this->InProductVariants->find('all')->where(['id'=>$postData['variant_id']])->first()->toArray();
+                    
+                    $exit_color = json_decode($main_variant_data['color'],true);
+                    $exit_size = json_decode($main_variant_data['size'],true);
+                    $exit_color =array_unique(array_merge($exit_color,$postData['color']));
+                    $new_size_arr = [];
+                    foreach($exit_size as $ky=>$ex_sz){
+                        $new_size_arr[$ky]=$ex_sz;
+                    }
+                    foreach($postData['color'] as $ky_c=>$ex_sz_c){
+                        if(!empty($new_size_arr[$ex_sz_c])){
+                            $cnt =  count($new_size_arr[$ex_sz_c]);
+                            
+                            $new_size_arr[$ex_sz_c]=array_unique(array_merge($new_size_arr[$ex_sz_c],$postData['size'][$ex_sz_c]));
+                        }else{
+                            $new_size_arr[$ex_sz_c]=$postData['size'][$ex_sz_c];
+                        }
+                        
+                    }
+
+                    $this->InProductVariants->updateAll(['size'=>json_encode($new_size_arr), 'color' => json_encode($exit_color)],['id'=>$postData['variant_id']]);
+                    
+                    $variant_data  = $postData['variant_data'];
+                    foreach ($variant_data as $key => $variant_list) {
+                        foreach ($variant_list as $keyx => $variant_list_list) {
+                            $var_prd_rw = [];
+                            $var_prd_rw['color'] = $key;
+                            $var_prd_rw['size'] = $keyx;
+                            $var_prd_rw['in_product_variants_id'] = $main_variant_data['id'];                    
+                            $var_prd_rw['brand_id'] = $main_variant_data['brand_id'] ;  
+                            $var_prd_rw += $variant_list_list;
+        
+                            $var_prd_rw['variant_size_related'] = !empty($variant_list_list['variant_size_related'])?json_encode($variant_list_list['variant_size_related']):NULL ;   
+                            $var_prd_rw['skin_tone'] = !empty($variant_list_list['skin_tone'])?json_encode($variant_list_list['skin_tone']):NULL ;
+                            
+                            $var_prd_rw['quantity'] = 0;
+                            $var_prd_rw['po_quantity'] = $variant_list_list['quantity'];
+                            $var_prd_rw['is_po'] = 1;
+                            $var_prd_rw['po_status'] = 1;
+                            $var_prd_rw['po_date'] = date('Y-m-d');   
+                            
+                            if (!empty($variant_list_list['product_image']['tmp_name'])) {
+                                if ($variant_list_list['product_image']['size'] <= 20000) {
+                                    $new_name = time().rand(1111,9999);
+                                    $file_path = str_replace('merchandise', 'webroot/', ROOT);
+                                    $avatarName = $this->Custom->uploadAvatarImage($variant_list_list['product_image']['tmp_name'], $variant_list_list['product_image']['name'], $file_path . PRODUCT_IMAGES, 500, $new_name);
+                //                    var_dump([$postData['product_image']['tmp_name'], $avatarName]);
+                                    
+                                    $file_path2 = str_replace('merchandise', 'inventory/webroot/', ROOT);
+                //                    $avatarName = $this->Custom->uploadAvatarImage($postData['product_image']['tmp_name'], $postData['product_image']['name'], $file_path2 . PRODUCT_IMAGES, 500, $new_name);
+                                    copy($file_path . PRODUCT_IMAGES.$avatarName, $file_path2.PRODUCT_IMAGES.$avatarName);
+                                    
+                                    $var_prd_rw['feature_image'] = $avatarName;
+                                } else {
+                                    $this->Flash->error(__('Image size should be 8  to 20 kb'));
+                                }
+                            }
+                            
+        
+                            $nwRw = $this->InProductVariantList->newEntity();
+                            $nwRw = $this->InProductVariantList->patchEntity($nwRw, $var_prd_rw);
+                            $nwRw = $this->InProductVariantList->save($nwRw);
+                            $last_variant_id = $nwRw->id;
+                            
+                        }
+                    }
+                $this->Flash->success(__("Product Variant added to po"));
+                return $this->redirect(HTTP_ROOT.'appadmins/newBrandPo/tab1?brand_id='.$main_variant_data['brand_id']);
+                exit;
+           }
+
+            $is_po = !empty($postData['for_po'])?$postData['for_po']:0;
+            unset($postData['for_po']);
+
             $variant_data = $postData['variant_data'];
 //            var_dump(!empty($postData['product_image']['name']));
             $postData['user_id'] = $this->request->session()->read('Auth.User.id');
@@ -4233,7 +4515,6 @@ class AppadminsController extends AppController {
             $postData['profession'] = !empty($postData['profession']) ? json_encode($postData['profession']) : NULL;
             $postData['variant_size_related'] = !empty($postData['variant_size_related']) ? json_encode($postData['variant_size_related']) : NULL;
             $postData['better_body_shape'] = !empty($postData['better_body_shape']) ? json_encode($postData['better_body_shape']) : NULL;
-            $postData['skin_tone'] = !empty($postData['skin_tone']) ? json_encode($postData['skin_tone']) : NULL;
             $postData['work_type'] = !empty($postData['work_type']) ? json_encode($postData['work_type']) : NULL;
             $postData['style_sphere_selections_v5'] = !empty($postData['style_sphere_selections_v5']) ? json_encode($postData['style_sphere_selections_v5']) : NULL;
             $postData['budget_value'] = !empty($postData[$postData['budget_type']]) ? $postData[$postData['budget_type']] : NULL;
@@ -4246,26 +4527,11 @@ class AppadminsController extends AppController {
             $postData['occasional_dress'] = !empty($postData['occasional_dress']) ? json_encode($postData['occasional_dress']) : NULL;
 
             //InProductVariantList
-            if (!empty($postData['product_image']['tmp_name'])) {
-                if ($postData['product_image']['size'] <= 20000) {
-                    $new_name = time().rand(1111,9999);
-                    $file_path = str_replace('merchandise', 'webroot/', ROOT);
-                    $avatarName = $this->Custom->uploadAvatarImage($postData['product_image']['tmp_name'], $postData['product_image']['name'], $file_path . PRODUCT_IMAGES, 500, $new_name);
-//                    var_dump([$postData['product_image']['tmp_name'], $avatarName]);
-                    
-                    $file_path2 = str_replace('merchandise', 'inventory/webroot/', ROOT);
-//                    $avatarName = $this->Custom->uploadAvatarImage($postData['product_image']['tmp_name'], $postData['product_image']['name'], $file_path2 . PRODUCT_IMAGES, 500, $new_name);
-                    copy($file_path . PRODUCT_IMAGES.$avatarName, $file_path2.PRODUCT_IMAGES.$avatarName);
-                    
-                    $postData['feature_image'] = $avatarName;
-                } else {
-                    $this->Flash->error(__('Image size should be 8  to 20 kb'));
-                }
-            }
-//            echo "<pre>";
-//            print_r($postData);
-//            echo "</pre>";
-//            exit;
+            
+        //    echo "<pre>";
+        //    print_r($postData);
+        //    echo "</pre>";
+        //    exit;
 
             $newRow = $this->InProductVariants->newEntity();
             $newRow = $this->InProductVariants->patchEntity($newRow, $postData);
@@ -4273,22 +4539,79 @@ class AppadminsController extends AppController {
             foreach ($variant_data as $key => $variant_list) {
                 foreach ($variant_list as $keyx => $variant_list_list) {
                     $var_prd_rw = [];
+                    
                     $var_prd_rw['color'] = $key;
                     $var_prd_rw['size'] = $keyx;
-                    $var_prd_rw['in_product_variants_id'] = $newRow->id;
+                    $var_prd_rw['in_product_variants_id'] = $newRow->id;                    
+                    $var_prd_rw['brand_id'] = $postData['brand_id'] ;  
                     $var_prd_rw += $variant_list_list;
+
+                    $var_prd_rw['variant_size_related'] = !empty($variant_list_list['variant_size_related'])?json_encode($variant_list_list['variant_size_related']):NULL ;   
+                    $var_prd_rw['skin_tone'] = !empty($variant_list_list['skin_tone'])?json_encode($variant_list_list['skin_tone']):NULL ;   
+
+                    if (!empty($variant_list_list['product_image']['tmp_name'])) {
+                        if ($variant_list_list['product_image']['size'] <= 2100000) {
+                            $new_name = time().rand(1111,9999);
+                            $file_path = str_replace('merchandise', 'webroot/', ROOT);
+                            $avatarName = $this->Custom->uploadAvatarImage($variant_list_list['product_image']['tmp_name'], $variant_list_list['product_image']['name'], $file_path . PRODUCT_IMAGES, 500, $new_name);
+        //                    var_dump([$postData['product_image']['tmp_name'], $avatarName]);
+                            
+                            $file_path2 = str_replace('merchandise', 'inventory/webroot/', ROOT);
+        //                    $avatarName = $this->Custom->uploadAvatarImage($postData['product_image']['tmp_name'], $postData['product_image']['name'], $file_path2 . PRODUCT_IMAGES, 500, $new_name);
+                            copy($file_path . PRODUCT_IMAGES.$avatarName, $file_path2.PRODUCT_IMAGES.$avatarName);
+                            
+                            $var_prd_rw['feature_image'] = $avatarName;
+                        } else {
+                            $this->Flash->error(__('Image size should be 8  to 20 kb'));
+                        }
+                    }
+
+                    if(!empty( $this->request->session()->read('new_variant_po_data'))){
+                        $new_variant_po_data = json_decode($this->request->session()->read('new_variant_po_data'),true);
+                        $var_prd_rw['quantity'] = 0;                        
+                        $var_prd_rw['po_quantity'] = 1;
+                        $var_prd_rw['is_po'] = 1;
+                        $var_prd_rw['po_status'] = 1;
+                        $var_prd_rw['po_date'] = date('Y-m-d');
+                        $var_prd_rw['allocate_user_id'] = $new_variant_po_data['pay_user_id'];
+                        $var_prd_rw['allocate_kid_id'] = $new_variant_po_data['pay_kid_id'];
+                        
+                    }
+                    if(!empty($is_po) && ($is_po == 1)){                        
+                        $var_prd_rw['quantity'] = 0;
+                        $var_prd_rw['po_quantity'] = $variant_list_list['quantity'];
+                        $var_prd_rw['is_po'] = 1;
+                        $var_prd_rw['po_status'] = 1;
+                        $var_prd_rw['po_date'] = date('Y-m-d');                        
+                    }
+                    // echo "<pre>";
+                    // print_r($variant_list_list);
+                    // print_r($var_prd_rw);
+                    // echo "</pre>";
+                    // exit;
+
                     $nwRw = $this->InProductVariantList->newEntity();
                     $nwRw = $this->InProductVariantList->patchEntity($nwRw, $var_prd_rw);
                     $nwRw = $this->InProductVariantList->save($nwRw);
+                    $last_variant_id = $nwRw->id;
+                    
                 }
             }
 
+            if(!empty( $this->request->session()->read('new_variant_po_data'))){
+                $this->request->session()->write('new_variant_po_data','');
+                $this->request->session()->delete('new_variant_po_data');
+            }
             $this->Flash->success(__("Product Variant added"));
 //            echo "<pre>";
 //            print_r($postData);
 //            echo "</pre>";
 //            exit;
-            return $this->redirect($this->referer());
+
+            
+
+            // return $this->redirect($this->referer());
+            return $this->redirect(HTTP_ROOT.'appadmins/newBrandPo/tab1?brand_id='.$postData['brand_id']);
         }
 
         $this->set(compact('utype', 'in_rack', 'productType', 'id', 'editproduct', 'profile', 'brandsListings', 'product_ctg_nme', 'product_sub_ctg_nme', 'tab', 'option', 'id', 'tab1_brand_list', 'tab1_data_list', 'all_sizes', 'all_colors'));
@@ -4342,18 +4665,19 @@ class AppadminsController extends AppController {
 
 
         $this->InProductVariants->belongsTo('InUsers', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
+        $this->InProductVariants->hasMany('in_prd_var', ['className' => 'InProductVariantList', 'foreignKey' => 'in_product_variants_id']);
 
         /* $menproductdetails */
-        $menproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '1', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers']);
+        $menproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '1', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers','in_prd_var']);
 
         /* $womenproductdetails */
-        $womenproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '2', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers']);
+        $womenproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '2', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers','in_prd_var']);
 
         /* $boyskidsproductdetails */
-        $boyskidsproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '3', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers']);
+        $boyskidsproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '3', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers','in_prd_var']);
 
         /* $girlkidsproductdetails */
-        $girlkidsproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '4', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers']);
+        $girlkidsproductdetails1 = $this->InProductVariants->find('all')->order(['InProductVariants.id' => 'DESC'])->where(['InProductVariants.profile_type' => '4', 'InProductVariants.brand_id !=' => 0/* , 'InProductVariants.is_merchandise' => 0 */])->contain(['InUsers','in_prd_var']);
 
         if (!empty($where_arr)) {
 
@@ -4452,18 +4776,21 @@ class AppadminsController extends AppController {
         $this->set(compact('variant_details', 'variant_products_details', 'varient_id','variant_color_images'));
     }
 
-    public function generateProduct($product_variant_list_id) {
+    public function generateProduct($product_variant_list_id,$req_frm=null) {
+        $this->viewBuilder()->layout('ajax');
         $this->loadModel('InProductVariants');
         $this->loadModel('InProductVariantList');
         $this->loadModel('InProducts');
         $this->loadModel('InColors');
+        $this->loadModel('PurchaseOrderProducts');
 
         $variant_products_details = $this->InProductVariantList->find('all')->where(['id' => $product_variant_list_id])->first();
         $variant_details = $this->InProductVariants->find('all')->where(['id' => $variant_products_details->in_product_variants_id])->first();
-        echo "<pre>";
-
-        if ($variant_products_details->quantity > 0) {
-            for ($i = 1; $i <= $variant_products_details->quantity; $i++) {
+        // echo "<pre>";
+        $prd_qnt = (!empty($req_frm) && ($req_frm=="po"))?$variant_products_details->po_quantity:$variant_products_details->quantity;
+        if ($prd_qnt > 0) {
+            $rnd_data = rand(1111,9999);
+            for ($i = 1; $i <= $prd_qnt; $i++) {
                 $newRw = [];
 
                 $newRw['in_product_variant_list_id'] = $variant_products_details->id;
@@ -4487,6 +4814,12 @@ class AppadminsController extends AppController {
                 $newRw['budget_value'] = $variant_details->budget_value;
                 $newRw['primary_size'] = $variant_details->primary_size;
                 $newRw['picked_size'] = $variant_details->primary_size;
+                $newRw['allocate_to_user_id'] = $variant_products_details->allocate_user_id;
+                $newRw['allocate_to_kid_id'] = $variant_products_details->allocate_kid_id;
+                $newRw['proportion_shoulders'] = $variant_products_details->proportion_shoulders;
+                $newRw['proportion_legs'] = $variant_products_details->proportion_legs;
+                $newRw['proportion_arms'] = $variant_products_details->proportion_arms;
+                $newRw['proportion_hips'] = $variant_products_details->proportion_hips;
 
                 if (!empty($variant_details->primary_size)) {
                     $newRw[$variant_details->primary_size] = $variant_products_details->size;
@@ -4497,9 +4830,15 @@ class AppadminsController extends AppController {
                         $newRw[$var_sz_rel_ky] = $var_sz_rel;
                     }
                 }
+                if (!empty($variant_products_details->variant_size_related)) {
+                    $variant_size_relatedx = json_decode($variant_products_details->variant_size_related, true);
+                    foreach ($variant_size_relatedx as $var_sz_rel_kyx => $var_sz_relx) {
+                        $newRw[$var_sz_rel_kyx] = $var_sz_relx;
+                    }
+                }
 
                 $newRw['better_body_shape'] = $variant_details->better_body_shape;
-                $newRw['skin_tone'] = $variant_details->skin_tone;
+                $newRw['skin_tone'] = $variant_products_details->skin_tone;
                 $newRw['work_type'] = $variant_details->work_type;
                 $newRw['jeans_Fit'] = $variant_details->jeans_Fit;
                 $get_color_id = $this->InColors->find('all')->where(['name' => $variant_products_details->color])->first();
@@ -4507,7 +4846,7 @@ class AppadminsController extends AppController {
                 $newRw['men_bottom_prefer'] = $variant_details->men_bottom_prefer;
                 $newRw['style_sphere_selections_v5'] = $variant_details->style_sphere_selections_v5;
                 $newRw['note'] = $variant_details->note;
-                $newRw['product_image'] = $variant_details->feature_image;
+                $newRw['product_image'] = $variant_products_details->feature_image;
                 $newRw['available_status'] = $variant_details->available_status;
                 $newRw['rack'] = $variant_details->rack;
                 $newRw['profession'] = $variant_details->profession;
@@ -4517,8 +4856,11 @@ class AppadminsController extends AppController {
                 $newRw['purchase_price'] = $variant_products_details->purchase_price;
                 $newRw['sale_price'] = $variant_products_details->sale_price;
                 $newRw['clearance_price'] = $variant_products_details->clearance_price;
-                $newRw['quantity'] = 1;
+                $newRw['quantity'] =  1;
                 $newRw['is_active'] = 1;
+                $newRw['po_status'] = 4;
+                $newRw['match_status'] = (!empty($variant_products_details->allocate_user_id) || !empty($variant_products_details->allocate_kid_id))? 1 : 2 ;
+                $newRw['is_merchandise'] = 1;
                 $newRw['created'] = date('Y-m-d H:i:s');
 
                 if (!empty($variant_details->profile_type) && ($variant_details->profile_type == '1')) {
@@ -4537,11 +4879,12 @@ class AppadminsController extends AppController {
 
                 $dtls = $this->Custom->dtls($nw_profile, $variant_details->brand_id, $variant_details->rack, $variant_details->product_type, $variant_products_details->size);
 
-                $newRw['prod_id'] = $dtls;
+                $newRw['prod_id'] = $dtls.'-'.$rnd_data;
 
                 $newRwInsert = $this->InProducts->newEntity();
                 $newRwInsert = $this->InProducts->patchEntity($newRwInsert, $newRw);
                 $newRwInsert = $this->InProducts->save($newRwInsert);
+                // print_r($newRwInsert);
                 $last_insert_id = $newRwInsert->id;
                 $last_id = 'DF' . $newRwInsert->id;
                 $style_number = $dtls . '-' . $last_id . '-' . $i;
@@ -4560,23 +4903,32 @@ class AppadminsController extends AppController {
                 file_put_contents($file_path1 . BARCODE . $br_name, $dataImg);
                 file_put_contents($file_path2 . BARCODE . $br_name, $dataImg);
 
-                $this->InProducts->updateAll(['bar_code_img' => $br_name, 'style_number' => $style_number, 'dtls' => $barcode_value], ['id' => $last_insert_id]);
+                // $this->InProducts->updateAll(['bar_code_img' => $br_name, 'style_number' => $style_number, 'dtls' => $barcode_value], ['id' => $last_insert_id]);
+                $this->InProducts->updateAll([/*'bar_code_img' => $br_name, */'style_number' => $style_number, 'dtls' => $barcode_value], ['id' => $last_insert_id]);
 
-                print_r($newRw);
+               
+
+                // print_r($newRw);
+            }
+            if((!empty($req_frm) && ($req_frm=="po"))){
+                // $this->InProductVariantList->updateAll(['po_quantity'=>0],['id' => $product_variant_list_id]);
+                $this->InProductVariantList->updateAll(['is_po'=>0],['id' => $product_variant_list_id]);
             }
         }
-//exit;
-        print_r($variant_products_details);
-        echo "Variant details";
-        print_r($variant_details);
+        //exit;
+        // print_r($variant_products_details);
+        // echo "Variant details";
+        // print_r($variant_details);
 
-        echo $product_variant_list_id;
-        echo "Check previously product created Or not as per quantity<br>";
-        echo "If not created then need to create<br>";
+        // echo $product_variant_list_id;
+        // echo "Check previously product created Or not as per quantity<br>";
+        // echo "If not created then need to create<br>";
+        // return true;
+        $brand_id = $variant_products_details->brand_id;
         $this->Flash->success(__("Product Generated successfully"));
-        return $this->redirect($this->referer());
+        return $this->redirect(HTTP_ROOT.'appadmins/new-brand-po/tab2?brand_id='.$brand_id);
 
-        exit;
+        // exit;
     }
 
     
@@ -4620,7 +4972,7 @@ class AppadminsController extends AppController {
             
 //            echo "<pre>";
 //            print_r($postData);
-            exit;
+            // exit;
             // 
 
         }
@@ -4676,16 +5028,21 @@ class AppadminsController extends AppController {
     }
 
     public function getSeasonWiseProduct(){
+        $this->loadModel('MatchingCase');
         $this->loadModel('WomenStyle');
         $this->loadModel('PersonalizedFix');
         $this->loadModel('WomenInformation');
         $this->loadModel('KidsDetails');
         $this->loadModel('UserDetails');
+        $this->loadModel('SizeChart');
+        $this->loadModel('MatchingLookCtg');
+        $this->loadModel('InRack');
         $this->viewBuilder()->layout('');if ($this->request->is('post')) {
             $postData = $this->request->data;
             $payment_id = $postData['payment_id'];
             $season_name = $postData['season'];
             $product_type = $postData['product_type'];
+            $where_to_show = $postData['where_to_show'];
             $getPaymentGatewayDetails = $this->PaymentGetways->find('all')->where(['id' => $payment_id])->first();
             if($getPaymentGatewayDetails->kid_id != 0){
                 $userDetails = $this->KidsDetails->find('all')->where(['id' => $getPaymentGatewayDetails->kid_id])->first();
@@ -4699,20 +5056,49 @@ class AppadminsController extends AppController {
                 $userDetails = $this->UserDetails->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
                 $gender = $getPaymentGatewayDetails->profile_type;
             }
+
+            $get_rack_ids = $this->MatchingLookCtg->find('all')->where(['product_type_name LIKE'=>$product_type])->first();
             
             $getMatchingProducts = [];
+                       
             if($gender == 2){
                 $women_style_data = $this->WomenStyle->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
-                $women_age = $this->Custom->ageCal(date('Y-m-d', strtotime($women_style_data->birthday)), date('Y-m-d'));
-                $stats = $this->PersonalizedFix->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
                 $womenInformationsData = $this->WomenInformation->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
+                $women_age = $this->Custom->ageCal(date('Y-m-d', strtotime($womenInformationsData->birthday)), date('Y-m-d'));
+                $stats = $this->PersonalizedFix->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
+                $sizeChart = $this->SizeChart->find('all')->where(['user_id' => $getPaymentGatewayDetails->user_id])->first();
+               
+                $user_size = '';
+                $user_size_col = '';
+                $or_cnd = [];
+
+                $rack_number_list = !empty($get_rack_ids)? explode(",",$get_rack_ids->linked_rack):[];
+                if(!empty($rack_number_list)){
+                    $rak_id_data = $this->InRack->find('all')->where(['rack_number IN'=>$rack_number_list]);
+                    $rak_id_list = !empty($rak_id_data) ? Hash::extract($rak_id_data->toArray(), '{n}.id') : [];
+                    if(!empty($get_rack_ids)){
+                        $mtc_sz = explode(',',$get_rack_ids->matching_size);
+                        $mtc_sz_nm = $mtc_sz[0];
+                        $user_size = $sizeChart->$mtc_sz_nm;
+                        $user_size_col = $mtc_sz_nm;
+                        foreach($mtc_sz as $clnm_nm){
+                            if(!empty($sizeChart->$clnm_nm)){
+                                $or_cnd[$clnm_nm]=$sizeChart->$clnm_nm;
+                            }
+                        }
+                    }
+                }
+                // echo "<pre>";
+                // print_r($or_cnd);exit;
+                // print_r($stats->weight_lbs);exit;
 
                 $getMatchingProducts = $this->InProducts->find('all')
-                ->where(['InProducts.profile_type' => 2, 
-                // 'InProducts.age1 >=' => $women_age, 'InProducts.age2 <=' => $women_age, 
-                // 'InProducts.tall_feet >=' => $stats->tell_in_feet, 'InProducts.tall_feet2 <=' => $stats->tell_in_feet,
-                // 'InProducts.best_fit_for_weight >=' => $stats->weight_lbs, 'InProducts.best_fit_for_weight2 <=' => $stats->weight_lbs,
+                ->where([/*'InProducts.id IN' => [1792,1794],*/'InProducts.profile_type' => 2, 
+                'InProducts.age1 <=' => $women_age, 'InProducts.age2 >=' => $women_age, 
+                'InProducts.tall_feet <=' => $stats->tell_in_feet, 'InProducts.tall_feet2 >=' => $stats->tell_in_feet,
+                'InProducts.best_fit_for_weight <=' => $stats->weight_lbs, 'InProducts.best_fit_for_weight2 >=' => $stats->weight_lbs,
                 'InProducts.better_body_shape LIKE' => '%"' . $womenInformationsData->body_type . '"%',
+                'InProducts.is_merchandise' => 0,
                 // 'available_status' => 1, 'match_status' => 2
                 ])
                 // ->where([
@@ -4720,13 +5106,477 @@ class AppadminsController extends AppController {
                 // ])
                 //     ->bind(':start', date('Y-m-01'), 'date')
                 //     ->bind(':end', $end_date, 'date')
-                ->limit(5)
-                ->group('prod_id');
-            }
+               ;
 
-            $this->set(compact('season_name', 'payment_id', 'gender','getPaymentGatewayDetails','getMatchingProducts'));
+                if(!empty($rack_number_list) && !empty($rak_id_list)){
+                    $getMatchingProducts = $getMatchingProducts->where(['rack IN'=>$rak_id_list]);
+                }
+                if(!empty($or_cnd)){
+                    $getMatchingProducts = $getMatchingProducts->where(['OR'=>$or_cnd]);
+                }
+
+                $get_other_match_prd = $this->MatchingCase->find('all')->where(["payment_id" => $payment_id,'created_on LIKE'=>"%".date('Y-m-d')."%"]);
+                if(!empty($get_other_match_prd)){
+                    $prv_match_prd = !empty($get_other_match_prd) ? Hash::extract($get_other_match_prd->toArray(), '{n}.product_id') : [];
+                    if(!empty($prv_match_prd)){
+                        $get_prd_id = $this->InProducts->find('all')->where(['id IN'=>$prv_match_prd]);
+                        $get_prc_prod_id_list = !empty($get_prd_id) ? Hash::extract($get_prd_id->toArray(), '{n}.prod_id') : [];
+                        if(!empty($get_prc_prod_id_list)){
+                            $getMatchingProducts = $getMatchingProducts->where(['InProducts.prod_id NOT IN'=>$get_prc_prod_id_list]);
+                        }
+                    }
+                }
+                
+                $getMatchingProducts = $getMatchingProducts->group('InProducts.prod_id')->limit(5);
+
+                foreach($getMatchingProducts as $mat_prd){
+                    $new_rw = $this->MatchingCase->newEntity();
+                    $new_rw->payment_id = $payment_id;
+                    $new_rw->product_id = $mat_prd->id;
+                    $new_rw->count = 0;
+                    $this->MatchingCase->save($new_rw);
+                    //MatchingCase                    
+                }
+                
+            }
+            // print_r($getMatchingProducts);exit;
+
+            $this->set(compact('season_name', 'payment_id', 'gender', 'getPaymentGatewayDetails', 'getMatchingProducts', 'where_to_show', 'user_size', 'user_size_col'));
         }
 
     }
+
+    public function getMerchandiseMatchingComment() {
+        $this->loadModel('MatchingProductComments');
+        $this->viewBuilder()->layout('');
+
+        if ($this->request->is('post')) {
+            $postData = $this->request->getData();
+            $product_id = $postData['product_id'];
+            $payment_id = $postData['payment_id'];
+            $this->MatchingProductComments->belongsTo('Users', ['className' => 'Users', 'foreignKey' => 'user_id']);
+            $all_cmts = $this->MatchingProductComments->find('all')->where(['MatchingProductComments.payment_id' => $payment_id, 'product_id' => $product_id])->contain(['Users'])->order(['MatchingProductComments.id' => 'DESC']);
+            $currentUserId = $this->Auth->user('id');
+            $this->set(compact('all_cmts', 'currentUserId','product_id'));
+        }
+    }
+
+    public function postMerchandiseMatchingComment($id = null) {
+        $this->loadModel('MatchingProductComments');
+        $this->viewBuilder()->layout('');
+
+        if ($this->request->is('post')) {
+            $postData = $this->request->data;
+            $postArr = [];
+            $postArr['payment_id'] = $postData['payment_id'];
+            $postArr['user_id'] = $this->request->session()->read('Auth.User.id');
+            $postArr['comment'] = $postData['comment'];
+            $postArr['product_id'] = $postData['product_id'];
+
+            if ($id) {
+                $comment = $this->MatchingProductComments->get($id);
+                $comment = $this->MatchingProductComments->patchEntity($comment, $postArr);
+            } else {
+                $comment = $this->MatchingProductComments->newEntity($postArr);
+            }
+
+            if ($this->MatchingProductComments->save($comment)) {
+                echo json_encode('success');
+            } else {
+                echo json_encode('error');
+            }
+        }
+        exit;
+    }
+
+    public function deleteMerchandiseMatchingComment($id = null) {
+        $this->loadModel('MatchingProductComments');
+        $this->viewBuilder()->layout('');
+
+        if ($this->request->is('post')) {
+            $comment = $this->MatchingProductComments->get($id);
+            if ($this->MatchingProductComments->delete($comment)) {
+                echo json_encode('success');
+            } else {
+                echo json_encode('error');
+            }
+        }
+        exit;
+    }
+
+    public function editMerchandiseMatchingComment() {
+        $this->loadModel('MatchingProductComments');
+        if ($this->request->is('post')) {
+            $commentId = $this->request->getData('commentId');
+            $comment = $this->MatchingProductComments->find('all')->where(['id' => $commentId])->first();
+            if ($comment) {
+                $this->response = $this->response->withType('application/json')->withStringBody(json_encode($comment));
+            } else {
+                $this->response = $this->response->withType('application/json')->withStringBody(json_encode(['error' => 'Comment not found']));
+            }
+        } else {
+            $this->response = $this->response->withType('application/json')->withStringBody(json_encode(['error' => 'Invalid request']));
+        }
+        return $this->response;
+    }
+    
+    public function getMerchandiseSuggComment() {
+        $this->loadModel('MatchingProductSuggestionComments');
+        $this->viewBuilder()->layout('');
+
+        if ($this->request->is('post')) {
+            $postData = $this->request->getData();
+            $pay_user_id = $postData['pay_user_id'];
+            $pay_kid_id = $postData['pay_kid_id'];
+            $user_size = $postData['user_size'];
+            $user_size_col = $postData['user_size_col'];
+            $payment_id = $postData['payment_id'];
+            $this->MatchingProductSuggestionComments->belongsTo('Users', ['className' => 'Users', 'foreignKey' => 'user_id']);
+            $all_cmts = $this->MatchingProductSuggestionComments->find('all')->where(['MatchingProductSuggestionComments.payment_id' => $payment_id, 'MatchingProductSuggestionComments.pay_user_id' => $pay_user_id,'MatchingProductSuggestionComments.pay_kid_id' => $pay_kid_id,'MatchingProductSuggestionComments.user_size' => $user_size, 'MatchingProductSuggestionComments.user_size_col' => $user_size_col ])->contain(['Users'])->order(['MatchingProductSuggestionComments.id' => 'DESC']);
+            $currentUserId = $this->Auth->user('id');
+            $this->set(compact('all_cmts', 'currentUserId','payment_id'));
+        }
+    }
+
+    public function postMerchandiseSuggComment($id = null) {
+        $this->loadModel('MatchingProductSuggestionComments');
+        $this->viewBuilder()->layout('');
+
+        if ($this->request->is('post')) {
+            $postData = $this->request->data;
+            $postArr = [];
+            $postArr['payment_id'] = $postData['payment_id'];
+            $postArr['user_id'] = $this->request->session()->read('Auth.User.id');
+            $postArr['comment'] = $postData['comment'];
+            $postArr['product_id'] = $postData['product_id'];
+            $postArr['look_type'] = $postData['look_type'];
+            $postArr['user_size_col'] = $postData['user_size_col'];
+            $postArr['user_size'] = $postData['user_size'];
+            $postArr['pay_user_id'] = $postData['pay_user_id'];
+            $postArr['pay_kid_id'] = $postData['pay_kid_id'];
+            if ($id) {
+                $comment = $this->MatchingProductSuggestionComments->get($id);
+                $comment = $this->MatchingProductSuggestionComments->patchEntity($comment, $postArr);
+            } else {
+                $comment = $this->MatchingProductSuggestionComments->newEntity($postArr);
+            }
+
+            if ($this->MatchingProductSuggestionComments->save($comment)) {
+                echo json_encode('success');
+            } else {
+                echo json_encode('error');
+            }
+        }
+        exit;
+    }
+
+    public function deleteMerchandiseSuggComment($id = null) {
+        $this->loadModel('MatchingProductSuggestionComments');
+        $this->viewBuilder()->layout('');
+
+        if ($this->request->is('post')) {
+            $comment = $this->MatchingProductSuggestionComments->get($id);
+            if ($this->MatchingProductSuggestionComments->delete($comment)) {
+                echo json_encode('success');
+            } else {
+                echo json_encode('error');
+            }
+        }
+        exit;
+    }
+
+    public function editMerchandiseSuggComment() {
+        $this->loadModel('MatchingProductSuggestionComments');
+        if ($this->request->is('post')) {
+            $commentId = $this->request->getData('commentId');
+            $comment = $this->MatchingProductSuggestionComments->find('all')->where(['id' => $commentId])->first();
+            if ($comment) {
+                $this->response = $this->response->withType('application/json')->withStringBody(json_encode($comment));
+            } else {
+                $this->response = $this->response->withType('application/json')->withStringBody(json_encode(['error' => 'Comment not found']));
+            }
+        } else {
+            $this->response = $this->response->withType('application/json')->withStringBody(json_encode(['error' => 'Invalid request']));
+        }
+        return $this->response;
+    }
+
+    public function addVariantForPoRequest(){
+        $this->loadModel('KidsDetails');
+        $this->loadModel('UserDetails');
+        if ($this->request->is('post')) {
+            $post_data = $this->request->getData();
+            // print_r($post_data);
+            if(!empty($post_data['pay_kid_id'])){
+                $userDetails = $this->KidsDetails->find('all')->where(['id' => $post_data['pay_kid_id']])->first();
+                if ($userDetails->kids_clothing_gender == 'girls') {
+                    $gender = 'GirlKids'; // Girl kid
+                }else{
+                    $gender = 'BoyKids'; // Boy Kid
+                }
+                $post_data['usr_nm'] = $userDetails->kids_first_name;
+            }else{
+                $userDetails = $this->UserDetails->find('all')->where(['user_id' => $post_data['pay_user_id']])->first();
+                if($userDetails->gender == 1){
+                    $gender = 'Men';
+                }else{
+                    $gender = 'Women';
+                }
+                $post_data['usr_nm'] = $userDetails->first_name." ".$userDetails->last_name;
+            }
+            $this->request->session()->write('new_variant_po_data', json_encode($post_data));           
+            // if($post_data['look_type'] == "look_1_summer_sleeveless_top"){
+                // return $this->redirect(HTTP_ROOT.'appadmins/add_variant_product/tab1/'.$gender);                    
+            // }
+            echo json_encode(['status'=>'success', 'url'=>HTTP_ROOT.'appadmins/newBrandPo/tab1/'.$gender]);
+            exit;
+        }
+        echo json_encode(['status'=>'error']);
+        exit;
+    }
+
+    public function poProductFileUpload(){
+        $this->loadModel('PoAttachments');
+        if ($this->request->is('post')) {
+            $post_data = $this->request->getData();  
+            
+            if(!empty($post_data['descp'])){
+                $newData = [];
+                $newData['purchase_order_products_id'] = $post_data['po_product_id'];
+                $newData['descp'] = $post_data['descp'];
+                $newRw = $this->PoAttachments->newEntity();
+                $newRw = $this->PoAttachments->patchEntity($newRw, $newData);
+                $this->PoAttachments->save($newRw);
+            }          
+            if (!empty($post_data['doc_file'])) {
+                $imagePath = "files/product_img/";
+                $filePaths = [];
+
+                foreach ($post_data['doc_file'] as $file) {
+                    if(!empty($file['tmp_name'])){
+                        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                        $filename = $file['tmp_name'];
+                        $original_name = $file['name'];
+                        $custom_name = time() . '_' . uniqid() . '.' . $ext;
+                        move_uploaded_file($filename, $imagePath . $custom_name);
+                        $filePaths = $imagePath . $custom_name;
+                        $newData = [];
+                        $newData['purchase_order_products_id'] = $post_data['po_product_id'];
+                        $newData['file'] = $filePaths;
+                        $newRw = $this->PoAttachments->newEntity();
+                        $newRw = $this->PoAttachments->patchEntity($newRw, $newData);
+                        $this->PoAttachments->save($newRw);
+                    }
+                } 
+                echo json_encode(true);             
+            }
+        }
+        exit;
+    }
+
+    public function getPoProductFile(){
+        $this->loadModel('PoAttachments');
+        if ($this->request->is('post')) {
+            $post_data = $this->request->getData(); 
+            $html = '';
+            $all_data = $this->PoAttachments->find('all')->where(['purchase_order_products_id'=>$post_data['po_product_id']]);
+            if(!empty($all_data->count())){
+                foreach($all_data as $ky => $dat){
+                    if(!empty($dat->file)){
+                        $html .= '<div id="file_'.$dat->id.'"><a href="'.HTTP_ROOT.$dat->file.'" target="_blank">Attachment'.($ky+1).'</a>  <button onclick="deleteFile('.$dat->id.')">Delete</button></div>';
+                    }
+                    if(!empty($dat->descp)){
+                        $html .= '<div id="file_'.$dat->id.'">'.$dat->descp.'  <button onclick="deleteFile('.$dat->id.')">Delete</button></div>';
+                    }
+                    
+                }                
+            }
+            echo $html;
+        }
+        exit;
+    }
+
+    public function deletePoProductFile(){
+        $this->loadModel('PoAttachments');
+        if ($this->request->is('post')) {
+            $post_data = $this->request->getData(); 
+            $file_data = $this->PoAttachments->find('all')->where(['id'=>$post_data['id']])->first();
+            @unlink($file_data->file);
+            $this->PoAttachments->deleteAll(['id'=>$post_data['id']]);            
+            echo json_encode(true);  
+        }
+        exit;
+    }
+
+    public function newPoEdit($id, $po_number){
+        $this->loadModel('InProductVariants');
+        $this->loadModel('InProductVariantList');
+        $this->loadModel('InSizes');
+        $this->loadModel('InColors');
+
+        $all_sizes = $this->InSizes->find('all')->where(['is_active' => 1]);
+        $all_colors = $this->InColors->find('all')->where(['is_active' => 1]);
+        $edit_data = $this->InProductVariantList->find('all')->where(['id'=>$id])->first();
+        if ($this->request->is('post')) {
+            $postData = $this->request->getData();
+
+            $newRw = $this->InProductVariantList->newEntity();
+            $newRw = $this->InProductVariantList->patchEntity($newRw, $postData);
+            $this->InProductVariantList->save($newRw);
+
+            $this->Flash->success(__("Po updated.."));
+            return $this->redirect(HTTP_ROOT.'appadmins/new-brand-po/tab2?brand_id='.$edit_data->brand_id);
+        }
+        $this->set(compact('edit_data','all_sizes','all_colors'));
+
+    }
+
+    
+    public function poNewProductFileUpload(){
+        $this->loadModel('PoNewAttachments');
+        if ($this->request->is('post')) {
+            $post_data = $this->request->getData();  
+            if(!empty($post_data['descp'])){
+                $newData = [];
+                $newData['variant_products_id'] = $post_data['po_product_id'];
+                $newData['descp'] = $post_data['descp'];
+                $newRw = $this->PoNewAttachments->newEntity();
+                $newRw = $this->PoNewAttachments->patchEntity($newRw, $newData);
+                $this->PoNewAttachments->save($newRw);
+            }            
+            if (!empty($post_data['doc_file'])) {
+                $imagePath = "files/product_img/";
+                $filePaths = [];
+
+                foreach ($post_data['doc_file'] as $file) {
+                    if(!empty($file['tmp_name'])){
+                        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                        $filename = $file['tmp_name'];
+                        $original_name = $file['name'];
+                        $custom_name = time() . '_' . uniqid() . '.' . $ext;
+                        move_uploaded_file($filename, $imagePath . $custom_name);
+                        $filePaths = $imagePath . $custom_name;
+                        $newData = [];
+                        $newData['variant_products_id'] = $post_data['po_product_id'];
+                        $newData['file'] = $filePaths;
+                        $newRw = $this->PoNewAttachments->newEntity();
+                        $newRw = $this->PoNewAttachments->patchEntity($newRw, $newData);
+                        $this->PoNewAttachments->save($newRw);
+                    }
+                } 
+                echo json_encode(true);             
+            }
+        }
+        exit;
+    }
+
+    public function getPoNewProductFile(){
+        $this->loadModel('PoNewAttachments');
+        if ($this->request->is('post')) {
+            $post_data = $this->request->getData(); 
+            $html = '';
+            $all_data = $this->PoNewAttachments->find('all')->where(['variant_products_id'=>$post_data['po_product_id']]);
+            if(!empty($all_data->count())){
+                foreach($all_data as $ky => $dat){
+                    if(!empty($dat->file)){
+                        $html .= '<div id="file_'.$dat->id.'"><a href="'.HTTP_ROOT.$dat->file.'" target="_blank">Attachment'.($ky+1).'</a>  <button onclick="deleteFile('.$dat->id.')">Delete</button></div>';
+                    }
+                    if(!empty($dat->descp)){
+                        $html .= '<div id="file_'.$dat->id.'">'.$dat->descp.'  <button onclick="deleteFile('.$dat->id.')">Delete</button></div>';
+                    }
+                }                
+            }
+            echo $html;
+        }
+        exit;
+    }
+
+    public function deleteNewPoProductFile(){
+        $this->loadModel('PoNewAttachments');
+        if ($this->request->is('post')) {
+            $post_data = $this->request->getData(); 
+            $file_data = $this->PoNewAttachments->find('all')->where(['id'=>$post_data['id']])->first();
+            @unlink($file_data->file);
+            $this->PoNewAttachments->deleteAll(['id'=>$post_data['id']]);            
+            echo json_encode(true);  
+        }
+        exit;
+    }
+
+    public function updateVarPoFrom(){
+        $this->loadModel('InProductVariantList');
+        $this->loadModel('InProducts');
+        $this->loadModel('PurchaseOrderProducts');
+        if ($this->request->is('post')) {
+            $postData = $this->request->data;
+            $getProductDetails = $this->InProducts->find('all')->where(['in_product_variant_list_id'=>$postData['variant_list_id']])->first();
+            if(!empty($getProductDetails )){
+                $newData = [];
+                $newData['product_id'] = $getProductDetails->prod_id;
+                $newData['qty'] = $postData['qty'];
+                $newData['brand_id'] = $getProductDetails->brand_id;
+                $newData['user_id'] = $postData['user_id'];
+                $newData['kid_id'] = $postData['kid_id'];
+                $newData['po_date'] = date('Y-m-d');
+                $newRw = $this->PurchaseOrderProducts->newEntity();
+                $newRw = $this->PurchaseOrderProducts->patchEntity($newRw, $newData);
+                $this->PurchaseOrderProducts->save($newRw);
+                echo json_encode(['status'=>'success','msg'=>'Added to Existing Customer Po.',$newData]); 
+                exit;
+            }
+            // $newData = [];
+            // $newData['id'] = $postData['variant_list_id'];
+            // $newData['po_quantity'] = $postData['qty'];
+            // $newData['is_po'] = 1;            
+            // $newData['po_status'] = 1;
+            // $newData['user_id'] = $postData['user_id'];
+            // $newData['kid_id'] = $postData['kid_id'];
+            // $newData['po_date'] = date('Y-m-d');
+            // $newRw = $this->InProductVariantList->newEntity();
+            // $newRw = $this->InProductVariantList->patchEntity($newRw, $newData);
+            // $this->InProductVariantList->save($newRw);
+            // echo json_encode(['status'=>'success','msg'=>'Added to PO.',$newData]); 
+            echo json_encode(['status'=>'error','msg'=>'Not added to PO.',$newData]);            
+        }
+        exit;
+    }
+
+    public function newPoCancel($id){
+        $this->loadModel('InProductVariantList');
+        $this->InProductVariantList->updateAll(['is_po'=>0, 'po_status'=>0, 'po_quantity'=>0],['id'=>$id]);
+        $this->Flash->success(__("Po cancelled successfully"));
+        return $this->redirect($this->referer());
+    }
+
+    public function cancleExistingBrandPo($id){
+        $this->loadModel('PurchaseOrderProducts');
+        $this->PurchaseOrderProducts->deleteAll(['id'=>$id]);
+        $this->Flash->success(__("Po cancelled successfully"));
+        return $this->redirect($this->referer());
+    }
+
+    public function editExistingBrandPo($id,$brand_id){
+        $this->loadModel('PurchaseOrderProducts');
+        $po_product = $this->PurchaseOrderProducts->find('all')->where(['id'=>$id])->first();
+        $get_product_details = $this->InProducts->find('all')->where(['prod_id'=>$po_product->product_id])->first();
+        if ($this->request->is('post')) {
+            $post_data = $this->request->getData(); 
+
+            $this->InProducts->updateAll(['clearance_price'=>$post_data['clearance_price'],'sale_price'=>$post_data['sale_price'],'purchase_price'=>$post_data['purchase_price']],['prod_id'=>$post_data['prod_id']]);
+                        
+            $this->Flash->success(__("Po updated successfully"));
+            return $this->redirect(HTTP_ROOT.'appadmins/existing-brand-po/tab2?brand_id='.$post_data['brand_id']);
+        }
+        $this->set(compact('get_product_details', 'id', 'brand_id'));
+    }
+
+    public function removePoCustomerSession(){
+        $this->request->session()->write('new_variant_po_data','');
+        $this->request->session()->delete('new_variant_po_data');
+        $this->Flash->success(__("Customer po data deleted."));
+        return $this->redirect($this->referer());
+    }
+  
+
     
 }

@@ -149,7 +149,17 @@
                                             <td><?php echo $pdetails->sale_price; ?></td>
                                             <td><?php echo $this->Custom->productQuantityM($pdetails->prod_id); ?></td>
                                             <td><?php echo (empty($pdetails->style_number)) ? $pdetails->dtls : $pdetails->style_number; ?></td>
-                                            <td><?php echo (!empty($pdetails->po_dt)) ? date('Y-m-d', strtotime($pdetails->po_dt->created_at)) : ''; ?></td>
+                                            <td>
+                                                <?php if(!empty($pdetails->po_dt)) {
+                                                    $prd_dt = date('Y-m-d', strtotime($pdetails->po_dt->created_at));                                                    
+                                                    echo $prd_dt;
+                                                }else{
+                                                    if(!empty($pdetails->variant_prd_list)){
+                                                        $prd_dt = date('Y-m-d', strtotime($pdetails->variant_prd_list->po_date));                                                    
+                                                        echo $prd_dt;
+                                                    }
+                                                } ?>
+                                             </td>
                                             
                                             <td style="text-align: center;">
                                                 <?php if($pdetails->is_deleted !=1){ ?>
@@ -160,7 +170,7 @@
 
 
                                                 <?= $this->Html->link($this->Html->tag('i', '', array('class' => 'fa fa-eye')), ['action' => '#'], ['escape' => false, "data-placement" => "top", "data-hint" => "Set New Password", 'data-toggle' => 'modal', 'data-target' => '#myModalproduct-' . $pdetails->id, "title" => "View Product Details", 'class' => 'btn btn-info hint--top  hint', 'style' => 'padding: 0 7px!important;']); ?>
-                                                <?= $this->Html->link($this->Html->tag('i', '', array('class' => 'fa fa-edit')), ['action' => 'add_product', 'Men', $pdetails->id], ['escape' => false, "data-placement" => "top", "data-hint" => "Edit", 'class' => 'btn btn-info hint--top  hint', 'style' => 'padding: 0 7px!important;']); ?>
+                                                <?php //echo $this->Html->link($this->Html->tag('i', '', array('class' => 'fa fa-edit')), ['action' => 'add_product', 'Men', $pdetails->id], ['escape' => false, "data-placement" => "top", "data-hint" => "Edit", 'class' => 'btn btn-info hint--top  hint', 'style' => 'padding: 0 7px!important;']); ?>
                                                 <?= ($user_type == 1) ? $this->Html->link($this->Html->tag('i', '', array('class' => 'fa fa-trash')), ['action' => 'productDelete', $pdetails->id, 'InProducts', $profile], ['escape' => false, "data-placement" => "top", "data-hint" => "Product Delete", 'class' => 'btn btn-danger hint--top  hint', 'style' => 'padding: 0 7px!important;', 'confirm' => __('Are you sure you want to delete Admin ?')]) : ''; ?>
 
 
@@ -1129,7 +1139,15 @@
                                             <td><?php echo $pdetails->sale_price; ?></td>
                                             <td><?php echo $this->Custom->productQuantityM($pdetails->prod_id); ?></td>
                                             <td><?php echo (empty($pdetails->style_number)) ? $pdetails->dtls : $pdetails->style_number; ?></td>
-                                            <td><?php echo (!empty($pdetails->po_dt)) ? date('Y-m-d', strtotime($pdetails->po_dt->created_at)) : ''; ?></td>
+                                            <td><?php if(!empty($pdetails->po_dt)) {
+                                                    $prd_dt = date('Y-m-d', strtotime($pdetails->po_dt->created_at));                                                    
+                                                    echo $prd_dt;
+                                                }else{
+                                                    if(!empty($pdetails->variant_prd_list)){
+                                                        $prd_dt = date('Y-m-d', strtotime($pdetails->variant_prd_list->po_date));                                                    
+                                                        echo $prd_dt;
+                                                    }
+                                                } ?></td>
                                            
                                             <td style="text-align: center;">
                                                 <?php if($pdetails->is_deleted !=1){ ?>
@@ -1138,7 +1156,7 @@
                                                 <a href="<?= HTTP_ROOT . "appadmins/all_barcode_prints/" . $pdetails->prod_id.'?merchant=1'; ?>" data-placement="top" target="_blank" data-hint="Print barcode" class="btn btn-info  hint--top  hint" style="padding: 0 7px!important;"><i class="fa fa-print "></i></a>
 
                                                 <?= $this->Html->link($this->Html->tag('i', '', array('class' => 'fa fa-eye')), ['action' => '#'], ['escape' => false, "data-placement" => "top", "data-hint" => "Set New Password", 'data-toggle' => 'modal', 'data-target' => '#myModalproductw-' . $pdetails->id, "title" => "View Product Details", 'class' => 'btn btn-info hint--top  hint', 'style' => 'padding: 0 7px!important;']); ?>
-                                                <?= $this->Html->link($this->Html->tag('i', '', array('class' => 'fa fa-edit')), ['action' => 'add_product', 'Women', $pdetails->id], ['escape' => false, "data-placement" => "top", "data-hint" => "Edit", 'class' => 'btn btn-info hint--top  hint', 'style' => 'padding: 0 7px!important;']); ?>
+                                                <?php //echo $this->Html->link($this->Html->tag('i', '', array('class' => 'fa fa-edit')), ['action' => 'add_product', 'Women', $pdetails->id], ['escape' => false, "data-placement" => "top", "data-hint" => "Edit", 'class' => 'btn btn-info hint--top  hint', 'style' => 'padding: 0 7px!important;']); ?>
                                                 <?= ($user_type == 1) ? $this->Html->link($this->Html->tag('i', '', array('class' => 'fa fa-trash')), ['action' => 'productDelete', $pdetails->id, 'InProducts', $profile], ['escape' => false, "data-placement" => "top", "data-hint" => "Delete", 'class' => 'btn btn-danger hint--top  hint', 'style' => 'padding: 0 7px!important;', 'confirm' => __('Are you sure you want to delete Admin ?')]) : ''; ?>
                                                 <?php if ($pdetails->available_status == 1) { ?>
                                                     <a href="<?php echo HTTP_ROOT . 'appadmins/deactive/' . $pdetails->id . '/InProducts'; ?>"> <?= $this->Form->button('<i class="fa fa-check"></i>', ["data-placement" => "top", "data-hint" => "Active", 'class' => "btn btn-success hint--top  hint", 'style' => 'padding: 0 7px!important;']) ?> </a>
@@ -1769,7 +1787,15 @@
                                             <td><?php echo $pdetails->sale_price; ?></td>
                                             <td><?php echo $this->Custom->productQuantityM($pdetails->prod_id); ?></td>
                                             <td><?php echo (empty($pdetails->style_number)) ? $pdetails->dtls : $pdetails->style_number; ?></td>
-                                            <td><?php echo (!empty($pdetails->po_dt)) ? date('Y-m-d', strtotime($pdetails->po_dt->created_at)) : ''; ?></td>
+                                            <td><?php if(!empty($pdetails->po_dt)) {
+                                                    $prd_dt = date('Y-m-d', strtotime($pdetails->po_dt->created_at));                                                    
+                                                    echo $prd_dt;
+                                                }else{
+                                                    if(!empty($pdetails->variant_prd_list)){
+                                                        $prd_dt = date('Y-m-d', strtotime($pdetails->variant_prd_list->po_date));                                                    
+                                                        echo $prd_dt;
+                                                    }
+                                                } ?></td>
                                             
                                             <td style="text-align: center;">
                                                 <?php if($pdetails->is_deleted !=1){ ?>
@@ -1778,7 +1804,7 @@
                                                 <a href="<?= HTTP_ROOT . "appadmins/all_barcode_prints/" . $pdetails->prod_id.'?merchant=1'; ?>" data-placement="top" target="_blank" data-hint="Print barcode" class="btn btn-info  hint--top  hint" style="padding: 0 7px!important;"><i class="fa fa-print "></i></a>
 
                                                 <?= $this->Html->link($this->Html->tag('i', '', array('class' => 'fa fa-eye')), ['action' => '#'], ['escape' => false, "data-placement" => "top", "data-hint" => "Set New Password", 'data-toggle' => 'modal', 'data-target' => '#myModalproductbk-' . $pdetails->id, "title" => "View Product Details", 'class' => 'btn btn-info hint--top  hint', 'style' => 'padding: 0 7px!important;']); ?>
-                                                <?= $this->Html->link($this->Html->tag('i', '', array('class' => 'fa fa-edit')), ['action' => 'add_product', 'BoyKids', $pdetails->id], ['escape' => false, "data-placement" => "top", "data-hint" => "Edit", 'class' => 'btn btn-info hint--top  hint', 'style' => 'padding: 0 7px!important;']); ?>
+                                                <?php //echo $this->Html->link($this->Html->tag('i', '', array('class' => 'fa fa-edit')), ['action' => 'add_product', 'BoyKids', $pdetails->id], ['escape' => false, "data-placement" => "top", "data-hint" => "Edit", 'class' => 'btn btn-info hint--top  hint', 'style' => 'padding: 0 7px!important;']); ?>
                                                 <?= ($user_type == 1) ? $this->Html->link($this->Html->tag('i', '', array('class' => 'fa fa-trash')), ['action' => 'productDelete', $pdetails->id, 'InProducts', $profile], ['escape' => false, "data-placement" => "top", "data-hint" => "Delete", 'class' => 'btn btn-danger hint--top  hint', 'style' => 'padding: 0 7px!important;', 'confirm' => __('Are you sure you want to delete Admin ?')]) : ''; ?>
                                                 <?php if ($pdetails->available_status == 1) { ?>
                                                     <a href="<?php echo HTTP_ROOT . 'appadmins/deactive/' . $pdetails->id . '/InProducts'; ?>"> <?= $this->Form->button('<i class="fa fa-check"></i>', ["data-placement" => "top", "data-hint" => "Active", 'class' => "btn btn-success hint--top  hint", 'style' => 'padding: 0 7px!important;']) ?> </a>
@@ -1987,7 +2013,15 @@
                                             <td><?php echo $pdetails->sale_price; ?></td>
                                             <td><?php echo $this->Custom->productQuantityM($pdetails->prod_id); ?></td>
                                             <td><?php echo (empty($pdetails->style_number)) ? $pdetails->dtls : $pdetails->style_number; ?></td>
-                                            <td><?php echo (!empty($pdetails->po_dt)) ? date('Y-m-d', strtotime($pdetails->po_dt->created_at)) : ''; ?></td>
+                                            <td><?php if(!empty($pdetails->po_dt)) {
+                                                    $prd_dt = date('Y-m-d', strtotime($pdetails->po_dt->created_at));                                                    
+                                                    echo $prd_dt;
+                                                }else{
+                                                    if(!empty($pdetails->variant_prd_list)){
+                                                        $prd_dt = date('Y-m-d', strtotime($pdetails->variant_prd_list->po_date));                                                    
+                                                        echo $prd_dt;
+                                                    }
+                                                } ?></td>
                                             
                                             <td style="text-align: center;">
                                                 <?php if($pdetails->is_deleted !=1){ ?>
@@ -1996,7 +2030,7 @@
                                                 <a href="<?= HTTP_ROOT . "appadmins/all_barcode_prints/" . $pdetails->prod_id.'?merchant=1'; ?>" data-placement="top" target="_blank" data-hint="Print barcode" class="btn btn-info  hint--top  hint" style="padding: 0 7px!important;"><i class="fa fa-print "></i></a>
 
                                                 <?= $this->Html->link($this->Html->tag('i', '', array('class' => 'fa fa-eye')), ['action' => '#'], ['escape' => false, "data-placement" => "top", "data-hint" => "Set New Password", 'data-toggle' => 'modal', 'data-target' => '#myModalproductgk-' . $pdetails->id, "title" => "View Product Details", 'class' => 'btn btn-info hint--top  hint', 'style' => 'padding: 0 7px!important;']); ?>   
-                                                <?= $this->Html->link($this->Html->tag('i', '', array('class' => 'fa fa-edit')), ['action' => 'add_product', 'GirlKids', $pdetails->id], ['escape' => false, "data-placement" => "top", "data-hint" => "Edit", 'class' => 'btn btn-info hint--top  hint', 'style' => 'padding: 0 7px!important;']); ?>
+                                                <?php //echo $this->Html->link($this->Html->tag('i', '', array('class' => 'fa fa-edit')), ['action' => 'add_product', 'GirlKids', $pdetails->id], ['escape' => false, "data-placement" => "top", "data-hint" => "Edit", 'class' => 'btn btn-info hint--top  hint', 'style' => 'padding: 0 7px!important;']); ?>
                                                 <?= ($user_type == 1) ? $this->Html->link($this->Html->tag('i', '', array('class' => 'fa fa-trash')), ['action' => 'productDelete', $pdetails->id, 'InProducts', $profile], ['escape' => false, "data-placement" => "top", "data-hint" => "Profile Delete", 'class' => 'btn btn-danger hint--top  hint', 'style' => 'padding: 0 7px!important;', 'confirm' => __('Are you sure you want to delete Admin ?')]) : ''; ?>
 
                                                 <?php if ($pdetails->available_status == 1) { ?>

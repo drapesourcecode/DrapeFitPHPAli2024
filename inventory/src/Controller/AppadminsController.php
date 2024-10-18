@@ -611,18 +611,19 @@ class AppadminsController extends AppController
 
         $this->InProducts->belongsTo('InUsers', ['className' => 'InUsers', 'foreignKey' => 'brand_id']);
         $this->InProducts->belongsTo('po_dt', ['className' => 'PurchaseOrders', 'foreignKey' => 'po_number', 'bindingKey' => 'po_number']);
+        $this->InProducts->belongsTo('variant_prd_list', ['className' => 'InProductVariantList', 'foreignKey' => 'in_product_variant_list_id']);
 
         /* $menproductdetails */
-        $menproductdetails1 = $this->InProducts->find('all')->order(['InProducts.id' => 'DESC'])->where(['InProducts.profile_type' => '1', 'InProducts.brand_id !=' => 0, 'InProducts.is_merchandise' => 1, 'InProducts.po_status >=' => 3, 'InProducts.is_deleted !=' => 1])->contain(['InUsers', 'po_dt'])->group('InProducts.prod_id');
+        $menproductdetails1 = $this->InProducts->find('all')->order(['InProducts.id' => 'DESC'])->where(['InProducts.profile_type' => '1', 'InProducts.brand_id !=' => 0, 'InProducts.is_merchandise' => 1, 'InProducts.po_status >=' => 3, 'InProducts.is_deleted !=' => 1])->contain(['InUsers', 'po_dt','variant_prd_list'])->group('InProducts.prod_id');
 
         /* $womenproductdetails */
-        $womenproductdetails1 = $this->InProducts->find('all')->order(['InProducts.id' => 'DESC'])->where(['InProducts.profile_type' => '2', 'InProducts.brand_id !=' => 0, 'InProducts.is_merchandise' => 1, 'InProducts.po_status >=' => 3, 'InProducts.is_deleted !=' => 1])->contain(['InUsers', 'po_dt'])->group('InProducts.prod_id');
+        $womenproductdetails1 = $this->InProducts->find('all')->order(['InProducts.id' => 'DESC'])->where(['InProducts.profile_type' => '2', 'InProducts.brand_id !=' => 0, 'InProducts.is_merchandise' => 1, 'InProducts.po_status >=' => 3, 'InProducts.is_deleted !=' => 1])->contain(['InUsers', 'po_dt','variant_prd_list'])->group('InProducts.prod_id');
 
         /* $boyskidsproductdetails */
-        $boyskidsproductdetails1 = $this->InProducts->find('all')->order(['InProducts.id' => 'DESC'])->where(['InProducts.profile_type' => '3', 'InProducts.brand_id !=' => 0, 'InProducts.is_merchandise' => 1, 'InProducts.po_status >=' => 3, 'InProducts.is_deleted !=' => 1])->contain(['InUsers', 'po_dt'])->group('InProducts.prod_id');
+        $boyskidsproductdetails1 = $this->InProducts->find('all')->order(['InProducts.id' => 'DESC'])->where(['InProducts.profile_type' => '3', 'InProducts.brand_id !=' => 0, 'InProducts.is_merchandise' => 1, 'InProducts.po_status >=' => 3, 'InProducts.is_deleted !=' => 1])->contain(['InUsers', 'po_dt','variant_prd_list'])->group('InProducts.prod_id');
 
         /* $girlkidsproductdetails */
-        $girlkidsproductdetails1 = $this->InProducts->find('all')->order(['InProducts.id' => 'DESC'])->where(['InProducts.profile_type' => '4', 'InProducts.brand_id !=' => 0, 'InProducts.is_merchandise' => 1, 'InProducts.po_status >=' => 3, 'InProducts.is_deleted !=' => 1])->contain(['InUsers', 'po_dt'])->group('InProducts.prod_id');
+        $girlkidsproductdetails1 = $this->InProducts->find('all')->order(['InProducts.id' => 'DESC'])->where(['InProducts.profile_type' => '4', 'InProducts.brand_id !=' => 0, 'InProducts.is_merchandise' => 1, 'InProducts.po_status >=' => 3, 'InProducts.is_deleted !=' => 1])->contain(['InUsers', 'po_dt','variant_prd_list'])->group('InProducts.prod_id');
 
         if (!empty($where_arr)) {
 
@@ -4607,7 +4608,7 @@ class AppadminsController extends AppController
             $this->Flash->error(__('All bar code not generated.'));
             return $this->redirect($this->referer());
         }
-        $this->InProducts->updateAll(['quantity' => 1, 'is_active' => 1, 'available_status' => 1, 'match_status' => 2, 'is_merchandise' => 0, 'po_status' => 4, 'is_clearance' => null, 'inventory_move_date'=>date('Y-m-d H:i:s')], ['prod_id' => $prod_id, 'is_merchandise' => 1]);
+        $this->InProducts->updateAll(['quantity' => 1, 'is_active' => 1, 'available_status' => 1/*, 'match_status' => 2*/, 'is_merchandise' => 0, 'po_status' => 4, /*'is_clearance' => null,*/ 'inventory_move_date'=>date('Y-m-d H:i:s')], ['prod_id' => $prod_id, 'is_merchandise' => 1]);
         $this->Flash->success(__('Successfuly move to inventory.'));
 
         return $this->redirect($this->referer());

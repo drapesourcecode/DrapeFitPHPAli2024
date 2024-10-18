@@ -178,7 +178,7 @@ $color_arr = $this->Custom->inColor();
         if (input.files && input.files[0]) {
             var sizeKB = input.files[0].size / 1000;
             //alert(sizeKB);
-            if (parseFloat(sizeKB) <= 20) {
+            if (parseFloat(sizeKB) <= 2100) {
                 var reader = new FileReader();
                 reader.onload = function (e) {
                     var img = $('<img />', {
@@ -515,5 +515,7 @@ sub, sup {
     line-height: 0;
     vertical-align: baseline;
 }
-
+option[disabled] {
+  background: #6563637d;
+}
 </style>                           

@@ -5249,7 +5249,7 @@ class AppadminsController extends AppController {
                           `in_pud`.`match_status` = 2 AND
                           `in_pud`.`available_status` = 1 AND
                           `in_pud`.`quantity` = 1 AND
-                           (`in_pud`.`is_clearance` = 2 OR `in_pud`.`is_clearance` IS NULL) AND
+                           
                           ' . $season_cnd . ' 
                           (
                             (
@@ -5288,7 +5288,7 @@ class AppadminsController extends AppController {
                                                       `in_pud`.`match_status` = 2 AND
                                                       `in_pud`.`available_status` = 1 AND
                                                       `in_pud`.`quantity` = 1 AND
-                                                       (`in_pud`.`is_clearance` = 2 OR `in_pud`.`is_clearance` IS NULL) AND
+                                                       
                                                       ' . $season_cnd . '
                                                       (
                                                         (
@@ -5326,7 +5326,7 @@ class AppadminsController extends AppController {
                                                       `in_pud`.`match_status` = 2 AND
                                                       `in_pud`.`available_status` = 1 AND
                                                       `in_pud`.`quantity` = 1 AND
-                                                       (`in_pud`.`is_clearance` = 2 OR `in_pud`.`is_clearance` IS NULL) AND
+                                                       
                                                       ' . $season_cnd . '
                                                       (
                                                         (
@@ -5352,7 +5352,7 @@ class AppadminsController extends AppController {
                                                       `in_pud`.`match_status` = 2 AND
                                                       `in_pud`.`available_status` = 1 AND
                                                       `in_pud`.`quantity` = 1 AND
-                                                       (`in_pud`.`is_clearance` = 2 OR `in_pud`.`is_clearance` IS NULL) AND
+                                                       
                                                       ' . $season_cnd . '
                                                       (
                                                         (
@@ -5389,7 +5389,7 @@ class AppadminsController extends AppController {
 
             if (!empty($all_prd_ids)) {
                 $this->InProducts->hasOne('match_case', ['className' => 'MatchingCase', 'foreignKey' => 'product_id'])->setConditions(['payment_id' => $id]);
-                $all_product = $this->InProducts->find('all')->contain(['match_case' /* => ['sort' => ['match_case.count' => 'DESC']] */])->where(['OR' => ['InProducts.is_clearance' => 2, 'InProducts.is_clearance IS' => NULL], 'InProducts.available_status !=' => 2, 'InProducts.is_active !=' => 0, 'InProducts.id IN' => $all_prd_ids])->order(['match_case.count' => 'DESC']);
+                $all_product = $this->InProducts->find('all')->contain(['match_case' /* => ['sort' => ['match_case.count' => 'DESC']] */])->where([/*'OR' => ['InProducts.is_clearance' => 2, 'InProducts.is_clearance IS' => NULL],*/ 'InProducts.available_status !=' => 2, 'InProducts.is_active !=' => 0, 'InProducts.id IN' => $all_prd_ids])->order(['match_case.count' => 'DESC']);
                 $this->paginate['limit'] = 10;
                 //            pj($all_product);exit;
 
@@ -9294,10 +9294,10 @@ class AppadminsController extends AppController {
         $this->InProducts->belongsTo('brand', ['className' => 'InUsers', 'foreignKey' => 'user_id']);
         if (!empty($prev_products)) {
             /* $product_list */
-            $product_list1 = $this->InProducts->find('all')->contain(['brand'])->order(['InProducts.id' => 'DESC'])->where(['OR' => ['is_clearance' => 2, 'is_clearance IS' => NULL], 'InProducts.available_status !=' => 2, 'InProducts.is_active !=' => 0, 'InProducts.profile_type' => $gender, 'InProducts.prod_id NOT IN' => $prev_products, 'InProducts.quantity >' => 0, 'InProducts.match_status' => 2])->group('prod_id');
+            $product_list1 = $this->InProducts->find('all')->contain(['brand'])->order(['InProducts.id' => 'DESC'])->where([/*'OR' => ['is_clearance' => 2, 'is_clearance IS' => NULL],*/ 'InProducts.available_status !=' => 2, 'InProducts.is_active !=' => 0, 'InProducts.profile_type' => $gender, 'InProducts.prod_id NOT IN' => $prev_products, 'InProducts.quantity >' => 0, 'InProducts.match_status' => 2])->group('prod_id');
         } else {
             /* $product_list */
-            $product_list1 = $this->InProducts->find('all')->contain(['brand'])->order(['InProducts.id' => 'DESC'])->where(['OR' => ['is_clearance' => 2, 'is_clearance IS' => NULL], 'InProducts.available_status !=' => 2, 'InProducts.is_active !=' => 0, 'InProducts.profile_type' => $gender, 'InProducts.quantity >' => 0, 'InProducts.match_status' => 2])->group('prod_id');
+            $product_list1 = $this->InProducts->find('all')->contain(['brand'])->order(['InProducts.id' => 'DESC'])->where([/*'OR' => ['is_clearance' => 2, 'is_clearance IS' => NULL],*/ 'InProducts.available_status !=' => 2, 'InProducts.is_active !=' => 0, 'InProducts.profile_type' => $gender, 'InProducts.quantity >' => 0, 'InProducts.match_status' => 2])->group('prod_id');
         }
         if (!empty($_GET['search_for']) && !empty($_GET['search_data'])) {
             if ($_GET['search_for'] == "product_name1") {

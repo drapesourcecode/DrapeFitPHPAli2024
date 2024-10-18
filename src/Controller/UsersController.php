@@ -118,7 +118,7 @@ class UsersController extends AppController {
     }
 
     public function beforeFilter(Event $event) {
-        $this->Auth->allow(['maternityActiveWear', 'plusActiveWear', 'activewear', 'homepagePopupbox', 'checkHomepagePopupbox', 'authorizeCreditCardRefund', 'invitekids', 'invitewomen', 'invitemen', 'autoMentions', 'boxUpdate', 'invite', 'demoemail', 'underConstruction', 'ajaxGmail', 'chatCheckAuth', 'helpClose', 'help', 'startOnlineOffline', 'chatHistory', 'websocketMessage', 'adminlogin', 'fbreturn', 'fblogin', 'fbreturncon', 'fbloginCon', 'client', 'webrootRedirect', 'personalInfo', 'login', 'index', 'logout', 'forget', 'changePassword', 'registration', 'sizedata', 'setPassword', 'shipping', 'ajaxCheckEmailAvail', 'deleteAddress', 'addShipAddress', 'websocketDivMinaus', 'websocketDivMinausAdmin', 'chatButtonClose', 'men', 'women', 'kids', 'address', 'ajaxLogin', 'userregistration', 'ajaxforget', 'googleLoginReturn', 'googlelogin', 'editprofileSocialmedia', 'notYetShipped', 'unsubscribe', 'autoLogin', 'checkEmail', 'autocheckoutmail', 'testMultiAttach', 'howitWorks', 'boxPricing', 'personalStylelist', 'plusSize', 'maternity', 'petite', 'womenJeans', 'womenBusiness', 'bigTall', 'styleGuide', 'frontInfluencer', 'notStripCustomerList', 'stripeRegisterCustomer', 'addCardStripe', 'striprCardStatus', 'cronjobkidStylfitReAuth', 'cronjobparentStylfitReAuth', 'reAuthPayment']);
+        $this->Auth->allow(['maternityActiveWear', 'plusActiveWear', 'activewear', 'homepagePopupbox', 'checkHomepagePopupbox', 'authorizeCreditCardRefund', 'invitekids', 'invitewomen', 'invitemen', 'autoMentions', 'boxUpdate', 'invite', 'demoemail', 'underConstruction', 'ajaxGmail', 'chatCheckAuth', 'helpClose', 'help', 'startOnlineOffline', 'chatHistory', 'websocketMessage', 'adminlogin', 'fbreturn', 'fblogin', 'fbreturncon', 'fbloginCon', 'client', 'webrootRedirect', 'personalInfo', 'login', 'index', 'logout', 'forget', 'changePassword', 'registration', 'sizedata', 'setPassword', 'shipping', 'ajaxCheckEmailAvail', 'deleteAddress', 'addShipAddress', 'websocketDivMinaus', 'websocketDivMinausAdmin', 'chatButtonClose', 'men', 'women', 'kids', 'address', 'ajaxLogin', 'userregistration', 'ajaxforget', 'googleLoginReturn', 'googlelogin', 'editprofileSocialmedia', 'notYetShipped', 'unsubscribe', 'autoLogin', 'checkEmail', 'autocheckoutmail', 'testMultiAttach', 'howitWorks', 'boxPricing', 'personalStylelist', 'plusSize', 'maternity', 'petite', 'womenJeans', 'womenBusiness', 'bigTall', 'styleGuide', 'frontInfluencer', 'notStripCustomerList', 'stripeRegisterCustomer', 'addCardStripe', 'striprCardStatus', 'cronjobkidStylfitReAuth', 'cronjobparentStylfitReAuth', 'reAuthPayment',  'apiCustomerOrderReview', 'getCardSelect', 'getBillingAddressDetails', 'getShippingAddressDetails', 'getAllAddress', 'getPaymentDetails', 'ajaxWalletsDetails', 'getShipAddressList', 'ajaxChangeshipthisAddress', 'ajaxAddressCount', 'ajaxShippingAddress', 'getBillingAddressList', 'ajaxChangeBillingAddress', 'getPaymentCardDetails', 'ajaxUseThisCard', 'apiCustomerOrderReviewReAuth', 'clearance']);
     }
 
     public function frontInfluencer($key) {
@@ -4433,7 +4433,7 @@ class UsersController extends AppController {
                     'email' => $this->Auth->user('email'),
                     //'amount' => $paymentGetwayAmount,
                     'amount' => $data['total'],
-                    'invice' => @$paymentId,
+                    'invice' => $lastPymentg->id,//@$paymentId,
                     'refId' => 32,
                     'companyName' => 'Drapefit',
                     'stripeToken' => $data['stripeToken'],
@@ -5580,9 +5580,10 @@ class UsersController extends AppController {
         exit;
     }
 
-    public function getPaymentCardDetails() {
+    public function getPaymentCardDetails($user_id=null) {
         $this->viewBuilder()->setLayout('ajax');
-        $savecard = $this->PaymentCardDetails->find('all')->where(['PaymentCardDetails.user_id' => $this->Auth->user('id')]);
+        $user_id = !empty($user_id) ? $user_id : $this->Auth->user('id');
+        $savecard = $this->PaymentCardDetails->find('all')->where(['PaymentCardDetails.user_id' => $user_id]);
         $this->set(compact('savecard'));
     }
 
@@ -5595,9 +5596,10 @@ class UsersController extends AppController {
         exit;
     }
 
-    public function getCardSelect() {
+    public function getCardSelect($user_id = null) {
         $this->viewBuilder()->setLayout('ajax');
-        $useCard = $this->PaymentCardDetails->find('all')->where(['PaymentCardDetails.user_id' => $this->Auth->user('id'), 'PaymentCardDetails.use_card' => 1])->first();
+        $user_id = !empty($user_id) ? $user_id : $this->Auth->user('id');
+        $useCard = $this->PaymentCardDetails->find('all')->where(['PaymentCardDetails.user_id' => $user_id, 'PaymentCardDetails.use_card' => 1])->first();
         $this->set(compact('useCard'));
     }
 
@@ -5629,9 +5631,10 @@ class UsersController extends AppController {
         }
     }
 
-    public function getBillingAddressDetails() {
+    public function getBillingAddressDetails($user_id = null) {
         $this->viewBuilder()->setLayout('ajax');
-        $billingAddress = $this->ShippingAddress->find('all')->where(['ShippingAddress.user_id' => $this->Auth->user('id'), 'ShippingAddress.is_billing' => 1])->first();
+        $user_id = !empty($user_id) ? $user_id : $this->Auth->user('id');
+        $billingAddress = $this->ShippingAddress->find('all')->where(['ShippingAddress.user_id' => $user_id, 'ShippingAddress.is_billing' => 1])->first();
         $this->set(compact('billingAddress'));
     }
 
@@ -5658,15 +5661,17 @@ class UsersController extends AppController {
         $this->set(compact('address', 'all_sales_tax'));
     }
 
-    public function getBillingAddressList() {
+    public function getBillingAddressList($user_id =  null) {
         $this->viewBuilder()->setLayout('ajax');
-        $billingAddress = $this->ShippingAddress->find('all')->where(['ShippingAddress.user_id' => $this->Auth->user('id')]);
+        $user_id = !empty($user_id) ? $user_id : $this->Auth->user('id');
+        $billingAddress = $this->ShippingAddress->find('all')->where(['ShippingAddress.user_id' => $user_id]);
         $this->set(compact('billingAddress'));
     }
 
-    public function getShipAddressList() {
+    public function getShipAddressList($user_id=null) {        
         $this->viewBuilder()->setLayout('ajax');
-        $billingAddress = $this->ShippingAddress->find('all')->where(['ShippingAddress.user_id' => $this->Auth->user('id')]);
+        $user_id = !empty($user_id) ? $user_id : $this->Auth->user('id');
+        $billingAddress = $this->ShippingAddress->find('all')->where(['ShippingAddress.user_id' => $user_id]);
         $this->set(compact('billingAddress'));
     }
 
@@ -5678,20 +5683,22 @@ class UsersController extends AppController {
         exit;
     }
 
-    public function ajaxChangeshipthisAddress() {
+    public function ajaxChangeshipthisAddress($user_id = null) {
         $this->viewBuilder()->setLayout('ajax');
         $data = $this->request->data;
-        $this->ShippingAddress->updateAll(['default_set' => 0], ['user_id' => $this->Auth->user('id')]);
+        $user_id = !empty($user_id)?$user_id:$this->Auth->user('id');
+        $this->ShippingAddress->updateAll(['default_set' => 0], ['user_id' => $user_id]);
         $this->ShippingAddress->updateAll(['default_set' => 1], ['id' => $data['default_set']]);
         $this->request->session()->write('user_shipping_address', $data['default_set']);
         echo json_encode('1');
         exit;
     }
 
-    public function ajaxChangeBillingAddress() {
+    public function ajaxChangeBillingAddress($user_id = null) {
         $this->viewBuilder()->setLayout('ajax');
         $data = $this->request->data;
-        $this->ShippingAddress->updateAll(['is_billing' => 0], ['user_id' => $this->Auth->user('id')]);
+        $user_id = !empty($user_id)?$user_id:$this->Auth->user('id');
+        $this->ShippingAddress->updateAll(['is_billing' => 0], ['user_id' => $user_id]);
         $this->ShippingAddress->updateAll(['is_billing' => 1], ['id' => $data['is_billing']]);
         echo json_encode('1');
         exit;
