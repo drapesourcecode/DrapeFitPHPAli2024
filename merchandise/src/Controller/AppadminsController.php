@@ -5314,6 +5314,7 @@ class AppadminsController extends AppController {
                 }else{
                     $gender = 'BoyKids'; // Boy Kid
                 }
+                $post_data['usr_nm'] = $userDetails->kids_first_name;
             }else{
                 $userDetails = $this->UserDetails->find('all')->where(['user_id' => $post_data['pay_user_id']])->first();
                 if($userDetails->gender == 1){
@@ -5321,6 +5322,7 @@ class AppadminsController extends AppController {
                 }else{
                     $gender = 'Women';
                 }
+                $post_data['usr_nm'] = $userDetails->first_name." ".$userDetails->last_name;
             }
             $this->request->session()->write('new_variant_po_data', json_encode($post_data));           
             // if($post_data['look_type'] == "look_1_summer_sleeveless_top"){

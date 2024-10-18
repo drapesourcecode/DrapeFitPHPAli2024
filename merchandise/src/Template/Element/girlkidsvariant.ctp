@@ -83,6 +83,7 @@ use Cake\Core\Configure;
                                                     <th>Product Name 1</th>
                                                     <th>Product Image</th>
                                                     <th>Color : Size</th>  
+                                                    <th>Quantity</th>  
                                                     <th style="text-align: center;">Action</th>
                                                 </tr>
                                             </thead>
@@ -105,6 +106,7 @@ use Cake\Core\Configure;
                                                             echo $pdetails->color.' : '.$pdetails->size;
                                                         ?>
                                                     </td>
+                                                    <td> <?php echo $pdetails->quantity; ?> </td>
                                                     <td style="text-align: center;">
                                                     <?php if($pdetails->is_po == 0){ ?>
                                                     <button type="button" id="btnshowPo<?=$pdetails->id;?>" onclick="$('#showPo<?= $pdetails->id;?>').toggle();$('#btnshowPo<?= $pdetails->id;?>').toggle()" class="btn btn-sm btn-primary">Add to PO</button>                                                
@@ -117,6 +119,7 @@ use Cake\Core\Configure;
                                                         <input type="hidden"  name="user_id" value="<?=$getPaymentGatewayDetails->user_id;?>">
                                                         <input type="hidden"  name="kid_id" value="<?=$getPaymentGatewayDetails->kid_id;?>">
                                                         <button type="button" class="btn btn-sm btn-primary" onClick="updateVarPox(<?=$pdetails->id;?>)">Submit</button>
+                                                        <button type="button" class="btn btn-sm btn-danger" onclick="$('#showPo<?= $pdetails->id;?>').toggle();$('#btnshowPo<?= $pdetails->id;?>').toggle()">Cancel</button>
                                                         </div>
                                                     </div>
                                                     </td>
