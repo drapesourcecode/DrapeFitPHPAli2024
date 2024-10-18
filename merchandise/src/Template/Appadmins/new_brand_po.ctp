@@ -72,11 +72,13 @@ $color_arr = $this->Custom->inColor();
                         <?= $this->Form->input('id', ['value' => @$id, 'type' => 'hidden', 'label' => false]); ?>
                         <?php if(empty($this->request->session()->read('new_variant_po_data'))){ ?>
                             <?= $this->Form->input('for_po', ['value' => 1, 'type' => 'hidden', 'label' => false]); ?>                            
-                        <?php }else{ ?>
+                        <?php }else{ 
+                            $new_variant_po_data = json_decode($this->request->session()->read('new_variant_po_data'), true);
+                            ?>
                                 <style>.var_qty{ display:none; }</style>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        Product will added for customer
+                                        Product will added for customer  <b><?=$new_variant_po_data['usr_nm'];?></b>
                                     </div>
                                     <div class="col-sm-12">
                                         If you want to add stock <a class="btn btn-info btn-sm" href="<?=HTTP_ROOT;?>appadmins/removePoCustomerSession">Click Here</a>
@@ -317,6 +319,10 @@ $color_arr = $this->Custom->inColor();
         });
 
         $("#seson input[type=checkbox]").click(function () {
+            let  checkedCount = $("#seson input[type=checkbox]:checked").length;
+            if(checkedCount>=4){
+                $("#seson #selectAllseson").prop("checked", true);
+            }
             $("#seson input[type=checkbox]").removeAttr('required');
             if (!$(this).prop("checked")) {
                 $("#seson #selectAllseson").prop("checked", false);

@@ -84,8 +84,8 @@
                                                             <ul>
                                                                 <li><img src="<?php echo HTTP_ROOT . 'images/' . $img ?>"></li>
                                                                 <li><h6><?php echo $card->card_name; ?> <span> ending in <?php echo $masked; ?></span></h6></li>
-                                                                <li><p><span>Name</span><?php echo $card->card_name; ?></p></li>
-                                                                <li><p><span>Expires date</span><?php echo $card->card_expire; ?></p></li>
+                                                                <li><p><span>Name: </span><?php echo $card->card_name; ?></p></li>
+                                                                <li><p><span>Expires date: </span><?php echo $card->card_expire; ?></p></li>
                                                             </ul>
                                                         </div>
                                                     </a>
